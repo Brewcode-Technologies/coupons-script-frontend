@@ -37,8 +37,7 @@ export default function CouponSidebar({ categoryName, stores, categories, select
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Search Filters"
-          className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-base focus:outline-none focus:ring-2"
-          style={{ focusRingColor: primary }}
+          className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-base focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
 
@@ -102,10 +101,7 @@ export default function CouponSidebar({ categoryName, stores, categories, select
             <Tag className="w-4 h-4" style={{ color: primary }} />
             <span>Coupons & Offers : <strong className="text-gray-900 dark:text-gray-100">{totalCoupons}</strong></span>
           </div>
-          <div className="flex items-center gap-2.5 text-gray-500 dark:text-gray-400 text-sm">
-            <CheckCircle className="w-4 h-4 text-green-500" />
-            <span>Verified : <strong className="text-gray-900 dark:text-gray-100">{verifiedCount}</strong></span>
-          </div>
+
           <div className="flex items-center gap-2.5 text-gray-500 dark:text-gray-400 text-sm">
             <Zap className="w-4 h-4 text-yellow-500" />
             <span>Fresh Coupons : <strong className="text-gray-900 dark:text-gray-100">{Math.min(10, totalCoupons)}</strong></span>

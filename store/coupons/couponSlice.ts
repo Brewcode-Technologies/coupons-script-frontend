@@ -38,7 +38,7 @@ const initialState: CouponState = {
 // Async thunks for API calls
 export const fetchCoupons = createAsyncThunk(
   'coupons/fetchCoupons',
-  async (filters = {}) => {
+  async (filters: any = {}) => {
     const response = await couponService.public.getCoupons(filters);
     return response;
   }

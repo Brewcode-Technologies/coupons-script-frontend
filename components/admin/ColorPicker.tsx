@@ -18,7 +18,7 @@ import {
   Divider
 } from '@mui/material';
 import { Palette, ContentCopy, Refresh } from '@mui/icons-material';
-import { hexToRgb, hexToHsl, generateColorVariations, colorNames, getContrastColor } from '@/utils/colorUtils';
+import { hexToRgb, hexToHsl, generateColorVariations, getContrastColor } from '@/utils/colorUtils';
 
 interface ColorPickerProps {
   label: string;
@@ -112,7 +112,7 @@ const tailwindColors = {
 };
 
 // Common color names to hex mapping
-const colorNames = {
+const colorNames: Record<string, string> = {
   // Basic colors
   black: '#000000', white: '#ffffff', red: '#ff0000', green: '#008000', blue: '#0000ff',
   yellow: '#ffff00', cyan: '#00ffff', magenta: '#ff00ff', silver: '#c0c0c0', gray: '#808080',

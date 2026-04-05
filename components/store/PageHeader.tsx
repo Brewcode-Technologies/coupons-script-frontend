@@ -5,8 +5,8 @@ interface PageHeaderProps {
   storeName: string;
   logoUrl?: string;
   logoBgColor?: string;
-  verifiedOffers: number;
-  date: string;
+  verifiedOffers?: number;
+  date?: string;
 }
 
 export default function PageHeader({
@@ -45,7 +45,7 @@ export default function PageHeader({
           {storeName} Coupons &amp; Promo Codes
         </h1>
         <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mt-0.5">
-          {verifiedOffers} VERIFIED OFFERS ON {date}
+          {storeName} Coupons &amp; Promo Codes
         </p>
       </div>
     </div>

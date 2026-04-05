@@ -2,17 +2,15 @@
 import { useEffect, useState } from 'react';
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Grid3X3, Store, Tag, Landmark, PartyPopper, ShoppingBag, MapPin } from "lucide-react";
+import { Grid3X3, Store, Tag, ShoppingBag, BookOpen } from "lucide-react";
 import { getStores, getSiteConfig } from '@/services/api';
 
 const menuItems = [
   { icon: Grid3X3, label: "Categories", href: "/category" },
   { icon: Store, label: "Stores", href: "/stores" },
-  { icon: Tag, label: "Brands", href: "/brands" },
-  { icon: Landmark, label: "Banks", href: "/banks" },
-  { icon: PartyPopper, label: "Festivals", href: "/festivals" },
-  { icon: ShoppingBag, label: "Product Deals", href: "/product-deals" },
-  { icon: MapPin, label: "Cities Deals", href: "/cities-deals" },
+  { icon: Tag, label: "All Coupons", href: "/all-coupons" },
+  { icon: ShoppingBag, label: "Deals", href: "/deals" },
+  { icon: BookOpen, label: "Blog", href: "/blog" },
 ];
 
 export default function CategorySidebar() {

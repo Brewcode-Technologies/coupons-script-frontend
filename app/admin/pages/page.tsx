@@ -132,6 +132,69 @@ const TERMS_TEMPLATE = `
 </ol>
 `.trim();
 
+const COOKIE_TEMPLATE = `
+<p><strong>COUPON FEAST</strong> IS OWNED AND OPERATED BY Coupon Feast Pvt. Ltd. BY USING THE WEBSITE, YOU AGREE TO THE TERMS AND CONDITIONS OF THIS COOKIE POLICY. IF YOU DO NOT AGREE WITH THE TERMS AND CONDITIONS OF THIS POLICY, PLEASE DO NOT PROCEED FURTHER TO USE THIS WEBSITE.</p>
+
+<p>This Cookie Policy explains how Coupon Feast ("we", "us", or "our") uses cookies and similar technologies when you visit our website. We are committed to being transparent about the technologies we use and how they affect your experience.</p>
+
+<h2>WHAT ARE COOKIES?</h2>
+<p>Cookies are small text files that are placed on your computer or mobile device when you visit a website. They are widely used to make websites work more efficiently, as well as to provide information to the owners of the site. Cookies help us improve your browsing experience and deliver personalized content.</p>
+
+<h2>TYPES OF COOKIES WE USE</h2>
+<h3>Essential Cookies</h3>
+<p>These cookies are necessary for the website to function properly. They enable core functionality such as security, network management, and account access. You cannot opt out of these cookies as the website cannot function without them.</p>
+
+<h3>Performance & Analytics Cookies</h3>
+<ul>
+<li>These cookies collect information about how visitors use our website, such as which pages are visited most often and if users receive error messages.</li>
+<li>All information collected by these cookies is aggregated and therefore anonymous.</li>
+<li>We use this data to improve how our website works and understand user behavior.</li>
+</ul>
+
+<h3>Functionality Cookies</h3>
+<ul>
+<li>These cookies allow the website to remember choices you make (such as your preferred language or region) and provide enhanced, more personalized features.</li>
+<li>They may also be used to provide services you have requested, such as watching a video or commenting on a blog.</li>
+</ul>
+
+<h3>Advertising & Targeting Cookies</h3>
+<ul>
+<li>These cookies are used to deliver advertisements that are relevant to you and your interests.</li>
+<li>They are also used to limit the number of times you see an advertisement and help measure the effectiveness of advertising campaigns.</li>
+<li>These cookies remember that you have visited a website and this information may be shared with other organizations such as advertisers.</li>
+</ul>
+
+<h2>THIRD-PARTY COOKIES</h2>
+<p>Some cookies are placed by third-party services that appear on our pages. We do not control the dissemination of these cookies. You should check the third-party websites for more information about these cookies and how to manage them.</p>
+<ul>
+<li><strong>Google Analytics</strong> — Used to track website usage and generate reports on visitor activity.</li>
+<li><strong>Google Ads</strong> — Used to serve personalized advertisements based on your browsing history.</li>
+<li><strong>Facebook Pixel</strong> — Used to measure the effectiveness of advertising by understanding the actions people take on our website.</li>
+</ul>
+
+<h2>HOW TO MANAGE COOKIES</h2>
+<p>Most web browsers allow you to control cookies through their settings. You can set your browser to refuse cookies or delete certain cookies. The following links provide information on how to modify cookie settings in popular browsers:</p>
+<ul>
+<li>Google Chrome — Settings → Privacy and Security → Cookies</li>
+<li>Mozilla Firefox — Options → Privacy & Security → Cookies</li>
+<li>Safari — Preferences → Privacy → Cookies</li>
+<li>Microsoft Edge — Settings → Cookies and Site Permissions</li>
+</ul>
+<p>Please note that if you choose to disable cookies, some features of our website may not function properly.</p>
+
+<h2>HOW LONG DO COOKIES LAST?</h2>
+<ul>
+<li><strong>Session Cookies</strong> — These are temporary cookies that expire when you close your browser. They are used to maintain your session while you navigate the website.</li>
+<li><strong>Persistent Cookies</strong> — These cookies remain on your device for a set period of time or until you delete them. They are used to remember your preferences and actions across multiple visits.</li>
+</ul>
+
+<h2>UPDATES TO THIS COOKIE POLICY</h2>
+<p>We may update this Cookie Policy from time to time to reflect changes in technology, legislation, or our data practices. When we make changes, we will update the date at the top of this policy. We encourage you to review this policy periodically to stay informed about how we use cookies.</p>
+
+<h2>CONTACT US</h2>
+<p>If you have any questions about our use of cookies or this Cookie Policy, please contact us by e-mail at <a href="mailto:support@couponsfeast.com">support@couponsfeast.com</a></p>
+`.trim();
+
 export default function AdminPagesManager() {
   const [pages, setPages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -176,6 +239,11 @@ export default function AdminPagesManager() {
       setForm({
         title: 'Terms & Conditions', slug: 'terms-and-conditions', page: 'terms-and-conditions', description: 'Terms and Conditions', template: 'legal', isActive: true,
         sections: [{ id: `s_${Date.now()}`, type: 'customHTML', title: 'Terms & Conditions', order: 1, content: TERMS_TEMPLATE }],
+      });
+    } else if (template === 'cookie-policy') {
+      setForm({
+        title: 'Cookie Policy', slug: 'cookie-policy', page: 'cookie-policy', description: 'Cookie Policy', template: 'legal', isActive: true,
+        sections: [{ id: `s_${Date.now()}`, type: 'customHTML', title: 'Cookie Policy', order: 1, content: COOKIE_TEMPLATE }],
       });
     } else {
       setForm(emptyPage);
@@ -267,7 +335,7 @@ export default function AdminPagesManager() {
       </div>
 
       {/* Quick Templates */}
-      <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
         <button onClick={() => openCreate('privacy-policy')}
           className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 bg-white hover:shadow-md hover:border-indigo-300 transition-all text-left">
           <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center flex-shrink-0">
@@ -285,6 +353,16 @@ export default function AdminPagesManager() {
           </div>
           <div>
             <p className="text-sm font-bold text-slate-800">Terms & Conditions</p>
+            <p className="text-xs text-slate-400">Pre-filled legal template — edit and publish</p>
+          </div>
+        </button>
+        <button onClick={() => openCreate('cookie-policy')}
+          className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 bg-white hover:shadow-md hover:border-indigo-300 transition-all text-left">
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0">
+            <FileText size={18} className="text-emerald-500" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-slate-800">Cookie Policy</p>
             <p className="text-xs text-slate-400">Pre-filled legal template — edit and publish</p>
           </div>
         </button>

@@ -93,7 +93,6 @@ export default function StoresPage() {
           </div>
         </div>
         <p className="text-[10px] sm:text-xs text-green-600 font-medium">
-          Verified On: {new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}
         </p>
       </div>
 
@@ -113,26 +112,18 @@ export default function StoresPage() {
           {!loading && stores.length > 0 && (
             <div className="mb-8">
               <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">Popular Stores</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 {stores.slice(0, 4).map((store) => {
                   const rawLogo = store.logo || '';
                   const logo = rawLogo.startsWith('http') ? rawLogo : rawLogo ? `${serverUrl}${rawLogo}` : '';
                   return (
                     <Link key={store._id} href={`/${store.slug}-coupons`}
-                      className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-primary/30 transition-all cursor-pointer group text-center no-underline block"
-                      style={{ boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px' }}>
-                      <div className="flex justify-center mb-3">
-                        <div className="w-14 h-14 rounded-full bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors overflow-hidden">
-                          {logo ? (
-                            <img src={logo} alt={store.storeName} className="w-full h-full object-cover" />
-                          ) : (
-                            <Store className="w-7 h-7 text-primary/70" />
-                          )}
-                        </div>
-                      </div>
-                      <h3 className="font-bold text-sm text-gray-900 dark:text-gray-100">{store.storeName}</h3>
-                      {store.category && (
-                        <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1">{store.category}</p>
+                      className="rounded-2xl overflow-hidden hover:-translate-y-1 transition-all duration-300 cursor-pointer group no-underline block h-[100px] sm:h-[120px] md:h-[150px]"
+                      style={{ boxShadow: 'rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px' }}>
+                      {logo ? (
+                        <img src={logo} alt={store.storeName} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-primary text-white text-xl font-bold">{store.storeName?.[0]}</div>
                       )}
                     </Link>
                   );

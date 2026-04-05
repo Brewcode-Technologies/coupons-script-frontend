@@ -25,10 +25,10 @@ export default function DealsPage() {
   const [stores, setStores] = useState<any[]>([]);
   const [trending, setTrending] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [countdown, setCountdown] = useState('');
   const [activeStore, setActiveStore] = useState('All');
   const [modalData, setModalData] = useState<any>(null);
   const [dealCols, setDealCols] = useState(4);
+  const [storeCols, setStoreCols] = useState(7);
 
   const serverUrl = 'http://localhost:5000';
 
@@ -48,21 +48,6 @@ export default function DealsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => {
-    const tick = () => {
-      const now = new Date();
-      const midnight = new Date(now);
-      midnight.setHours(24, 0, 0, 0);
-      const diff = midnight.getTime() - now.getTime();
-      const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
-      const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-      const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
-      setCountdown(`${h}:${m}:${s}`);
-    };
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, []);
 
   const getImage = (deal: any) => {
     const raw = deal.image || deal.store?.logo || '';
@@ -115,19 +100,6 @@ export default function DealsPage() {
               <h1 className="text-xl sm:text-2xl font-bold" style={{ color: textMain }}>Deals Of The Day</h1>
               <p className="text-sm" style={{ color: textMuted }}>Fresh. Handpicked. Curated.</p>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="text-left sm:text-right">
-                <p className="text-[10px] uppercase tracking-wide" style={{ color: textMuted }}>New Deals in</p>
-                <div className="flex items-center gap-1">
-                  {countdown.split(':').map((unit, i) => (
-                    <span key={i} className="flex items-center gap-1">
-                      <span className="text-lg sm:text-xl font-bold px-2 py-1 rounded-md" style={{ color: primary, backgroundColor: `${primary}10` }}>{unit}</span>
-                      {i < 2 && <span className="font-bold" style={{ color: primary }}>:</span>}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -174,8 +146,8 @@ export default function DealsPage() {
                 style={{ backgroundColor: cardBg, boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px' }}
                 onClick={() => openDeal(featured)}
               >
-                <div className="sm:w-1/2 flex items-center justify-center p-6" style={{ backgroundColor: isDark ? darkPalette.bg : '#f3f4f6' }}>
-                  <img src={getImage(featured)} alt={featured.title} className="max-h-[220px] object-contain" />
+                <div className="sm:w-1/2 h-[200px] sm:h-auto" style={{ backgroundColor: isDark ? darkPalette.bg : '#f3f4f6' }}>
+                  <img src={getImage(featured)} alt={featured.title} className="w-full h-full object-cover" />
                 </div>
                 <div className="sm:w-1/2 p-6 sm:p-8 flex flex-col justify-center" style={{ backgroundColor: isDark ? '#0f172a' : '#0d2545' }}>
                   <span className="text-white text-sm px-4 py-1 rounded-md w-fit mb-3 font-semibold" style={{ backgroundColor: primary }}>
@@ -254,24 +226,27 @@ export default function DealsPage() {
         {/* Top Stores */}
         {stores.length > 0 && (
           <div className="mt-12">
-            <h2 className="text-xl font-bold mb-5" style={{ color: textMain }}>Top Stores</h2>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
-              {stores.slice(0, 16).map((store: any) => {
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold" style={{ color: textMain }}>Top Stores</h2>
+              <ColumnSwitcher columns={storeCols} onChange={setStoreCols} mobileOptions={[3, 4]} desktopOptions={[4, 5, 6, 7]} />
+            </div>
+            <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${storeCols}, minmax(0, 1fr))` }}>
+              {stores.slice(0, storeCols <= 4 ? 12 : storeCols <= 6 ? 12 : 16).map((store: any) => {
                 const rawLogo = store.logo || '';
                 const logo = rawLogo.startsWith('http') ? rawLogo : rawLogo ? `${serverUrl}${rawLogo}` : '';
                 return (
-                  <Link key={store._id} href={`/${store.slug}-coupons`} className="no-underline group text-center">
+                  <Link key={store._id} href={`/coupons/${store.slug}-coupons`} className="no-underline group text-center">
                     <div
-                      className="rounded-xl border p-4 flex items-center justify-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-                      style={{ backgroundColor: cardBg, borderColor: borderCol, minHeight: 70 }}
+                      className="rounded-2xl overflow-hidden flex items-center justify-center transition-all duration-300 hover:-translate-y-1"
+                      style={{ backgroundColor: cardBg, height: 80, boxShadow: 'rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px' }}
                     >
                       {logo ? (
-                        <img src={logo} alt={store.storeName} className="h-8 object-contain max-w-[80%]" />
+                        <img src={logo} alt={store.storeName} className="w-full h-full object-cover" />
                       ) : (
-                        <span className="text-sm font-bold" style={{ color: primary }}>{store.storeName?.[0]}</span>
+                        <div className="w-full h-full flex items-center justify-center text-white text-xl font-bold" style={{ backgroundColor: primary }}>{store.storeName?.[0]}</div>
                       )}
                     </div>
-                    <p className="mt-1.5 text-xs font-semibold" style={{ color: textMain }}>{store.storeName}</p>
+                    <p className="mt-2 text-sm font-bold truncate" style={{ color: textMain }}>{store.storeName}</p>
                   </Link>
                 );
               })}

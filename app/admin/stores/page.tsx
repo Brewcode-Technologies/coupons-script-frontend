@@ -6,7 +6,7 @@ import {
   TextField, Drawer, IconButton, Accordion, AccordionSummary, AccordionDetails
 } from '@mui/material';
 import AdminShell from '@/components/admin/AdminShell';
-import { getStores, createStore, updateStore, deleteStore, bulkDeleteStores } from '@/services/api';
+import { getStores, createStore, updateStore, deleteStore, bulkDeleteStores, getCoupons } from '@/services/api';
 import toast from 'react-hot-toast';
 import { Add, Edit, Delete, Store, Language, Close, ExpandMore, CheckBox, CheckBoxOutlineBlank, IndeterminateCheckBox } from '@mui/icons-material';
 import ImageUploadField from '@/components/admin/ImageUploadField';
@@ -36,12 +36,22 @@ export default function AdminStores() {
   const [slugManual, setSlugManual] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
+  const [couponCounts, setCouponCounts] = useState<Record<string, number>>({});
 
   useEffect(() => { fetchStores(); }, []);
 
   const fetchStores = async () => {
-    try { const res = await getStores(); setStores(res.data); }
-    catch (error) { console.error('Error fetching stores:', error); }
+    try {
+      const [storeRes, couponRes] = await Promise.all([getStores(), getCoupons({ limit: 10000 })]);
+      setStores(storeRes.data);
+      const coupons = couponRes.data?.data || couponRes.data || [];
+      const counts: Record<string, number> = {};
+      (Array.isArray(coupons) ? coupons : []).forEach((c: any) => {
+        const sid = c.store?._id || c.store;
+        if (sid) counts[sid] = (counts[sid] || 0) + 1;
+      });
+      setCouponCounts(counts);
+    } catch (error) { console.error('Error fetching stores:', error); }
   };
 
   const closeDrawer = () => { setOpen(false); setEditId(null); setFormData({ ...defaultForm }); setSlugManual(false); };
@@ -69,7 +79,7 @@ export default function AdminStores() {
 
   const confirmDelete = async () => {
     if (storeToDelete) {
-      try { await deleteStore(storeToDelete._id); toast.success('Store deleted!'); fetchStores(); }
+      try { await deleteStore(storeToDelete._id, true); toast.success('Store deleted!'); fetchStores(); }
       catch (error: any) { toast.error(error.response?.data?.error || 'Failed to delete store'); }
     }
     setDeleteOpen(false); setStoreToDelete(null);
@@ -82,7 +92,7 @@ export default function AdminStores() {
 
   const confirmBulkDelete = async () => {
     try {
-      const res = await bulkDeleteStores(Array.from(selected));
+      const res = await bulkDeleteStores(Array.from(selected), true);
       toast.success(res.data?.message || `${selected.size} store(s) deleted`);
       setSelected(new Set()); fetchStores();
     } catch (error: any) { toast.error(error.response?.data?.error || 'Failed to delete stores'); }
@@ -385,7 +395,10 @@ export default function AdminStores() {
         <DialogContent className="p-6">
           <div className="text-center py-4">
             <Typography variant="h6">Delete <strong>{selected.size} selected store(s)</strong>?</Typography>
-            <p className="text-gray-500 text-sm mt-2">This cannot be undone. Associated coupons may be affected.</p>
+            <p className="text-gray-500 text-sm mt-2">
+              This will also permanently delete <strong>{Array.from(selected).reduce((sum, id) => sum + (couponCounts[id] || 0), 0)}</strong> associated coupon(s).
+            </p>
+            <p className="text-red-400 text-xs mt-1">This cannot be undone.</p>
           </div>
         </DialogContent>
         <DialogActions className="p-6 bg-gray-50">
@@ -403,7 +416,10 @@ export default function AdminStores() {
           <div className="text-center py-4">
             <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(239,68,68,0.08)' }}><Delete style={{ color: '#ef4444', fontSize: 28 }} /></div>
             <Typography variant="h6" className="mb-2">Delete <strong>"{storeToDelete?.storeName}"</strong>?</Typography>
-            <p className="text-gray-500 text-sm">This action cannot be undone. All associated coupons may be affected.</p>
+            <p className="text-gray-500 text-sm">
+              This will also permanently delete <strong>{couponCounts[storeToDelete?._id] || 0}</strong> associated coupon(s).
+            </p>
+            <p className="text-red-400 text-xs mt-1">This action cannot be undone.</p>
           </div>
         </DialogContent>
         <DialogActions className="p-6 bg-gray-50">

@@ -113,6 +113,81 @@ export default function SiteConfigAdmin() {
       showSocialMedia: true,
       showNewsletter: true
     },
+    footerCategories: [
+      {
+        title: 'Travel & Essentials',
+        groups: [
+          { heading: 'Travel & Transportation', links: [
+            { label: 'Flight Coupons', href: '/coupons/flight-coupons' },
+            { label: 'Travel Coupons', href: '/coupons/travel-coupons' },
+            { label: 'Hotel Coupons', href: '/coupons/hotel-coupons' },
+            { label: 'Bus Coupons', href: '/coupons/bus-coupons' },
+            { label: 'Bike Rentals Coupons', href: '/coupons/bike-rentals-coupons' },
+          ]},
+          { heading: 'Utilities & Recharge', links: [
+            { label: 'Utility Bill Payments Coupons', href: '/coupons/utility-bill-payments-coupons' },
+            { label: 'Recharge Coupons', href: '/coupons/recharge-coupons' },
+          ]},
+          { heading: 'Web & Hosting', links: [
+            { label: 'Hosting Coupons', href: '/coupons/hosting-coupons' },
+          ]},
+        ]
+      },
+      {
+        title: 'Food & Lifestyle',
+        groups: [
+          { heading: 'Food & Dining', links: [
+            { label: 'Pizza Coupons', href: '/coupons/pizza-coupons' },
+            { label: 'Meat & Dairy Coupons', href: '/coupons/meat-dairy-coupons' },
+            { label: 'Groceries Coupons', href: '/coupons/groceries-coupons' },
+          ]},
+          { heading: 'Shopping & Lifestyle', links: [
+            { label: 'Fashion Coupons', href: '/coupons/fashion-coupons' },
+            { label: 'Footwear Coupons', href: '/coupons/footwear-coupons' },
+            { label: 'Jewellery Coupons', href: '/coupons/jewellery-coupons' },
+            { label: 'Kids & Lifestyle Coupons', href: '/coupons/kids-lifestyle-coupons' },
+            { label: 'Lingerie Coupons', href: '/coupons/lingerie-coupons' },
+          ]},
+          { heading: 'Gifts & Specialty', links: [
+            { label: 'Gifts & Flowers Coupons', href: '/coupons/gifts-flowers-coupons' },
+          ]},
+        ]
+      },
+      {
+        title: 'Health & Personal Care',
+        groups: [
+          { heading: 'Beauty & Health', links: [
+            { label: 'Beauty Coupons', href: '/coupons/beauty-coupons' },
+            { label: 'Medicines Coupons', href: '/coupons/medicines-coupons' },
+            { label: 'Lab Tests Coupons', href: '/coupons/lab-tests-coupons' },
+            { label: 'Protein Supplements Coupons', href: '/coupons/protein-supplements-coupons' },
+          ]},
+          { heading: 'Personal Services', links: [
+            { label: 'Services Coupons', href: '/coupons/services-coupons' },
+            { label: 'Eyewear Coupons', href: '/coupons/eyewear-coupons' },
+          ]},
+          { heading: 'Education & Learning', links: [
+            { label: 'Education Coupons', href: '/coupons/education-coupons' },
+          ]},
+        ]
+      },
+      {
+        title: 'Tech & Entertainment',
+        groups: [
+          { heading: 'Electronics & Appliances', links: [
+            { label: 'Electronics Coupons', href: '/coupons/electronics-coupons' },
+            { label: 'Kitchen Appliances Coupons', href: '/coupons/kitchen-appliances-coupons' },
+          ]},
+          { heading: 'Entertainment & Subscriptions', links: [
+            { label: 'Entertainment Coupons', href: '/coupons/entertainment-coupons' },
+            { label: 'OTT Coupons', href: '/coupons/ott-coupons' },
+          ]},
+          { heading: 'Home & Furniture', links: [
+            { label: 'Furniture Coupons', href: '/coupons/furniture-coupons' },
+          ]},
+        ]
+      },
+    ],
     promoCard: {
       title: 'Earn Up To $100 ExtraBucks At CVS',
       description: "Steal this influencer's top picks from her latest CVS beauty haul.",
@@ -135,7 +210,13 @@ export default function SiteConfigAdmin() {
   const fetchConfig = async () => {
     try {
       const response = await getSiteConfig();
-      setConfig(response.data);
+      setConfig((prev: any) => ({
+        ...prev,
+        ...response.data,
+        footerCategories: (response.data.footerCategories && response.data.footerCategories.length > 0)
+          ? response.data.footerCategories
+          : prev.footerCategories || [],
+      }));
     } catch (error) {
       console.error('Error fetching site config:', error);
     } finally {
@@ -148,7 +229,10 @@ export default function SiteConfigAdmin() {
     const loadingToast = toast.loading('Saving configuration...');
     
     try {
-      await updateSiteConfig(config);
+      await updateSiteConfig({
+        ...config,
+        footerCategories: config.footerCategories || [],
+      });
       
       // Update favicon if changed
       if (config.logos.favicon) {
@@ -1161,6 +1245,124 @@ export default function SiteConfigAdmin() {
             const cols = [...(config.footerContent?.columns || []), { heading: 'New Column', links: [{ label: 'Link', href: '#' }] }];
             setConfig({ ...config, footerContent: { ...config.footerContent, columns: cols } });
           }}>Add Column</Button>
+
+          {/* Popular Categories Section */}
+          <Divider sx={{ my: 4 }} />
+          <Accordion sx={{ border: '1px solid #e5e7eb', borderRadius: 2, '&:before': { display: 'none' }, boxShadow: 'none' }}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="subtitle1" fontWeight="bold">Popular Categories (4 Columns)</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                Manage the "Popular Categories" section in the footer. Each column has a title and grouped sub-sections with links.
+              </Typography>
+
+              <TextField
+                fullWidth
+                label="Section Heading (leave empty to hide)"
+                value={config.footerCategoriesHeading ?? 'Popular Categories'}
+                onChange={(e) => setConfig({ ...config, footerCategoriesHeading: e.target.value })}
+                helperText="Clear this field to hide the heading entirely"
+                InputProps={{ sx: { height: 48, borderRadius: 2 } }}
+                sx={{ mb: 3 }}
+              />
+
+              {(config.footerCategories || []).map((col: any, colIdx: number) => (
+                <Accordion key={colIdx} sx={{ mb: 2, border: '1px solid #e5e7eb', borderRadius: '8px !important', '&:before': { display: 'none' }, boxShadow: 'none' }}>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%', pr: 1 }}>
+                      <Typography variant="subtitle2" fontWeight="bold" sx={{ flex: 1 }}>
+                        Column {colIdx + 1}: {col.title || 'Untitled'}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {(col.groups || []).length} groups
+                      </Typography>
+                    </Box>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                      <TextField
+                        label="Column Title"
+                        value={col.title}
+                        onChange={(e) => {
+                          const cats = [...config.footerCategories];
+                          cats[colIdx] = { ...cats[colIdx], title: e.target.value };
+                          setConfig({ ...config, footerCategories: cats });
+                        }}
+                        InputProps={{ sx: { height: 48, borderRadius: 2 } }}
+                        sx={{ flex: 1 }}
+                      />
+                      <Button color="error" variant="outlined" size="small" sx={{ height: 48, borderRadius: 2 }} onClick={() => {
+                        const cats = config.footerCategories.filter((_: any, i: number) => i !== colIdx);
+                        setConfig({ ...config, footerCategories: cats });
+                      }}>Remove Column</Button>
+                    </Box>
+
+                    {(col.groups || []).map((group: any, gIdx: number) => (
+                      <Card key={gIdx} variant="outlined" sx={{ mb: 2, p: 2, borderRadius: 2, backgroundColor: '#fafafa' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+                          <TextField label="Sub-heading" value={group.heading} sx={{ flex: 1 }}
+                            InputProps={{ sx: { height: 48, borderRadius: 2 } }}
+                            onChange={(e) => {
+                              const cats = [...config.footerCategories];
+                              cats[colIdx].groups[gIdx] = { ...group, heading: e.target.value };
+                              setConfig({ ...config, footerCategories: cats });
+                            }}
+                          />
+                          <Button color="error" variant="outlined" size="small" sx={{ height: 48, borderRadius: 2 }} onClick={() => {
+                            const cats = [...config.footerCategories];
+                            cats[colIdx].groups = cats[colIdx].groups.filter((_: any, i: number) => i !== gIdx);
+                            setConfig({ ...config, footerCategories: cats });
+                          }}>Remove</Button>
+                        </Box>
+                        {(group.links || []).map((link: any, lIdx: number) => (
+                          <Box key={lIdx} sx={{ display: 'flex', gap: 1.5, mb: 1.5, alignItems: 'center' }}>
+                            <TextField label="Label" value={link.label} sx={{ flex: 1 }}
+                              InputProps={{ sx: { height: 48, borderRadius: 2 } }}
+                              onChange={(e) => {
+                                const cats = [...config.footerCategories];
+                                cats[colIdx].groups[gIdx].links[lIdx] = { ...link, label: e.target.value };
+                                setConfig({ ...config, footerCategories: cats });
+                              }}
+                            />
+                            <TextField label="URL" value={link.href} sx={{ flex: 1 }}
+                              InputProps={{ sx: { height: 48, borderRadius: 2 } }}
+                              onChange={(e) => {
+                                const cats = [...config.footerCategories];
+                                cats[colIdx].groups[gIdx].links[lIdx] = { ...link, href: e.target.value };
+                                setConfig({ ...config, footerCategories: cats });
+                              }}
+                            />
+                            <IconButton color="error" onClick={() => {
+                              const cats = [...config.footerCategories];
+                              cats[colIdx].groups[gIdx].links = cats[colIdx].groups[gIdx].links.filter((_: any, i: number) => i !== lIdx);
+                              setConfig({ ...config, footerCategories: cats });
+                            }}><DeleteIcon fontSize="small" /></IconButton>
+                          </Box>
+                        ))}
+                        <Button size="small" startIcon={<AddIcon />} sx={{ mt: 1, borderRadius: 2, textTransform: 'none' }} onClick={() => {
+                          const cats = [...config.footerCategories];
+                          cats[colIdx].groups[gIdx].links = [...cats[colIdx].groups[gIdx].links, { label: '', href: '#' }];
+                          setConfig({ ...config, footerCategories: cats });
+                        }}>Add Link</Button>
+                      </Card>
+                    ))}
+
+                    <Button size="small" variant="outlined" startIcon={<AddIcon />} sx={{ borderRadius: 2, textTransform: 'none' }} onClick={() => {
+                      const cats = [...config.footerCategories];
+                      cats[colIdx].groups = [...(cats[colIdx].groups || []), { heading: 'New Group', links: [{ label: '', href: '#' }] }];
+                      setConfig({ ...config, footerCategories: cats });
+                    }}>Add Sub-group</Button>
+                  </AccordionDetails>
+                </Accordion>
+              ))}
+
+              <Button variant="outlined" startIcon={<AddIcon />} sx={{ mt: 1, borderRadius: 2, textTransform: 'none' }} onClick={() => {
+                const cats = [...(config.footerCategories || []), { title: 'New Column', groups: [{ heading: 'New Group', links: [{ label: '', href: '#' }] }] }];
+                setConfig({ ...config, footerCategories: cats });
+              }}>Add Category Column</Button>
+            </AccordionDetails>
+          </Accordion>
 
           {/* Bottom Bar Links */}
           <Divider sx={{ my: 4 }} />

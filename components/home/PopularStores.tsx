@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { FaArrowUpRightFromSquare } from 'react-icons/fa6';
@@ -38,13 +38,24 @@ export default function PopularStores() {
   const [stores, setStores] = useState<any[]>([]);
   const [featuredStore, setFeaturedStore] = useState<any>(null);
   const [page, setPage] = useState(0);
-  const [columns, setColumns] = useState(4);
+  const [columns, setColumns] = useState(5);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [gridHeight, setGridHeight] = useState(0);
+
+  useEffect(() => {
+    const updateHeight = () => {
+      if (gridRef.current) setGridHeight(gridRef.current.offsetHeight);
+    };
+    updateHeight();
+    window.addEventListener('resize', updateHeight);
+    return () => window.removeEventListener('resize', updateHeight);
+  }, [stores, page, columns]);
   const perPage = 12;
 
   useEffect(() => {
     Promise.all([
       getStores(),
-      getCoupons({ limit: 200, sort: 'clickCount' })
+      getCoupons({ limit: 1000, sort: 'clickCount' })
     ]).then(([storeRes, couponRes]) => {
       const storeData = storeRes.data?.data || storeRes.data || [];
       const list = storeData.length > 0 ? storeData : fallbackStores;
@@ -61,9 +72,9 @@ export default function PopularStores() {
         }
       });
 
-      // Attach coupon count to each store
+      // Attach coupon count and clicks to each store
       list.forEach((s: any) => {
-        s.couponCount = countMap[s._id] || 0;
+        s.couponCount = s.couponCount || countMap[s._id] || 0;
         s.totalClicks = clickMap[s._id] || 0;
       });
 
@@ -129,55 +140,39 @@ export default function PopularStores() {
       </div>
 
       {/* Main Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="flex gap-6">
         {/* Featured Store Card */}
         {featured && (
-          <div className="lg:col-span-1">
+          <div className="hidden lg:flex w-[280px] xl:w-[320px] shrink-0">
             <Link
               href={`/coupons/${storeSlug(featured)}-coupons`}
-              className="rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border no-underline group block"
-              style={{ backgroundColor: '#000', borderColor: borderClr, height: 320 }}
+              className="rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border no-underline group flex flex-col w-full"
+              style={{ backgroundColor: '#000', borderColor: borderClr, height: '100%', maxHeight: 400 }}
             >
-              {/* Image — shrinks on hover */}
-              <div className="relative overflow-hidden h-[200px] group-hover:h-[100px] transition-all duration-300">
+              <div className="relative overflow-hidden flex-[1.2] min-h-[140px] group-hover:flex-[0.5] transition-all duration-300">
                 <img
                   src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=500&fit=crop"
                   alt="bg"
                   className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity"
                 />
                 <div className="absolute top-4 left-4 z-10">
-                  <p className="font-bold text-xs" style={{ color: primary }}>MOST CLICKED</p>
-                  <h3 className="text-sm font-semibold text-white">Store Of The Month</h3>
+                  <p className="font-bold text-[11px] tracking-wider" style={{ color: primary }}>MOST CLICKED</p>
+                  <h3 className="text-sm font-semibold text-white mt-1">Store Of The Month</h3>
                 </div>
               </div>
-
-              {/* Logo pill */}
               <div className="relative z-10 px-4 -mt-[18px]">
-                <div className="w-10 h-10 rounded-full shadow-md border overflow-hidden" style={{ backgroundColor: '#ffffff', borderColor: borderClr }}>
+                <div className="w-11 h-11 rounded-full shadow-md border-2 overflow-hidden" style={{ backgroundColor: '#ffffff', borderColor: borderClr }}>
                   <img src={logoUrl(featured)} alt={featured.name || featured.storeName} className="w-full h-full object-contain p-1" />
                 </div>
               </div>
-
-              {/* Content */}
-              <div className="px-4 pt-2 pb-4 flex flex-col" style={{ height: 'calc(100% - 200px + 18px)' }}>
-                <h3 className="font-bold text-sm text-white group-hover:text-xs transition-all duration-300">
-                  {featured.name || featured.storeName}
-                </h3>
-                <p className="text-xs text-gray-400 mt-0.5">
-                  {featured.couponCount || featured.coupons?.length || 0} Coupons • {featured.totalClicks || 0} Clicks
+              <div className="px-4 pt-2 pb-4 flex flex-col flex-shrink-0">
+                <h3 className="font-bold text-base text-white">{featured.name || featured.storeName}</h3>
+                <p className="text-xs text-gray-400 mt-1">
+                  {featured.couponCount || 0} {featured.couponCount === 1 ? 'Coupon' : 'Coupons'} • {(featured.totalClicks || 0).toLocaleString()} Clicks
                 </p>
-
-                <div className="flex-1" />
-
-                {/* Button — revealed on hover */}
-                <div className="overflow-hidden max-h-0 group-hover:max-h-24 transition-all duration-300 ease-in-out">
+                <div className="overflow-hidden max-h-0 group-hover:max-h-24 transition-all duration-300 ease-in-out mt-3">
                   <div className="border-t border-dashed mb-3" style={{ borderColor: 'rgba(255,255,255,0.2)' }} />
-                  <span
-                    className="block w-full py-2 rounded-lg font-extrabold text-sm tracking-widest text-center text-white"
-                    style={{ backgroundColor: primary }}
-                  >
-                    VIEW COUPONS
-                  </span>
+                  <span className="block w-full py-2 rounded-lg font-extrabold text-xs tracking-widest text-center text-white" style={{ backgroundColor: primary }}>VIEW COUPONS</span>
                 </div>
               </div>
             </Link>
@@ -185,12 +180,7 @@ export default function PopularStores() {
         )}
 
         {/* Store Grid */}
-        <div className={`lg:col-span-3 grid gap-5 ${
-          columns === 2 ? 'grid-cols-2' :
-          columns === 3 ? 'grid-cols-2 sm:grid-cols-3' :
-          columns === 5 ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5' :
-          'grid-cols-2 sm:grid-cols-3 md:grid-cols-4'
-        }`}>
+        <div ref={gridRef} className="flex-1 grid gap-5" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>
           {visibleStores.map((store) => (
             <Link
               key={store._id}

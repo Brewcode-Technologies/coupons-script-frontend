@@ -131,7 +131,7 @@ export default function TrendingDeals() {
         {deals.slice(0, limit).map((deal) => (
           <div key={deal._id} className="cursor-pointer" onClick={() => {
             trackClick(deal._id).catch(() => {});
-            const storeUrl = deal.store?.websiteUrl || '';
+            const storeUrl = (deal.store as any)?.websiteUrl || '';
             if (storeUrl) window.open(storeUrl, '_blank', 'noopener,noreferrer');
             setModalDeal(deal);
           }}>
@@ -194,7 +194,7 @@ export default function TrendingDeals() {
           discount={modalDeal.discount}
           storeName={modalDeal.store?.storeName}
           storeLogo={modalDeal.store?.logo}
-          storeUrl={modalDeal.store?.websiteUrl}
+          storeUrl={(modalDeal.store as any)?.websiteUrl}
           expiryDate={modalDeal.expiryDate}
           details={modalDeal.description}
         />

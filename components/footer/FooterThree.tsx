@@ -99,7 +99,7 @@ export default function FooterThree({ config }: FooterThreeProps) {
           {siteConfig?.footer?.copyright || `© ${new Date().getFullYear()} ${siteName}. All rights reserved.`}
         </p>
         <ul className="flex items-center gap-4 text-sm">
-          {(content?.bottomLinks || [{ label: 'Privacy Policy', href: '/privacy-policy' }, { label: 'Terms & Conditions', href: '/terms-and-conditions' }, { label: 'Sitemap', href: '/sitemap.xml' }]).map((item: any) => (
+          {(content?.bottomLinks || [{ label: 'Privacy Policy', href: '/privacy-policy' }, { label: 'Terms & Conditions', href: '/terms-and-conditions' }, { label: 'Cookie Policy', href: '/cookie-policy' }, { label: 'Sitemap', href: '/sitemap.xml' }]).map((item: any) => (
             <li key={item.label} className="list-none">
               <a href={item.href} className="no-underline hover:underline transition" style={{ color: textMain }}>{item.label}</a>
             </li>

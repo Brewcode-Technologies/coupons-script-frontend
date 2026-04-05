@@ -23,7 +23,7 @@ export default function AllCouponsPage() {
   const [coupons, setCoupons] = useState<any[]>([]);
   const [stores, setStores] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [storeCols, setStoreCols] = useState(6);
+  const [storeCols, setStoreCols] = useState(7);
 
   const serverUrl = 'http://localhost:5000';
 
@@ -62,25 +62,29 @@ export default function AllCouponsPage() {
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold">Top Stores</h2>
-              <ColumnSwitcher columns={storeCols} onChange={setStoreCols} mobileOptions={[3, 4]} desktopOptions={[4, 6, 8]} />
+              <ColumnSwitcher columns={storeCols} onChange={setStoreCols} mobileOptions={[3, 4]} desktopOptions={[4, 5, 6, 7]} />
             </div>
-            <div className={`grid gap-3 ${storeCols === 3 ? 'grid-cols-3' : storeCols === 4 ? 'grid-cols-4' : storeCols === 8 ? 'grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8' : 'grid-cols-3 sm:grid-cols-4 md:grid-cols-6'}`}>
-              {stores.slice(0, 12).map((store: any) => {
+            <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${storeCols}, minmax(0, 1fr))` }}>
+              {stores.slice(0, storeCols <= 4 ? 12 : storeCols <= 6 ? 12 : 16).map((store: any) => {
                 const rawLogo = store.logo || '';
                 const logo = rawLogo.startsWith('http') ? rawLogo : rawLogo ? `${serverUrl}${rawLogo}` : '';
                 return (
                   <Link
                     key={store._id}
-                    href={`/${store.slug}-coupons`}
-                    className="flex flex-col items-center gap-2 p-3 rounded-xl border no-underline transition-all hover:shadow-md"
-                    style={{ backgroundColor: cardBg, borderColor: borderCol }}
+                    href={`/coupons/${store.slug}-coupons`}
+                    className="no-underline group text-center"
                   >
-                    {logo ? (
-                      <img src={logo} alt={store.storeName} className="w-10 h-10 object-contain rounded-lg" />
-                    ) : (
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold" style={{ backgroundColor: primary }}>{store.storeName?.[0]}</div>
-                    )}
-                    <span className="text-xs font-semibold text-center truncate w-full" style={{ color: textMain }}>{store.storeName}</span>
+                    <div
+                      className="rounded-2xl overflow-hidden flex items-center justify-center transition-all duration-300 hover:-translate-y-1"
+                      style={{ backgroundColor: cardBg, height: 80, boxShadow: 'rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px' }}
+                    >
+                      {logo ? (
+                        <img src={logo} alt={store.storeName} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-white text-xl font-bold" style={{ backgroundColor: primary }}>{store.storeName?.[0]}</div>
+                      )}
+                    </div>
+                    <p className="mt-2 text-sm font-bold truncate" style={{ color: textMain }}>{store.storeName}</p>
                   </Link>
                 );
               })}

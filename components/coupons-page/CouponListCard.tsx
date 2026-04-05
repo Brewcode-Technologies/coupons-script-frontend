@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CheckCircle, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { trackClick } from '@/services/api';
 import PromoModal from '@/components/coupon/PromoModal';
@@ -72,10 +72,7 @@ export default function CouponListCard({ coupon }: Props) {
 
         {/* Right: Verified + CTA */}
         <div className="w-36 sm:w-48 shrink-0 flex flex-col items-end justify-center gap-2 px-3 sm:px-4 py-3">
-          <div className="flex items-center gap-1 text-green-600 text-xs sm:text-sm font-medium">
-            <CheckCircle className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
-            Verified
-          </div>
+
           {code ? (
             <button
               onClick={handleReveal}

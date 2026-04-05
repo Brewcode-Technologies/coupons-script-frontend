@@ -206,7 +206,6 @@ function HTMLSection({ section, cardBg, textPrimary, textSecondary, borderColor,
       <div
         className="max-w-none [&_*]:max-w-none [&_p]:mb-4 [&_h2]:mt-8 [&_h2]:mb-3 [&_h2]:text-xl [&_h2]:font-bold [&_h3]:mt-6 [&_h3]:mb-2 [&_h3]:text-lg [&_h3]:font-semibold [&_ul]:mb-4 [&_ul]:pl-6 [&_ul]:list-disc [&_ol]:mb-4 [&_ol]:pl-6 [&_ol]:list-decimal [&_li]:mb-2 [&_a]:underline"
         style={{ color: textSecondary, lineHeight: '1.8', fontSize: '15px' }}
-        style={{ color: textSecondary }}
         dangerouslySetInnerHTML={{ __html: section.content || '' }}
       />
     </div>

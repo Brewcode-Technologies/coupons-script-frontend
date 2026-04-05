@@ -42,7 +42,7 @@ export default function FooterTwo({ config }: FooterTwoProps) {
               <div key={section.heading}>
                 <h3 className="font-semibold text-base mb-4" style={{ color: textMain }}>{section.heading}</h3>
                 <ul className="text-sm space-y-2">
-                  {section.links.map((link) => (
+                  {section.links.map((link: any) => (
                     <li key={link.label} className="list-none">
                       <a href={link.href} className="hover:underline transition no-underline" style={{ color: textMuted }}
                         onMouseEnter={e => (e.currentTarget.style.color = '#ffffff')}

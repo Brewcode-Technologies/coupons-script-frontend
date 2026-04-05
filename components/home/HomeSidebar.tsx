@@ -7,11 +7,11 @@ import { useDynamicTheme } from "@/components/DynamicThemeProvider";
 const menuItems = [
   { icon: Grid3X3, label: "Categories", href: "/category" },
   { icon: Store, label: "Stores", href: "/stores" },
-  { icon: Tag, label: "Brands", href: "#" },
-  { icon: Landmark, label: "Banks", href: "#" },
-  { icon: PartyPopper, label: "Festivals", href: "#" },
-  { icon: ShoppingBag, label: "Product Deals", href: "#" },
-  { icon: MapPin, label: "Cities Deals", href: "#" },
+  { icon: Tag, label: "Brands", href: "/brands" },
+  { icon: Landmark, label: "Banks", href: "/banks" },
+  { icon: PartyPopper, label: "Festivals", href: "/festivals" },
+  { icon: ShoppingBag, label: "Product Deals", href: "/product-deals" },
+  { icon: MapPin, label: "Cities Deals", href: "/cities-deals" },
 ];
 
 const popularMerchants = [

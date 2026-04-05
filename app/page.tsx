@@ -6,7 +6,6 @@ import PopularStores from '@/components/home/PopularStores';
 import TopCoupons from '@/components/home/TopCoupons';
 import DealsOfTheDay from '@/components/home/DealsOfTheDay';
 import Collections from '@/components/home/Collections';
-import PopularCategories from '@/components/home/PopularCategories';
 import LazySection from '@/components/common/LazySection';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 
@@ -50,9 +49,6 @@ export default function HomePage() {
       </LazySection>
       <LazySection skeleton="cards">
         <Collections />
-      </LazySection>
-      <LazySection skeleton="grid">
-        <PopularCategories />
       </LazySection>
     </main>
   );

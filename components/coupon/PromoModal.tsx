@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Copy, Check, ExternalLink } from 'lucide-react';
 
 interface PromoModalProps {
@@ -40,9 +41,9 @@ export default function PromoModal({
 
   const expiry = expiryDate ? new Date(expiryDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4 animate-fadeIn" onClick={onClose}>
-      <div className="relative bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden max-h-[90vh] flex flex-col animate-slideUp" onClick={e => e.stopPropagation()}>
+  const modalContent = (
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4" style={{ isolation: 'isolate' }} onClick={onClose}>
+      <div className="relative bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden max-h-[90vh] flex flex-col mx-auto" onClick={e => e.stopPropagation()}>
 
         {/* Close button - always visible */}
         <button
@@ -117,36 +118,6 @@ export default function PromoModal({
           {/* Divider */}
           <div className="mx-8 border-t border-gray-100" />
 
-          {/* Cash Back Section */}
-          <div className="mx-6 my-5 bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl px-6 pt-8 pb-6 border border-cyan-100/50">
-            <div className="flex justify-center mb-3">
-              <span className="text-3xl">⚡</span>
-            </div>
-            <p className="text-center text-[10px] font-bold tracking-[0.2em] text-gray-400 uppercase mb-1">Save Even More</p>
-            <h3 className="text-center text-base font-bold text-gray-900 mb-4">Add 1% cash back to this offer</h3>
-            <p className="text-center text-xs text-gray-400 mb-4 leading-relaxed">
-              By continuing, you agree to our{' '}
-              <a href="/terms-and-conditions" className="underline text-gray-600">Terms</a>{' '}and{' '}
-              <a href="/privacy-policy" className="underline text-gray-600">Privacy Policy</a>
-            </p>
-            <input
-              type="email"
-              placeholder="Email Address"
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 placeholder-gray-400 bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 mb-3 transition-all"
-            />
-            <button className="w-full bg-gray-900 text-white rounded-full py-3 text-sm font-bold hover:bg-gray-700 transition-colors cursor-pointer">
-              Activate 1% cash back
-            </button>
-            <p className="text-center text-xs text-gray-400 mt-3">
-              Or <a href="#" className="underline text-gray-600">continue with social accounts</a>
-            </p>
-          </div>
-
-          {/* How does it work */}
-          <div className="text-center py-3">
-            <a href="#" className="text-xs underline text-gray-400 hover:text-gray-700 transition-colors">How does it work?</a>
-          </div>
-
           {/* Footer */}
           <div className="flex items-center justify-between px-8 py-4 border-t border-gray-100 bg-gray-50/50">
             {expiry && <span className="text-xs text-gray-500 font-medium">Ends {expiry}</span>}
@@ -167,4 +138,7 @@ export default function PromoModal({
       </div>
     </div>
   );
+
+  if (typeof window === 'undefined') return null;
+  return createPortal(modalContent, document.body);
 }

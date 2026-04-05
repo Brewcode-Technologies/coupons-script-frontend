@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { getFooter } from '@/services/api';
 
 export default function DynamicFooter() {
-  const [footerData, setFooterData] = useState(null);
+  const [footerData, setFooterData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,11 +34,11 @@ export default function DynamicFooter() {
 
   if (!footerData) return null;
 
-  const linkSections = footerData.sections?.filter(section => 
+  const linkSections = footerData.sections?.filter((section: any) => 
     section.type === 'links' && section.isVisible
-  ).sort((a, b) => a.order - b.order) || [];
+  ).sort((a: any, b: any) => a.order - b.order) || [];
 
-  const socialSection = footerData.sections?.find(section => 
+  const socialSection = footerData.sections?.find((section: any) => 
     section.type === 'social' && section.isVisible
   );
 
@@ -52,15 +52,15 @@ export default function DynamicFooter() {
 
         {/* Links Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-          {linkSections.map((section) => (
+          {linkSections.map((section: any) => (
             <div key={section._id} className="space-y-4">
               <h3 className="text-lg font-semibold uppercase tracking-wide">
                 {section.title}
               </h3>
               <ul className="space-y-2">
                 {section.links
-                  ?.sort((a, b) => a.order - b.order)
-                  .map((link) => (
+                  ?.sort((a: any, b: any) => a.order - b.order)
+                  .map((link: any) => (
                     <li key={link._id}>
                       {link.isExternal ? (
                         <a
@@ -93,8 +93,8 @@ export default function DynamicFooter() {
               </h3>
               <div className="flex flex-wrap gap-4">
                 {socialSection.links
-                  ?.sort((a, b) => a.order - b.order)
-                  .map((link) => (
+                  ?.sort((a: any, b: any) => a.order - b.order)
+                  .map((link: any) => (
                     <a
                       key={link._id}
                       href={link.href}

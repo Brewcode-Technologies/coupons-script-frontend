@@ -30,7 +30,7 @@ export const getStores = (params?: any) => api.get('/public/stores/list', { para
 export const getStoreBySlug = (slug: string) => api.get(`/public/stores/details/${slug}`);
 export const createStore = (data: any) => api.post('/admin/stores/create', data);
 export const updateStore = (id: string, data: any) => api.put(`/admin/stores/update/${id}`, data);
-export const deleteStore = (id: string) => api.delete(`/admin/stores/delete/${id}`);
+export const deleteStore = (id: string, deleteCoupons?: boolean) => api.delete(`/admin/stores/delete/${id}${deleteCoupons ? '?deleteCoupons=true' : ''}`);
 
 // CMS / Site Config
 export const getSiteConfig = () => api.get('/public/site/config');
@@ -122,7 +122,7 @@ export const uploadLogo = (file: File, logoType?: string) => {
 export const uploadBannerImage = (file: File) => uploadLogo(file, 'banner');
 
 // Bulk Delete
-export const bulkDeleteStores = (ids: string[]) => api.post('/admin/stores/bulk-delete', { ids });
+export const bulkDeleteStores = (ids: string[], deleteCoupons?: boolean) => api.post('/admin/stores/bulk-delete', { ids, deleteCoupons });
 export const bulkDeleteCoupons = (ids: string[]) => api.post('/admin/coupons/bulk-delete', { ids });
 export const bulkDeleteDeals = (ids: string[]) => api.post('/admin/deals/bulk-delete', { ids });
 export const bulkDeleteBanners = (ids: string[]) => api.post('/admin/banner/bulk-delete', { ids });

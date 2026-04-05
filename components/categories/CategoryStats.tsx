@@ -43,7 +43,7 @@ export default function CategoryStats() {
           </div>
         </div>
       </div>
-      <p className="text-[10px] sm:text-xs text-green-600 font-medium">Verified On: {today}</p>
+
     </div>
   );
 }

@@ -6,11 +6,13 @@ import NavbarThree from '@/components/navbar/NavbarThree';
 import NavbarFour from '@/components/navbar/NavbarFour';
 
 const defaultNavLinks = [
-  { name: 'Stores', url: '/stores' },
   { name: 'Categories', url: '/category' },
-  { name: 'March Sales', url: '#' },
-  { name: 'Blog', url: '/blog' },
-  { name: 'Deals', url: '#' },
+  { name: 'Stores', url: '/stores' },
+  { name: 'Brands', url: '/brands' },
+  { name: 'Banks', url: '/banks' },
+  { name: 'Festivals', url: '/festivals' },
+  { name: 'Product Deals', url: '/product-deals' },
+  { name: 'Cities Deals', url: '/cities-deals' },
 ];
 
 export default function Navbar() {

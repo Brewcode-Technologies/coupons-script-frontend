@@ -184,7 +184,7 @@ export default function CMSAdmin() {
       
       toast.success(`Category "${categoryData.name}" created successfully!`, { id: loadingToast });
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Category creation error:', error);
       const errorMessage = error.response?.data?.error || error.message || 'Unknown error occurred';
       toast.error(`Error creating category: ${errorMessage}`, { id: loadingToast });
@@ -358,7 +358,7 @@ export default function CMSAdmin() {
       await fetchData();
       
       toast.success(`Page "${pageData.title}" created successfully!`, { id: loadingToast });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Page creation error:', error);
       const errorMessage = error.response?.data?.error || error.message || 'Unknown error occurred';
       toast.error(`Error creating page: ${errorMessage}`, { id: loadingToast });
@@ -1120,8 +1120,8 @@ export default function CMSAdmin() {
               {/* Existing Sections */}
               {editingPage.sections && editingPage.sections.length > 0 ? (
                 editingPage.sections
-                  .sort((a, b) => a.order - b.order)
-                  .map((section, index) => (
+                  .sort((a: any, b: any) => a.order - b.order)
+                  .map((section: any, index: number) => (
                     <Card key={section.id || index} sx={{ mb: 2, border: '1px solid #ddd' }}>
                       <CardContent>
                         <Grid container spacing={2}>

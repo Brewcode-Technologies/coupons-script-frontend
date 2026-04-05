@@ -9,6 +9,7 @@ interface SiteTheme {
   secondaryColor: string;
   backgroundColor: string;
   textColor: string;
+  accentColor?: string;
 }
 
 interface SiteFonts {
@@ -22,7 +23,7 @@ interface SiteConfigData {
   fonts: SiteFonts;
   logo: string;
   logos?: { navbar?: string; footer?: string; favicon?: string; ogImage?: string };
-  footer: { copyright: string; email: string; phone?: string; address?: string };
+  footer: { copyright: string; email: string; phone?: string; address?: string; showSocialMedia?: boolean; showNewsletter?: boolean };
   navbar?: {
     layout?: string; style?: string; bgColor?: string; textColor?: string;
     showSearch?: boolean; showThemeToggle?: boolean; sticky?: boolean;
@@ -37,7 +38,15 @@ interface SiteConfigData {
   footerContent?: {
     tagline?: string;
     columns?: Array<{ heading: string; links: Array<{ label: string; href: string }> }>;
+    bottomLinks?: Array<{ label: string; href: string }>;
   };
+  footerCategories?: Array<{
+    title: string;
+    groups: Array<{
+      heading: string;
+      links: Array<{ label: string; href: string }>;
+    }>;
+  }>;
 }
 
 const defaultLabels = {

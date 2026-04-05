@@ -177,7 +177,6 @@ export default function Sidebar({
           <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{trustText}</p>
           {lastVerified && (
             <p className="text-sm text-gray-500 mt-1">
-              Our team last verified offers for {storeName} deals on {lastVerified}.
             </p>
           )}
           <a href="#" className="text-sm underline text-gray-700 mt-2 inline-block hover:text-gray-900">
