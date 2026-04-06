@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { ChevronRight, ExternalLink } from 'lucide-react';
 import { getDeals, getStores, getCoupons } from '@/services/api';
+import { getServerUrl, getImageUrl } from '@/utils/serverUrl';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
 import PromoModal from '@/components/coupon/PromoModal';
@@ -14,7 +15,7 @@ export default function DealsPage() {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   const primary = siteConfig?.theme?.primaryColor || '#7c3aed';
-  const siteName = siteConfig?.siteName || 'CouponsFeast';
+  const siteName = siteConfig?.siteName || '';
   const cardBg = isDark ? darkPalette.cardBg : '#ffffff';
   const textMain = isDark ? darkPalette.text : '#111827';
   const textMuted = isDark ? `${darkPalette.text}aa` : '#6b7280';
@@ -30,7 +31,7 @@ export default function DealsPage() {
   const [dealCols, setDealCols] = useState(4);
   const [storeCols, setStoreCols] = useState(7);
 
-  const serverUrl = 'http://localhost:5000';
+  const serverUrl = getServerUrl();
 
   useEffect(() => {
     Promise.all([

@@ -35,11 +35,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebSite",
-              "name": "Coupon Feast",
-              "url": "https://couponsfeast.com",
+              "name": "Coupons Site",
+              "url": process.env.NEXT_PUBLIC_SITE_URL || "https://example.com",
               "potentialAction": {
                 "@type": "SearchAction",
-                "target": "https://couponsfeast.com/search?q={search_term_string}",
+                "target": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/search?q={search_term_string}`,
                 "query-input": "required name=search_term_string"
               }
             })

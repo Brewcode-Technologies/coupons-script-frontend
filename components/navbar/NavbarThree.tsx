@@ -5,6 +5,7 @@ import { Menu, X, Sun, Moon, ChevronDown } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import StoresDropdown from '@/components/layout/StoresDropdown';
+import { getImageUrl } from '@/utils/serverUrl';
 
 interface NavLink { name: string; url: string; hasDropdown?: boolean; }
 
@@ -63,7 +64,7 @@ export default function NavbarThree({ navLinks, config }: NavbarThreeProps) {
         {/* Logo */}
         <Link href="/" className="flex-shrink-0 no-underline">
           {logoUrl ? (
-            <img src={logoUrl.startsWith('http') ? logoUrl : `http://localhost:5000${logoUrl}`} alt={siteName} className="h-8 w-auto" />
+            <img src={getImageUrl(logoUrl)} alt={siteName} className="h-8 w-auto" />
           ) : (
             <span className="font-extrabold text-xl tracking-tight" style={{ color: primary }}>
               {siteName}

@@ -1,6 +1,7 @@
 'use client';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
+import { getImageUrl } from '@/utils/serverUrl';
 
 interface FooterTwoProps { config: any; }
 
@@ -31,7 +32,7 @@ export default function FooterTwo({ config }: FooterTwoProps) {
         <div className="flex flex-col md:flex-row items-start justify-between gap-10 py-10" style={{ borderBottom: `1px solid ${border}` }}>
           <div>
             {logoUrl ? (
-              <img src={logoUrl.startsWith('http') ? logoUrl : `http://localhost:5000${logoUrl}`} alt={siteName} className="h-16 w-auto mb-4" />
+              <img src={getImageUrl(logoUrl)} alt={siteName} className="h-16 w-auto mb-4" />
             ) : (
               <span className="text-2xl font-extrabold tracking-tight" style={{ color: siteConfig?.theme?.primaryColor || '#7c3aed' }}>{siteName}</span>
             )}

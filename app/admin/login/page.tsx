@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
           <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-200 mb-4">
             <Zap size={24} className="text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-800">CouponsFeast</h1>
+          <h1 className="text-2xl font-bold text-slate-800">Admin Panel</h1>
           <p className="text-slate-400 text-sm mt-1">Admin Panel</p>
         </div>
 
@@ -57,7 +57,7 @@ export default function AdminLoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@couponsfeast.com"
+              placeholder="admin@example.com"
               variant="outlined"
               autoComplete="email"
               sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px', height: 52 } }}
@@ -103,7 +103,7 @@ export default function AdminLoginPage() {
         </div>
 
         <p className="text-center text-slate-400 text-xs mt-6">
-          © {new Date().getFullYear()} CouponsFeast. All rights reserved.
+          © {new Date().getFullYear()} All rights reserved.
         </p>
       </div>
     </div>

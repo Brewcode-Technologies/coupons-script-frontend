@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ExternalLink } from 'lucide-react';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { trackClick } from '@/services/api';
+import { getServerUrl } from '@/utils/serverUrl';
 import PromoModal from '@/components/coupon/PromoModal';
 
 interface Props {
@@ -15,7 +16,7 @@ export default function CouponListCard({ coupon }: Props) {
   const [showModal, setShowModal] = useState(false);
   const { siteConfig } = useDynamicTheme();
   const primary = siteConfig?.theme?.primaryColor || '#7c3aed';
-  const serverUrl = 'http://localhost:5000';
+  const serverUrl = getServerUrl();
 
   const store = coupon.store || {};
   const storeName = coupon.storeName || store.storeName || '';

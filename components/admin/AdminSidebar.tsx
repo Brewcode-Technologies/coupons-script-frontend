@@ -52,7 +52,7 @@ function SidebarInner({
           </div>
           {!narrow && (
             <div className="flex-1 min-w-0">
-              <p className="text-slate-800 font-bold text-base leading-tight">CouponsFeast</p>
+              <p className="text-slate-800 font-bold text-base leading-tight">Admin Panel</p>
               <p className="text-indigo-400 text-[10px] font-semibold tracking-widest uppercase mt-0.5">Admin Panel</p>
             </div>
           )}

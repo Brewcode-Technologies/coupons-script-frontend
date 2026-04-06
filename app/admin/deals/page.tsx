@@ -124,7 +124,7 @@ export default function DealsManagement() {
   const renderDealCard = (deal: Deal) => {
     const store = (deal.store as any);
     const storeName = store?.storeName || '';
-    const serverUrl = 'http://localhost:5000';
+    const serverUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
     const logo = deal.logo || (store?.logo ? (store.logo.startsWith('http') ? store.logo : `${serverUrl}${store.logo}`) : '');
     const img = deal.image || '';
     return (
@@ -298,7 +298,7 @@ export default function DealsManagement() {
               </TextField>
             </div>
             <TextField label="Product / Deal URL (Check Price button opens this)" value={formData.link} onChange={(e) => set({ link: e.target.value })} fullWidth
-              placeholder="https://www.amazon.in/dp/B0F1BPM734?tag=couponsfeast-21"
+              placeholder="https://www.amazon.in/dp/B0F1BPM734"
               helperText='This URL opens in a new tab when user clicks "Check price" button'
               sx={inputSx} />
             <TextField label="Expiry Date" type="date" value={formData.expiryDate ? formData.expiryDate.split('T')[0] : ''} onChange={(e) => set({ expiryDate: e.target.value })} fullWidth InputLabelProps={{ shrink: true }} sx={inputSx} />

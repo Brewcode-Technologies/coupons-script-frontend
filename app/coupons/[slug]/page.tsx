@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { getCoupons, getStores, getCategories } from '@/services/api';
+import { getImageUrl } from '@/utils/serverUrl';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
 import CouponBanner from '@/components/coupons-page/CouponBanner';
@@ -54,7 +55,7 @@ export default function CouponsPage() {
 
         if (matchedStore) {
           const logo = matchedStore.logo || '';
-          setMatchedLogo(logo.startsWith('http') ? logo : logo ? `http://localhost:5000${logo}` : '');
+          setMatchedLogo(getImageUrl(logo));
         } else if (matchedCat?.icon) {
           setMatchedLogo(matchedCat.icon);
         }

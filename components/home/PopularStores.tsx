@@ -8,6 +8,7 @@ import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
 import { getStores, getCoupons } from '@/services/api';
 import ColumnSwitcher from '@/components/common/ColumnSwitcher';
+import { getImageUrl } from '@/utils/serverUrl';
 
 const fallbackStores = [
   { _id: '1', name: 'Amazon', slug: 'amazon', logo: 'https://cdn.grabon.in/gograbon/images/merchant/1773381281318/amazon-logo.jpg', couponCount: 70 },
@@ -106,8 +107,7 @@ export default function PopularStores() {
   const storeSlug = (store: any) =>
     store.slug || (store.name || store.storeName || '').toLowerCase().replace(/\s+/g, '-');
 
-  const logoUrl = (store: any) =>
-    store.logo?.startsWith('http') ? store.logo : `http://localhost:5000${store.logo}`;
+  const logoUrl = (store: any) => getImageUrl(store.logo || '');
 
   return (
     <section className="max-w-7xl mx-auto px-4 py-8">

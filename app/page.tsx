@@ -16,7 +16,7 @@ export default function HomePage() {
   useEffect(() => {
     if (!siteConfig) return;
     const sc = siteConfig as any;
-    document.title = sc.seo?.metaTitle || sc.siteName || 'Coupon Feast';
+    document.title = sc.seo?.metaTitle || sc.siteName || 'Coupons';
     const setMeta = (name: string, content: string) => {
       if (!content) return;
       let el = document.querySelector(`meta[name="${name}"]`) || document.querySelector(`meta[property="${name}"]`);

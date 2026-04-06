@@ -470,7 +470,7 @@ export default function AdminPagesManager() {
 
                 <div>
                   <label className="text-sm font-semibold text-slate-700 block mb-1.5">
-                    URL Slug * <span className="text-indigo-500 font-mono text-xs">→ localhost:3000/{form.slug === 'home' ? '' : (form.slug || 'your-slug')}</span>
+                    URL Slug * <span className="text-indigo-500 font-mono text-xs">→ yourdomain.com/{form.slug === 'home' ? '' : (form.slug || 'your-slug')}</span>
                   </label>
                   <input
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-mono outline-none focus:border-indigo-400 transition-colors"
@@ -480,7 +480,7 @@ export default function AdminPagesManager() {
                   />
                   {form.slug === 'home' && (
                     <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-lg mt-1.5">
-                      ⚠️ The <strong>home</strong> slug maps to <strong>localhost:3000/</strong> (the homepage). It is managed by the homepage sections above.
+                      ⚠️ The <strong>home</strong> slug maps to <strong>yourdomain.com/</strong> (the homepage). It is managed by the homepage sections above.
                     </p>
                   )}
                 </div>

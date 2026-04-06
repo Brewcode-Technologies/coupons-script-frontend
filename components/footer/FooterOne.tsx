@@ -2,6 +2,7 @@
 import { Facebook, Instagram, Twitter, Linkedin, Youtube } from 'lucide-react';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
+import { getImageUrl } from '@/utils/serverUrl';
 
 interface FooterOneProps { config: any; }
 
@@ -62,7 +63,7 @@ export default function FooterOne({ config }: FooterOneProps) {
       <div className="max-w-7xl mx-auto px-6 py-10 md:py-14">
         <div className="mb-8">
           {siteConfig?.logos?.footer ? (
-            <img src={siteConfig.logos.footer.startsWith('http') ? siteConfig.logos.footer : `http://localhost:5000${siteConfig.logos.footer}`} alt={siteConfig.siteName} className="h-16 w-auto mb-2" />
+            <img src={getImageUrl(siteConfig.logos.footer)} alt={siteConfig.siteName} className="h-16 w-auto mb-2" />
           ) : (
             <h2 className="text-3xl md:text-4xl font-bold italic tracking-tight">
               {siteConfig?.siteName || 'CouponsFeast'}{' '}
@@ -70,7 +71,7 @@ export default function FooterOne({ config }: FooterOneProps) {
               <span className="text-sm align-top ml-0.5">YEARS</span>
             </h2>
           )}
-          <p className="text-xs tracking-widest opacity-80 mt-1 uppercase">Celebrating 20 Years of Savings</p>
+
           {content?.tagline && (
             <p className="text-sm opacity-70 mt-3 max-w-2xl leading-relaxed">{content.tagline}</p>
           )}

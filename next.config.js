@@ -1,7 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['localhost'],
+    domains: [
+      'localhost',
+      'coupons-script-backend-production.up.railway.app',
+      'res.cloudinary.com',
+    ],
   },
 }
 

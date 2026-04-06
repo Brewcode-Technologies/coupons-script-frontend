@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Plus, Minus } from 'lucide-react';
 import PromoModal from './PromoModal';
 import { trackClick } from '@/services/api';
+import { getServerUrl } from '@/utils/serverUrl';
 
 interface Coupon {
   _id: string;
@@ -35,7 +36,7 @@ export default function CouponCard({ coupon }: { coupon: Coupon }) {
   const [showDetails, setShowDetails] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  const serverUrl = 'http://localhost:5000';
+  const serverUrl = getServerUrl();
   const store = coupon.store;
   const storeUrl = coupon.affiliateUrl || coupon.websiteUrl || store?.websiteUrl || '';
   const storeName = coupon.storeName || store?.storeName || '';

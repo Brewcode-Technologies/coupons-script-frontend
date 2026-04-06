@@ -7,10 +7,11 @@ import { getDeals } from '@/services/api';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
 import PromoModal from '@/components/coupon/PromoModal';
+import { getServerUrl } from '@/utils/serverUrl';
 
 function DealCard({ deal, primary, borderClr, cardBg, isDark, darkBg, buyLabel, onBuy }: any) {
   const store = deal.store || {};
-  const serverUrl = 'http://localhost:5000';
+  const serverUrl = getServerUrl();
   const rawLogo = store.logo || '';
   const logo = rawLogo.startsWith('http') ? rawLogo : rawLogo ? `${serverUrl}${rawLogo}` : '';
   const rawImage = deal.image || '';

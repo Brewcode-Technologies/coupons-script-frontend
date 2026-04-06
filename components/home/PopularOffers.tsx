@@ -5,6 +5,7 @@ import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
 import { getDeals } from '@/services/api';
 import PromoModal from '@/components/coupon/PromoModal';
+import { getServerUrl } from '@/utils/serverUrl';
 
 function OfferCard({ offer, primary, textColor, mutedText, cardBg, borderClr, isDark, darkBg, redeemLabel, onRedeem }: any) {
   const handleRedeem = () => {
@@ -62,7 +63,7 @@ export default function PopularOffers() {
     getDeals({ section: 'popular_offers', limit: 4 })
       .then(res => {
         const data = res.data?.data ?? res.data ?? [];
-        const serverUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
+        const serverUrl = getServerUrl();
         setOffers((Array.isArray(data) ? data : []).map((d: any) => {
           const storeLogo = d.logo || (d.store?.logo ? (d.store.logo.startsWith('http') ? d.store.logo : `${serverUrl}${d.store.logo}`) : '');
           return {

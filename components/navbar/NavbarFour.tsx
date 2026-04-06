@@ -31,6 +31,7 @@ import Link from 'next/link';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
 import { getStores, getCategories, getCoupons } from '@/services/api';
+import { getServerUrl, getImageUrl } from '@/utils/serverUrl';
 
 const navLinks = [
   {
@@ -105,9 +106,8 @@ export default function NavbarFour() {
   const [dynamicCategories, setDynamicCategories] = useState<any[]>([]);
   const [dynamicCoupons, setDynamicCoupons] = useState<any[]>([]);
 
-  const serverUrl = 'http://localhost:5000';
-  const logoUrl = (raw: string) =>
-    raw?.startsWith('http') ? raw : raw ? `${serverUrl}${raw}` : '';
+  const serverUrl = getServerUrl();
+  const logoUrl = (raw: string) => getImageUrl(raw || '');
 
   // Fetch dynamic data for search
   useEffect(() => {
@@ -191,11 +191,7 @@ export default function NavbarFour() {
           <Link href="/" className="flex items-center gap-1 shrink-0 no-underline">
             {siteConfig?.logos?.navbar ? (
               <img
-                src={
-                  siteConfig.logos.navbar.startsWith('http')
-                    ? siteConfig.logos.navbar
-                    : `http://localhost:5000${siteConfig.logos.navbar}`
-                }
+                src={getImageUrl(siteConfig.logos.navbar)}
                 alt={siteName}
                 className="hidden sm:block h-12 w-auto object-contain"
               />
@@ -571,11 +567,7 @@ export default function NavbarFour() {
               <Link href="/" onClick={closeDrawer} className="no-underline">
                 {siteConfig?.logos?.navbar ? (
                   <img
-                    src={
-                      siteConfig.logos.navbar.startsWith('http')
-                        ? siteConfig.logos.navbar
-                        : `http://localhost:5000${siteConfig.logos.navbar}`
-                    }
+                    src={getImageUrl(siteConfig.logos.navbar)}
                     alt={siteName}
                     className="h-10 w-auto object-contain"
                   />

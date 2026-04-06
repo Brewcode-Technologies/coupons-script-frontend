@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { getCoupons, getStores } from '@/services/api';
+import { getServerUrl } from '@/utils/serverUrl';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
 import CouponCard from '@/components/coupon/CouponCard';
@@ -25,7 +26,7 @@ export default function AllCouponsPage() {
   const [loading, setLoading] = useState(true);
   const [storeCols, setStoreCols] = useState(7);
 
-  const serverUrl = 'http://localhost:5000';
+  const serverUrl = getServerUrl();
 
   useEffect(() => {
     Promise.all([getCoupons({ limit: 1000 }), getStores()])

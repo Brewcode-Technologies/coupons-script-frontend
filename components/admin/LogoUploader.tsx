@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Box, Button, Typography, Alert, CircularProgress } from '@mui/material';
 import { CloudUpload } from '@mui/icons-material';
 import { uploadLogo } from '@/services/api';
+import { getImageUrl } from '@/utils/serverUrl';
 
 interface LogoUploaderProps {
   currentLogo: string;
@@ -61,9 +62,7 @@ export default function LogoUploader({ currentLogo, onLogoUpdate, logoType = 'na
     }
   };
 
-  const logoSrc = currentLogo
-    ? currentLogo.startsWith('http') ? currentLogo : `http://localhost:5000${currentLogo}`
-    : '';
+  const logoSrc = currentLogo ? getImageUrl(currentLogo) : '';
 
   return (
     <Box sx={{ p: 2, border: '1px solid #ddd', borderRadius: 2 }}>

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { getCoupons, trackClick } from '@/services/api';
 import PromoModal from '@/components/coupon/PromoModal';
+import { getServerUrl } from '@/utils/serverUrl';
 
 const fallbackCards = [
   {
@@ -83,7 +84,7 @@ function mapCouponToCard(coupon: any) {
   const domain = store.websiteUrl
     ? store.websiteUrl.replace(/https?:\/\/(www\.)?/, '').replace(/\/$/, '')
     : store.slug ? `${store.slug}.com` : '';
-  const serverUrl = 'http://localhost:5000';
+  const serverUrl = getServerUrl();
   const logo = coupon.customLogo
     ? (coupon.customLogo.startsWith('http') ? coupon.customLogo : `${serverUrl}${coupon.customLogo}`)
     : store.logo

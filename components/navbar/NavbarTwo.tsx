@@ -7,6 +7,7 @@ import { useTheme } from '@/components/ThemeProvider';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import StoresDropdown from '@/components/layout/StoresDropdown';
 import { searchCoupons, getStores, getCategories } from '@/services/api';
+import { getImageUrl } from '@/utils/serverUrl';
 
 interface NavLink { name: string; url: string; hasDropdown?: boolean; }
 interface NavbarTwoProps { navLinks: NavLink[]; config: any; }
@@ -147,7 +148,7 @@ export default function NavbarTwo({ navLinks, config }: NavbarTwoProps) {
                 onMouseEnter={e => (e.currentTarget.style.backgroundColor = dropHover)}
                 onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}>
                 {store.logo && (
-                  <img src={store.logo.startsWith('http') ? store.logo : `http://localhost:5000${store.logo}`}
+                  <img src={getImageUrl(store.logo)}
                     alt="" className="w-8 h-8 rounded-lg object-contain p-1" style={{ backgroundColor: dropHover }} />
                 )}
                 <div>
@@ -192,7 +193,7 @@ export default function NavbarTwo({ navLinks, config }: NavbarTwoProps) {
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
             {siteConfig?.logos?.navbar ? (
-              <img src={siteConfig.logos.navbar.startsWith('http') ? siteConfig.logos.navbar : `http://localhost:5000${siteConfig.logos.navbar}`} alt={siteConfig.siteName || 'Logo'} className="h-8 w-auto" />
+              <img src={getImageUrl(siteConfig.logos.navbar)} alt={siteConfig.siteName || 'Logo'} className="h-8 w-auto" />
             ) : (
               <span className="font-extrabold text-2xl tracking-tight" style={{ color: navText }}>
                 {siteConfig?.siteName || 'CouponsFeast'}

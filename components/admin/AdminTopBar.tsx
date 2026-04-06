@@ -12,7 +12,7 @@ const pageTitles: Record<string, { title: string; subtitle: string }> = {
 
 export default function AdminTopBar() {
   const pathname = usePathname();
-  const page = pageTitles[pathname] ?? { title: 'Admin', subtitle: 'CouponsFeast Management' };
+  const page = pageTitles[pathname] ?? { title: 'Admin', subtitle: 'Admin Management' };
 
   return (
     <header

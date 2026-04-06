@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import PromoModal from '@/components/coupon/PromoModal';
+import { getServerUrl } from '@/utils/serverUrl';
 
 export interface TopDeal {
   _id?: string;
@@ -20,7 +21,7 @@ export interface TopDeal {
 
 export function mapDealToTopDeal(deal: any): TopDeal {
   const store = deal.store || {};
-  const serverUrl = 'http://localhost:5000';
+  const serverUrl = getServerUrl();
   const rawImg = deal.image || store.logo || '';
   const image = rawImg.startsWith('http') ? rawImg : rawImg ? `${serverUrl}${rawImg}` : '';
   const rawLogo = store.logo || '';

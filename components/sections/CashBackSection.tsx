@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Zap } from 'lucide-react';
 import { getCoupons, trackClick } from '@/services/api';
 import PromoModal from '@/components/coupon/PromoModal';
+import { getServerUrl } from '@/utils/serverUrl';
 
 const fallbackStores = [
   { name: 'Becker', cashBack: '20%', bgColor: '#ffffff', img: 'https://www.retailmenot.com/imagery/merchants/03i7YGKJifFEICrmRNaam2r.fit_limit.quality_80.size_172x172.v1766005512.jpg.webp' },
@@ -17,7 +18,7 @@ const fallbackStores = [
 
 function mapCouponToCashback(coupon: any) {
   const store = coupon.store || {};
-  const serverUrl = 'http://localhost:5000';
+  const serverUrl = getServerUrl();
   const rawLogo = store.logo || '';
   const img = rawLogo.startsWith('http') ? rawLogo : rawLogo ? `${serverUrl}${rawLogo}` : '';
   return {

@@ -14,6 +14,7 @@ import {
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
 import { getCoupons, getCategories } from '@/services/api';
+import { getServerUrl } from '@/utils/serverUrl';
 
 const ICON_MAP: Record<string, IconType> = {
   'most-used': FaFire, popular: FaFire, trending: FaFire, hot: FaFire,
@@ -85,8 +86,7 @@ export default function TopCoupons() {
     getCoupons({ limit: 50, sort: 'clickCount' })
       .then((res) => {
         const data = res.data?.data ?? res.data ?? [];
-        const serverUrl =
-          process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
+        const serverUrl = getServerUrl();
         const mapped = (Array.isArray(data) ? data : []).map((c: any) => {
           const storeLogo = c.store?.logo
             ? c.store.logo.startsWith('http')

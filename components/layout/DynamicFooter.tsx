@@ -2,8 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { getFooter } from '@/services/api';
+import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 
 export default function DynamicFooter() {
+  const { siteConfig } = useDynamicTheme();
   const [footerData, setFooterData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -47,7 +49,7 @@ export default function DynamicFooter() {
       <div className="max-w-7xl mx-auto px-4 py-12">
         {/* Logo Section */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold">CouponsFeast</h2>
+          <h2 className="text-3xl font-bold">{siteConfig?.siteName || ''}</h2>
         </div>
 
         {/* Links Grid */}

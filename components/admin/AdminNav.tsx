@@ -38,7 +38,7 @@ export default function AdminNav() {
                 Admin Panel
               </Typography>
               <Typography variant="body2" className="opacity-90">
-                CouponsFeast Management
+                Admin Management
               </Typography>
             </div>
           </div>

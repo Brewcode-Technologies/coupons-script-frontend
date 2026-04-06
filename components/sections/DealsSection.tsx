@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { getDeals } from '@/services/api';
 import PromoModal from '@/components/coupon/PromoModal';
+import { getServerUrl } from '@/utils/serverUrl';
 
 const fallbackDeals = [
   { brand: 'ATHLETA', logo: 'https://via.placeholder.com/100?text=ATHLETA', title: '30% Off Train Essentials', discount: '30% Off', type: 'coupon' },
@@ -18,7 +19,7 @@ const fallbackDeals = [
 
 function mapDealToCard(deal: any) {
   const store = deal.store || {};
-  const serverUrl = 'http://localhost:5000';
+  const serverUrl = getServerUrl();
   const rawLogo = deal.image || store.logo || '';
   const logo = rawLogo.startsWith('http') ? rawLogo : rawLogo ? `${serverUrl}${rawLogo}` : '';
 

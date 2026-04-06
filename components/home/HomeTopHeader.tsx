@@ -2,6 +2,7 @@
 import { Search, Bell, User } from "lucide-react";
 import Link from "next/link";
 import { useDynamicTheme } from "@/components/DynamicThemeProvider";
+import { getImageUrl } from '@/utils/serverUrl';
 
 interface Props {
   onSearchClick?: () => void;
@@ -9,7 +10,7 @@ interface Props {
 
 export default function HomeTopHeader({ onSearchClick }: Props) {
   const { siteConfig } = useDynamicTheme();
-  const siteName = siteConfig?.siteName || "CouponsFeast";
+  const siteName = siteConfig?.siteName || '';
   const primary = siteConfig?.theme?.primaryColor || "#7c3aed";
 
   return (
@@ -19,7 +20,7 @@ export default function HomeTopHeader({ onSearchClick }: Props) {
         <Link href="/" className="flex-shrink-0 no-underline">
           {siteConfig?.logos?.navbar ? (
             <img
-              src={siteConfig.logos.navbar.startsWith("http") ? siteConfig.logos.navbar : `http://localhost:5000${siteConfig.logos.navbar}`}
+              src={getImageUrl(siteConfig.logos.navbar)}
               alt={siteName}
               className="h-8 w-auto"
             />

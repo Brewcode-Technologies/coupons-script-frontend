@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { getSiteConfig } from '@/services/api';
 import { useTheme } from '@/components/ThemeProvider';
+import { getImageUrl } from '@/utils/serverUrl';
 
 interface SiteTheme {
   primaryColor: string;
@@ -52,7 +53,7 @@ interface SiteConfigData {
 const defaultLabels = {
   couponCard: { revealCode: 'Reveal Code', getReward: 'Get Reward', getDeal: 'Get Deal', seeDetails: 'See Details', hideDetails: 'Hide Details', limitedTime: 'Limited time', expiringToday: 'Expiring today', exclusive: 'Exclusive', interested: 'interested', onlineCashBack: 'Online Cash Back' },
   promoModal: { saveMoreTitle: 'Save Even More', cashBackHeading: 'Add 1% cash back to this offer', cashBackButton: 'Activate 1% cash back', startShopping: 'Start Shopping', continueTo: 'Continue to', detailsLabel: 'Details & Exclusions', howItWorks: 'How does it work?', termsText: 'By continuing, you agree to our', termsLink: 'Terms', privacyLink: 'Privacy Policy', socialText: 'continue with social accounts', emailPlaceholder: 'Email Address', copiedText: 'Copied!', copyText: 'Copy', endsText: 'Ends' },
-  homepage: { tagline: "India's Leading Coupons & Deals Marketplace", featuredTitle: 'The Best Coupons, Promo Codes & Cash Back Offers', trendingTitle: 'Trending Deals Right Now', topStoresTitle: 'Shop at Top Stores', popularStoresTitle: 'Popular Stores', topCouponsTitle: "Today's Top Coupons & Offers", dealsTitle: 'Deals Of The Day', viewMoreDeals: 'View More Deals', popularOffersTitle: 'Popular Offers of the Day', collectionsTitle: 'Collections', cashBackTitle: 'Cash Back at Stores We Love', cashBackSubtitle: 'cha-ching', allCashBack: 'All Cash Back', latestCouponsTitle: 'Latest Coupons', topDealsTitle: "Today's Top Deals", topDealsSubtitle: 'Presented by CouponsFeast', viewMoreDealsBtn: 'View more deals', allTopDeals: 'All Top Deals', dealsSectionTitle: 'Top Deals', dealsSectionAllBtn: 'All Deals', mostPopular: 'MOST POPULAR', storeOfMonth: 'Store Of The Month', viewCoupons: 'VIEW COUPONS', redeemNow: 'REDEEM NOW', buyNow: 'BUY NOW', checkPrice: 'Check price', shopNow: 'Shop Now', couponCode: 'Coupon code', cashBackLabel: 'Cash Back' },
+  homepage: { tagline: "India's Leading Coupons & Deals Marketplace", featuredTitle: 'The Best Coupons, Promo Codes & Cash Back Offers', trendingTitle: 'Trending Deals Right Now', topStoresTitle: 'Shop at Top Stores', popularStoresTitle: 'Popular Stores', topCouponsTitle: "Today's Top Coupons & Offers", dealsTitle: 'Deals Of The Day', viewMoreDeals: 'View More Deals', popularOffersTitle: 'Popular Offers of the Day', collectionsTitle: 'Collections', cashBackTitle: 'Cash Back at Stores We Love', cashBackSubtitle: 'cha-ching', allCashBack: 'All Cash Back', latestCouponsTitle: 'Latest Coupons', topDealsTitle: "Today's Top Deals", topDealsSubtitle: '', viewMoreDealsBtn: 'View more deals', allTopDeals: 'All Top Deals', dealsSectionTitle: 'Top Deals', dealsSectionAllBtn: 'All Deals', mostPopular: 'MOST POPULAR', storeOfMonth: 'Store Of The Month', viewCoupons: 'VIEW COUPONS', redeemNow: 'REDEEM NOW', buyNow: 'BUY NOW', checkPrice: 'Check price', shopNow: 'Shop Now', couponCode: 'Coupon code', cashBackLabel: 'Cash Back' },
   discount: { cashText: 'Cash', backText: 'Back', freeText: 'Free', shipText: 'Ship', pingText: 'ping', saleText: 'SALE', upToText: 'Up To', offText: 'Off' },
 };
 
@@ -110,7 +111,7 @@ export default function DynamicThemeProvider({ children }: { children: React.Rea
       console.error('Error fetching site config:', error);
       // Fallback theme
       setSiteConfig({
-        siteName: 'CouponsFeast',
+        siteName: 'Coupons Site',
         theme: {
           primaryColor: '#7c3aed',
           secondaryColor: '#9333ea',
@@ -123,8 +124,8 @@ export default function DynamicThemeProvider({ children }: { children: React.Rea
         },
         logo: '/uploads/logo.png',
         footer: {
-          copyright: '© CouponsFeast 2026',
-          email: 'support@couponsfeast.com'
+          copyright: '© Coupons Site',
+          email: 'support@example.com'
         }
       });
     } finally {
@@ -199,7 +200,7 @@ export default function DynamicThemeProvider({ children }: { children: React.Rea
     // Set favicon from config
     const faviconUrl = (siteConfig as any).logos?.favicon;
     if (faviconUrl) {
-      const href = faviconUrl.startsWith('http') ? faviconUrl : `http://localhost:5000${faviconUrl}`;
+      const href = getImageUrl(faviconUrl);
       let link = document.querySelector('link[rel="icon"]') as HTMLLinkElement;
       if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
       link.href = href;

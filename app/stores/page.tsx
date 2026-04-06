@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Search, Store, ChevronRight, ExternalLink } from 'lucide-react';
 import { getStores, getCategories } from '@/services/api';
+import { getServerUrl } from '@/utils/serverUrl';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
 import CategorySidebar from '@/components/categories/CategorySidebar';
@@ -51,7 +52,7 @@ export default function StoresPage() {
     return list;
   }, [stores, activeLetter, search]);
 
-  const serverUrl = 'http://localhost:5000';
+  const serverUrl = getServerUrl();
 
   const gridClass = {
     2: 'grid-cols-2',
