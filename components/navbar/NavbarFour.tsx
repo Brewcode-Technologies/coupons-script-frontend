@@ -178,32 +178,34 @@ export default function NavbarFour() {
       <div className="max-w-7xl mx-auto px-4">
         {/* Main Row */}
         <div className="flex items-center justify-between h-16 gap-3">
-          {/* Hamburger — mobile + tablet */}
-          <button
-            className="lg:hidden p-2 rounded-lg transition-colors shrink-0"
-            style={{ color: navText }}
-            onClick={() => setMobileOpen(true)}
-          >
-            <Menu className="w-5 h-5" style={{ color: navText }} />
-          </button>
+          {/* Hamburger + Logo grouped together */}
+          <div className="flex items-center gap-1 shrink-0">
+            <button
+              className="lg:hidden p-2 rounded-lg transition-colors shrink-0"
+              style={{ color: navText }}
+              onClick={() => setMobileOpen(true)}
+            >
+              <Menu className="w-5 h-5" style={{ color: navText }} />
+            </button>
 
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-1 shrink-0 no-underline">
-            {siteConfig?.logos?.navbar ? (
-              <img
-                src={getImageUrl(siteConfig.logos.navbar)}
-                alt={siteName}
-                className="hidden sm:block h-12 w-auto object-contain"
-              />
-            ) : (
-              <span
-                className="hidden sm:block text-2xl font-extrabold"
-                style={{ color: isDark ? primary : '#ffffff' }}
-              >
-                {siteName}
-              </span>
-            )}
-          </Link>
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-1 shrink-0 no-underline">
+              {siteConfig?.logos?.navbar ? (
+                <img
+                  src={getImageUrl(siteConfig.logos.navbar)}
+                  alt={siteName}
+                  className="h-8 sm:h-12 w-auto object-contain"
+                />
+              ) : (
+                <span
+                  className="text-lg sm:text-2xl font-extrabold"
+                  style={{ color: isDark ? primary : '#ffffff' }}
+                >
+                  {siteName}
+                </span>
+              )}
+            </Link>
+          </div>
 
           {/* Search Bar — desktop */}
           <div className="hidden md:flex flex-1 max-w-lg mx-4">
@@ -561,8 +563,8 @@ export default function NavbarFour() {
           >
             {/* Drawer header */}
             <div
-              className="flex items-center justify-between px-5 py-4 border-b shrink-0"
-              style={{ borderColor: isDark ? borderColor : '#e5e7eb' }}
+              className="flex items-center justify-between px-5 py-4 shrink-0"
+              style={{ background: isDark ? darkPalette.cardBg : primary }}
             >
               <Link href="/" onClick={closeDrawer} className="no-underline">
                 {siteConfig?.logos?.navbar ? (
@@ -572,7 +574,7 @@ export default function NavbarFour() {
                     className="h-10 w-auto object-contain"
                   />
                 ) : (
-                  <span className="text-xl font-extrabold" style={{ color: primary }}>
+                  <span className="text-xl font-extrabold" style={{ color: '#ffffff' }}>
                     {siteName}
                   </span>
                 )}
@@ -581,7 +583,7 @@ export default function NavbarFour() {
                 onClick={closeDrawer}
                 className="p-1.5 rounded-full bg-transparent border-none cursor-pointer"
               >
-                <X className="w-5 h-5" style={{ color: isDark ? navText : '#374151' }} />
+                <X className="w-5 h-5" style={{ color: isDark ? navText : '#ffffff' }} />
               </button>
             </div>
 
@@ -620,15 +622,15 @@ export default function NavbarFour() {
                   onClick={closeDrawer}
                   className="flex items-center gap-3 px-5 py-4 text-base font-normal transition-colors no-underline border-b"
                   style={{
-                    color: isDark ? mutedText : '#6b7280',
-                    borderColor: isDark ? borderColor : '#e5e7eb',
+                    color: isDark ? darkPalette.text : '#1f2937',
+                    borderColor: isDark ? borderColor : '#f3f4f6',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.color = isDark ? navText : primary;
-                    e.currentTarget.style.backgroundColor = isDark ? hoverBg : `${primary}12`;
+                    e.currentTarget.style.color = primary;
+                    e.currentTarget.style.backgroundColor = `${primary}10`;
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.color = isDark ? mutedText : '#6b7280';
+                    e.currentTarget.style.color = isDark ? darkPalette.text : '#1f2937';
                     e.currentTarget.style.backgroundColor = 'transparent';
                   }}
                 >

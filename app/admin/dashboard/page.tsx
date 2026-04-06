@@ -8,7 +8,10 @@ import api from '@/services/api';
 const card = 'rounded-2xl bg-white border border-slate-100 shadow-sm';
 
 function timeAgo(date: string) {
-  const diff = Date.now() - new Date(date).getTime();
+  if (!date) return '';
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return '';
+  const diff = Date.now() - d.getTime();
   const mins = Math.floor(diff / 60000);
   if (mins < 1) return 'just now';
   if (mins < 60) return `${mins} min ago`;
@@ -47,9 +50,9 @@ export default function AdminDashboard() {
   ];
 
   const recentActivity = (s.recentActivity || []).map((item: any) => ({
-    label: item.label,
-    time: timeAgo(item.time),
-    color: item.type === 'store' ? '#6366f1' : '#10b981',
+    label: item.title || item.label || (item.store?.storeName ? `${item.store.storeName} coupon` : 'Activity'),
+    time: timeAgo(item.createdAt || item.time),
+    color: item.store ? '#10b981' : '#6366f1',
   }));
 
   return (
