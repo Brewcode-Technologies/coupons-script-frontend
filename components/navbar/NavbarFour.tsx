@@ -41,7 +41,7 @@ const navLinks = [
   },
   {
     label: 'Categories',
-    href: '/category',
+    href: '/categories',
     icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-category-icon-v2.png',
   },
   {
@@ -396,7 +396,7 @@ export default function NavbarFour() {
                     {filtered.map((c) => (
                       <Link
                         key={c._id}
-                        href={`/category/${c.slug || c.name?.toLowerCase().replace(/\s+/g, '-')}`}
+                        href={`/coupons/${c.slug || c.name?.toLowerCase().replace(/\s+/g, '-')}`}
                         onClick={closeSearch}
                         className="flex items-center gap-3 p-3 md:p-4 rounded-xl border transition-all no-underline shrink-0 w-44 md:w-56 lg:w-64"
                         style={{ borderColor }}
@@ -597,7 +597,7 @@ export default function NavbarFour() {
                 },
                 {
                   label: 'Categories',
-                  href: '/category',
+                  href: '/categories',
                   icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-category-icon-v2.png',
                 },
                 {

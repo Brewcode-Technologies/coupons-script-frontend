@@ -33,14 +33,35 @@ export default function CategoryGrid({ activeLetter, search, columns }: { active
   const [allCategories, setAllCategories] = useState<any[]>([]);
 
   useEffect(() => {
+    console.log('🔍 Fetching categories from API...');
     getCategories().then(res => {
-      const data = res.data?.data ?? res.data ?? [];
-      setAllCategories((Array.isArray(data) ? data : []).map((c: any) => ({
+      console.log('✅ Categories API Response:', res);
+      console.log('📊 Response data:', res.data);
+      
+      // Handle different possible response structures
+      let data;
+      if (Array.isArray(res.data)) {
+        data = res.data;
+      } else if (res.data?.data && Array.isArray(res.data.data)) {
+        data = res.data.data;
+      } else if (res.data?.categories && Array.isArray(res.data.categories)) {
+        data = res.data.categories;
+      } else {
+        data = [];
+      }
+      
+      console.log('📋 Parsed categories data:', data);
+      console.log('🔢 Categories count:', data.length);
+      
+      setAllCategories(data.map((c: any) => ({
         name: c.name,
         slug: c.slug,
         icon: getIcon(c.slug || '', c.name || ''),
       })));
-    }).catch(() => {});
+    }).catch((error) => {
+      console.error('❌ Error fetching categories:', error);
+      console.error('🔗 API URL:', process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api');
+    });
   }, []);
 
   const filtered = useMemo(() => {
@@ -58,7 +79,8 @@ export default function CategoryGrid({ activeLetter, search, columns }: { active
   if (allCategories.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-sm text-gray-500 dark:text-gray-400">No categories found. Add categories from admin.</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Loading categories...</p>
+        <p className="text-xs text-gray-400 mt-2">If this persists, check the browser console for errors.</p>
       </div>
     );
   }
@@ -79,12 +101,17 @@ export default function CategoryGrid({ activeLetter, search, columns }: { active
   }[columns] || 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4';
 
   return (
-    <div className={`grid ${gridClass} gap-4`} key={columns}>
-      {filtered.map((cat, i) => (
-        <div key={cat.slug || cat.name} className="animate-scaleIn" style={{ animationDelay: `${i * 30}ms` }}>
-          <CategoryCard icon={cat.icon} name={cat.name} />
-        </div>
-      ))}
-    </div>
+    <>
+      <div className="mb-4 text-sm text-gray-500 dark:text-gray-400">
+        Showing {filtered.length} of {allCategories.length} categories
+      </div>
+      <div className={`grid ${gridClass} gap-4`} key={columns}>
+        {filtered.map((cat, i) => (
+          <div key={cat.slug || cat.name} className="animate-scaleIn" style={{ animationDelay: `${i * 30}ms` }}>
+            <CategoryCard icon={cat.icon} name={cat.name} />
+          </div>
+        ))}
+      </div>
+    </>
   );
 }

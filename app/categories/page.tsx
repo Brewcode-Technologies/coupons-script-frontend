@@ -12,11 +12,11 @@ import MobileNavTabs from '@/components/common/MobileNavTabs';
 export default function CategoriesPage() {
   const [activeLetter, setActiveLetter] = useState('ALL');
   const [columns, setColumns] = useState(3);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     setColumns(window.innerWidth < 640 ? 2 : 3);
   }, []);
-  const [search, setSearch] = useState('');
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-3">
