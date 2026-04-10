@@ -145,7 +145,7 @@ export default function PopularStores() {
         {featured && (
           <div className="hidden lg:flex w-[280px] xl:w-[320px] shrink-0">
             <Link
-              href={`/coupons/${storeSlug(featured)}-coupons`}
+              href={`/stores/${storeSlug(featured)}`}
               className="rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border no-underline group flex flex-col w-full"
               style={{ backgroundColor: '#000', borderColor: borderClr, height: '100%', maxHeight: 400 }}
             >
@@ -184,7 +184,7 @@ export default function PopularStores() {
           {visibleStores.map((store) => (
             <Link
               key={store._id}
-              href={`/coupons/${storeSlug(store)}-coupons`}
+              href={`/stores/${storeSlug(store)}`}
               className="no-underline group text-center"
             >
               <div

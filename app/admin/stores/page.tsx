@@ -40,8 +40,33 @@ export default function AdminStores() {
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
   const [couponCounts, setCouponCounts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
+  const [slugError, setSlugError] = useState('');
+  const [checkingSlug, setCheckingSlug] = useState(false);
 
   useEffect(() => { fetchStores(); }, []);
+
+  // Check if slug exists
+  const checkSlugExists = async (slug: string) => {
+    if (!slug) return false;
+    try {
+      const response = await getStores();
+      const existingStore = response.data?.find((store: any) => store.slug === slug && store._id !== editId);
+      return !!existingStore;
+    } catch {
+      return false;
+    }
+  };
+
+  const validateSlug = async (slug: string) => {
+    if (!slug) {
+      setSlugError('');
+      return;
+    }
+    setCheckingSlug(true);
+    const exists = await checkSlugExists(slug);
+    setSlugError(exists ? 'This slug is already taken' : '');
+    setCheckingSlug(false);
+  };
 
   const fetchStores = async () => {
     setLoading(true);
@@ -63,9 +88,13 @@ export default function AdminStores() {
     }
   };
 
-  const closeDrawer = () => { setOpen(false); setEditId(null); setFormData({ ...defaultForm }); setSlugManual(false); };
+  const closeDrawer = () => { setOpen(false); setEditId(null); setFormData({ ...defaultForm }); setSlugManual(false); setSlugError(''); };
 
   const handleSubmit = async () => {
+    if (slugError) {
+      toast.error('Please fix the slug error before saving');
+      return;
+    }
     try {
       const data = { ...formData, slug: formData.slug || formData.storeName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') };
       if (editId) { await updateStore(editId, data); toast.success('Store updated!'); }
@@ -218,8 +247,25 @@ export default function AdminStores() {
             <TextField fullWidth label="Store Name *" placeholder="e.g., Amazon, Target" value={formData.storeName}
               onChange={(e) => { const v = e.target.value; setFormData(p => ({ ...p, storeName: v, ...(!slugManual ? { slug: v.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') } : {}) })); }} required variant="outlined"
               sx={{ '& .MuiInputBase-root': { height: 48 } }} />
-            <TextField fullWidth label="Slug" placeholder="Auto-generated" value={formData.slug} onChange={(e) => { setSlugManual(true); f('slug', e.target.value); }} helperText="URL-friendly name" variant="outlined"
-              sx={{ '& .MuiInputBase-root': { height: 48 } }} />
+            <TextField fullWidth label="Slug" placeholder="Auto-generated" value={formData.slug} 
+              onChange={(e) => { 
+                if (editId) return; // Prevent editing slug for existing stores
+                const newSlug = e.target.value;
+                setSlugManual(true); 
+                f('slug', newSlug);
+                if (newSlug) validateSlug(newSlug);
+              }} 
+              helperText={editId ? "Slug cannot be changed for existing stores" : (slugError || "URL-friendly name")} 
+              error={!!slugError && !editId}
+              disabled={!!editId}
+              variant="outlined"
+              InputProps={{
+                endAdornment: checkingSlug && !editId ? <div className="text-xs text-gray-400">Checking...</div> : null
+              }}
+              sx={{ 
+                '& .MuiInputBase-root': { height: 48 },
+                '& .Mui-disabled': { backgroundColor: '#f5f5f5', color: '#666' }
+              }} />
             <ImageUploadField label="Logo" value={formData.logo} onChange={(url) => f('logo', url)} uploadType="logo" />
             <TextField fullWidth label="Website URL" placeholder="https://www.store.com" value={formData.websiteUrl} onChange={(e) => f('websiteUrl', e.target.value)} variant="outlined"
               InputProps={{ startAdornment: <Language className="text-gray-400 mr-2" /> }} sx={{ '& .MuiInputBase-root': { height: 48 } }} />

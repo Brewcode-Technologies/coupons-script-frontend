@@ -46,10 +46,7 @@ function CollectionCard({
         )}
         <div className="min-w-0">
           <p className="font-bold text-sm" style={{ color: primary }}>
-            {item.discount || item.title}
-          </p>
-          <p className="text-xs leading-snug line-clamp-2 mt-0.5" style={{ color: mutedText }}>
-            {item.description || item.title}
+            {item.storeName} Coupons
           </p>
         </div>
       </div>
@@ -153,11 +150,17 @@ export default function Collections() {
         setCollections(
           deals.map((deal: any) => {
             const store = deal.store || {};
+            const serverUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
+            const logo = deal.logo || store.logo || '';
+            const logoUrl = logo.startsWith('http') ? logo : logo ? `${serverUrl}${logo}` : '';
+            const image = deal.image || '';
+            const imageUrl = image.startsWith('http') ? image : image ? `${serverUrl}${image}` : '';
+            
             return {
               title: deal.title,
               description: deal.description || '',
-              logo: deal.logo || store.logo || '',
-              bg: deal.image || '',
+              logo: logoUrl,
+              bg: imageUrl,
               link: deal.link || store.websiteUrl || '',
               discount: deal.discount || '',
               storeName: store.storeName || '',

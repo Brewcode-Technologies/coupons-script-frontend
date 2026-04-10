@@ -6,6 +6,7 @@ import { useTheme } from '@/components/ThemeProvider';
 interface Props {
   storeName?: string;
   logoUrl?: string;
+  storeDescription?: string;
   totalCoupons: number;
   couponCount: number;
   offerCount: number;
@@ -14,7 +15,7 @@ interface Props {
   onTabChange: (tab: string) => void;
 }
 
-export default function CouponBanner({ storeName, logoUrl, totalCoupons, couponCount, offerCount, freshCount, activeTab, onTabChange }: Props) {
+export default function CouponBanner({ storeName, logoUrl, storeDescription, totalCoupons, couponCount, offerCount, freshCount, activeTab, onTabChange }: Props) {
   const { siteConfig } = useDynamicTheme();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
@@ -54,7 +55,7 @@ export default function CouponBanner({ storeName, logoUrl, totalCoupons, couponC
                 Today {storeName} Coupons &amp; Offers
               </h1>
               <p className="text-sm sm:text-base mt-1.5" style={{ color: textMuted }}>
-                Best {totalCoupons} Coupons &amp; Offers last validated on {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                {storeDescription || `Best ${totalCoupons} Coupons & Offers last validated on ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`}
               </p>
             </div>
           </div>

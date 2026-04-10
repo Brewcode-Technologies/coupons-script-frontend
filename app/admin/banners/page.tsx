@@ -67,7 +67,9 @@ export default function BannerManagement() {
   const fetchBanners = async () => {
     try {
       const res = await getBanners();
-      setBanners(Array.isArray(res.data?.data ?? res.data) ? (res.data?.data ?? res.data) : []);
+      const bannersData = Array.isArray(res.data?.data ?? res.data) ? (res.data?.data ?? res.data) : [];
+      console.log('Fetched banners:', bannersData);
+      setBanners(bannersData);
     } catch { toast.error('Failed to load banners'); }
     finally { setLoading(false); }
   };
@@ -87,10 +89,36 @@ export default function BannerManagement() {
   };
 
   const handleSubmit = async () => {
-    if (!editingBanner && !formData.label?.trim() && !formData.title?.trim() && !formData.discount?.trim()) {
-      toast.error('At least Brand Name, Headline, or Badge is required');
-      return;
+    // Validation based on banner type
+    if (formData.bannerType === 'quick_left') {
+      if (!formData.image?.trim()) {
+        toast.error('Banner Image URL is required for Quick Promo');
+        return;
+      }
+      if (!formData.storeUrl?.trim()) {
+        toast.error('Affiliate URL is required for Quick Promo');
+        return;
+      }
+      // Validate URL format
+      try {
+        new URL(formData.image.trim());
+      } catch {
+        toast.error('Please enter a valid Banner Image URL');
+        return;
+      }
+      try {
+        new URL(formData.storeUrl.trim());
+      } catch {
+        toast.error('Please enter a valid Affiliate URL');
+        return;
+      }
+    } else {
+      if (!editingBanner && !formData.label?.trim() && !formData.title?.trim() && !formData.discount?.trim()) {
+        toast.error('At least Brand Name, Headline, or Badge is required');
+        return;
+      }
     }
+    
     try {
       if (editingBanner?._id) {
         const patch: any = {};
@@ -102,10 +130,12 @@ export default function BannerManagement() {
           const newCmp = newVal ?? '';
           if (String(newCmp) !== String(oldCmp)) patch[key] = newVal;
         }
-        // quick_left: save as hero_left and force-clear all display fields
+        // quick_left: save as hero_left but mark it
         if (patch.bannerType === 'quick_left' || formData.bannerType === 'quick_left') {
           patch.bannerType = 'hero_left';
-          patch.title = '';
+          patch.title = formData.label || 'Quick Promo';
+          patch.label = formData.label || 'Quick Promo';
+          patch.description = 'QUICK_PROMO_MARKER';
           patch.cta = '';
           patch.discount = '';
           patch.secondDiscount = '';
@@ -116,22 +146,55 @@ export default function BannerManagement() {
         await updateBanner(editingBanner._id, patch);
         toast.success('Banner updated!');
       } else {
-        const payload = { ...formData, title: formData.title || formData.label || formData.discount || '' };
-        // quick_left: save as hero_left and clear display fields
+        const payload = { ...formData };
+        
+        // quick_left: save as hero_left but mark it for frontend identification
         if (payload.bannerType === 'quick_left') {
           payload.bannerType = 'hero_left';
-          payload.title = '';
+          payload.title = payload.label?.trim() || 'Quick Promo';
+          payload.label = payload.label?.trim() || 'Quick Promo';
+          // Add a special marker to identify this as a quick promo
+          payload.description = 'QUICK_PROMO_MARKER';
           payload.cta = '';
           payload.discount = '';
           payload.secondDiscount = '';
           payload.secondDiscountDesc = '';
           payload.emoji = '';
+          payload.couponCode = '';
+        } else {
+          // Ensure we have a title for other banner types
+          if (!payload.title?.trim()) {
+            payload.title = payload.label?.trim() || payload.discount?.trim() || 'Banner';
+          }
         }
+        
+        console.log('Final payload being sent:', payload);
         await createBanner(payload);
         toast.success('Banner created!');
       }
       setDialogOpen(false); setFormData(emptyForm); setEditingBanner(null); fetchBanners();
-    } catch { toast.error('Failed to save banner'); }
+    } catch (error: any) { 
+      console.error('Banner save error:', error);
+      console.error('Error response:', error.response);
+      console.error('Error data:', error.response?.data);
+      
+      let errorMsg = 'Failed to save banner';
+      if (error.response?.data) {
+        if (typeof error.response.data === 'string') {
+          errorMsg = error.response.data;
+        } else if (error.response.data.error) {
+          errorMsg = error.response.data.error;
+        } else if (error.response.data.message) {
+          errorMsg = error.response.data.message;
+        } else {
+          errorMsg = JSON.stringify(error.response.data);
+        }
+      } else if (error.message) {
+        errorMsg = error.message;
+      }
+      
+      toast.error(`Error: ${errorMsg}`);
+    }
   };
 
   const handleDelete = async () => {
@@ -167,14 +230,21 @@ export default function BannerManagement() {
   const formType = formData.bannerType || 'hero_left';
   const isQuick = formType === 'quick_left';
   const isLeft = formType === 'hero_left' || isQuick;
-  const leftBanners = banners.filter(b => b.bannerType !== 'hero_right');
+  
+  // Separate banners by type using marker for Quick Promo
+  const leftBanners = banners.filter(b => b.bannerType === 'hero_left' && b.description !== 'QUICK_PROMO_MARKER');
   const rightBanners = banners.filter(b => b.bannerType === 'hero_right');
+  const quickPromoBanners = banners.filter(b => b.bannerType === 'hero_left' && b.description === 'QUICK_PROMO_MARKER');
 
   if (loading) return (
     <AdminShell><div className="flex items-center justify-center h-40 gap-3"><CircularProgress size={20} /><p className="text-slate-400">Loading banners...</p></div></AdminShell>
   );
 
-  const renderBannerCard = (banner: Banner) => (
+  const renderBannerCard = (banner: Banner) => {
+    const isQuickPromo = banner.description === 'QUICK_PROMO_MARKER';
+    const displayName = isQuickPromo ? (banner.label || 'Quick Promo') : (banner.label || banner.title);
+    
+    return (
     <div key={banner._id} className="rounded-2xl p-4 flex items-center justify-between gap-3 bg-white border shadow-sm hover:shadow-md transition-shadow"
       style={{ borderColor: selected.has(banner._id!) ? '#f59e0b' : 'rgb(241 245 249)' }}>
       <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -188,13 +258,14 @@ export default function BannerManagement() {
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="font-bold text-slate-800 text-sm truncate">{banner.label || banner.title}</p>
+            <p className="font-bold text-slate-800 text-sm truncate">{displayName}</p>
+            {isQuickPromo && <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-600">Quick Promo</span>}
             <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
               style={{ background: banner.isActive ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)', color: banner.isActive ? '#10b981' : '#ef4444' }}>
               {banner.isActive ? 'Active' : 'Off'}
             </span>
           </div>
-          <p className="text-slate-400 text-xs truncate">{banner.discount} — {banner.cta}</p>
+          <p className="text-slate-400 text-xs truncate">{isQuickPromo ? 'Image + Link Only' : `${banner.discount} — ${banner.cta}`}</p>
         </div>
       </div>
       <div className="flex gap-1.5 flex-shrink-0">
@@ -206,6 +277,7 @@ export default function BannerManagement() {
       </div>
     </div>
   );
+  };
 
   return (
     <AdminShell>
@@ -231,6 +303,21 @@ export default function BannerManagement() {
           <Button variant="contained" startIcon={<Add />} onClick={() => openAdd('hero_left')} size="small"
             style={{ background: 'linear-gradient(135deg,#f59e0b,#d97706)', borderRadius: 10, textTransform: 'none', fontWeight: 600 }}>Add Slide</Button>
         </div>
+      </div>
+
+      {/* Quick Promo Section */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <h3 className="font-bold text-slate-700">Quick Promo Banners</h3>
+            <Chip label={`${quickPromoBanners.length}`} size="small" style={{ background: 'rgba(16,185,129,0.1)', color: '#10b981', fontWeight: 700 }} />
+          </div>
+          <Button variant="contained" startIcon={<Add />} onClick={() => openAdd('quick_left')} size="small"
+            style={{ background: 'linear-gradient(135deg,#10b981,#059669)', borderRadius: 10, textTransform: 'none', fontWeight: 600 }}>Add Quick Promo</Button>
+        </div>
+        {quickPromoBanners.length === 0
+          ? <p className="text-slate-400 text-sm p-4 bg-white rounded-xl border border-slate-100">No quick promo banners yet</p>
+          : <div className="flex flex-col gap-2">{quickPromoBanners.map(renderBannerCard)}</div>}
       </div>
 
       {/* Left Carousel Section */}
@@ -277,12 +364,50 @@ export default function BannerManagement() {
             {quickEditMode ? (
               <>
                 <p className="text-xs font-bold text-emerald-600 uppercase tracking-wider">Only these fields will be updated</p>
-                <TextField label="Tab Name" value={formData.label} onChange={(e) => set({ label: e.target.value })} fullWidth placeholder="e.g., Redrail, UBER" helperText="Shown in the tab bar below the banner"  />
-                <TextField label="Banner Image URL" value={formData.image} onChange={(e) => set({ image: e.target.value })} fullWidth placeholder="https://..."  />
+                <TextField 
+                  label="Tab Name (optional)" 
+                  value={formData.label} 
+                  onChange={(e) => set({ label: e.target.value })} 
+                  fullWidth 
+                  placeholder="e.g., Amazon, Flipkart" 
+                  helperText="Leave empty to hide tab button" 
+                  sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                />
+                <TextField 
+                  label="Banner Image URL" 
+                  value={formData.image} 
+                  onChange={(e) => set({ image: e.target.value })} 
+                  fullWidth 
+                  placeholder="https://..." 
+                  required 
+                  sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                />
                 {formData.image && <img src={formData.image} alt="preview" className="h-20 rounded-lg object-cover border border-slate-100" onError={(e) => { e.currentTarget.style.display = 'none'; }} />}
-                <Button variant="outlined" onClick={() => fileInputRef.current?.click()} disabled={uploading} startIcon={uploading ? <CircularProgress size={16} /> : <CloudUpload />} style={{ textTransform: 'none', borderRadius: 10, borderColor: '#10b981', color: '#10b981' }}>Upload Image</Button>
-                <TextField label="Coupon / Offer Code" value={formData.couponCode} onChange={(e) => set({ couponCode: e.target.value })} fullWidth placeholder="e.g., SAVE20"  />
-                <TextField label="Affiliate URL" value={formData.storeUrl} onChange={(e) => set({ storeUrl: e.target.value })} fullWidth placeholder="https://..."  />
+                <Button 
+                  variant="outlined" 
+                  onClick={() => fileInputRef.current?.click()} 
+                  disabled={uploading} 
+                  startIcon={uploading ? <CircularProgress size={16} /> : <CloudUpload />} 
+                  style={{ 
+                    textTransform: 'none', 
+                    borderRadius: 10, 
+                    borderColor: '#10b981', 
+                    color: '#10b981',
+                    height: 48,
+                    fontWeight: 500
+                  }}
+                >
+                  Upload Image
+                </Button>
+                <TextField 
+                  label="Affiliate URL" 
+                  value={formData.storeUrl} 
+                  onChange={(e) => set({ storeUrl: e.target.value })} 
+                  fullWidth 
+                  placeholder="https://..." 
+                  required 
+                  sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                />
               </>
             ) : (
               <>
@@ -296,63 +421,270 @@ export default function BannerManagement() {
                 {/* QUICK LEFT — minimal fields from dropdown */}
                 {isQuick ? (
                   <>
-                    <p className="text-xs font-bold text-emerald-600 uppercase tracking-wider">Minimal banner — no title, no button on site</p>
-                    <TextField label="Tab Name" value={formData.label} onChange={(e) => set({ label: e.target.value })} fullWidth placeholder="e.g., Redrail, UBER" helperText="Shown in the tab bar below the banner"  />
-                    <TextField label="Banner Image URL" value={formData.image} onChange={(e) => set({ image: e.target.value })} fullWidth placeholder="https://..."  />
+                    <p className="text-xs font-bold text-emerald-600 uppercase tracking-wider">Minimal banner — just image and link</p>
+                    <TextField 
+                      label="Tab Name (optional)" 
+                      value={formData.label} 
+                      onChange={(e) => set({ label: e.target.value })} 
+                      fullWidth 
+                      placeholder="e.g., Amazon, Flipkart" 
+                      helperText="Leave empty to hide tab button" 
+                      sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                    />
+                    <TextField 
+                      label="Banner Image URL" 
+                      value={formData.image} 
+                      onChange={(e) => set({ image: e.target.value })} 
+                      fullWidth 
+                      placeholder="https://..." 
+                      required 
+                      sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                    />
                     {formData.image && <img src={formData.image} alt="preview" className="h-20 rounded-lg object-cover border border-slate-100" onError={(e) => { e.currentTarget.style.display = 'none'; }} />}
-                    <Button variant="outlined" onClick={() => fileInputRef.current?.click()} disabled={uploading} startIcon={uploading ? <CircularProgress size={16} /> : <CloudUpload />} style={{ textTransform: 'none', borderRadius: 10, borderColor: '#10b981', color: '#10b981' }}>Upload Image</Button>
-                    <TextField label="Coupon / Offer Code" value={formData.couponCode} onChange={(e) => set({ couponCode: e.target.value })} fullWidth placeholder="e.g., SAVE20"  />
-                    <TextField label="Affiliate URL" value={formData.storeUrl} onChange={(e) => set({ storeUrl: e.target.value })} fullWidth placeholder="https://..."  />
+                    <Button 
+                      variant="outlined" 
+                      onClick={() => fileInputRef.current?.click()} 
+                      disabled={uploading} 
+                      startIcon={uploading ? <CircularProgress size={16} /> : <CloudUpload />} 
+                      style={{ 
+                        textTransform: 'none', 
+                        borderRadius: 10, 
+                        borderColor: '#10b981', 
+                        color: '#10b981',
+                        height: 48,
+                        fontWeight: 500
+                      }}
+                    >
+                      Upload Image
+                    </Button>
+                    <TextField 
+                      label="Affiliate URL" 
+                      value={formData.storeUrl} 
+                      onChange={(e) => set({ storeUrl: e.target.value })} 
+                      fullWidth 
+                      placeholder="https://..." 
+                      required 
+                      sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                    />
                   </>
 
                 ) : isLeft ? (
                   <>
                     {/* FULL LEFT CAROUSEL */}
-                    <TextField label="Brand / Tab Name *" value={formData.label} onChange={(e) => set({ label: e.target.value })} fullWidth placeholder="e.g., Redrail, UBER" helperText="Shown in the tab bar below the banner"  />
+                    <TextField 
+                      label="Brand / Tab Name *" 
+                      value={formData.label} 
+                      onChange={(e) => set({ label: e.target.value })} 
+                      fullWidth 
+                      placeholder="e.g., Redrail, UBER" 
+                      helperText="Shown in the tab bar below the banner" 
+                      sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                    />
                     <p className="text-xs font-bold text-slate-500 uppercase tracking-wider pt-1">Main Offer</p>
-                    <TextField label="Headline (big text) *" value={formData.discount} onChange={(e) => set({ discount: e.target.value })} fullWidth placeholder="e.g., UP TO ₹200 OFF"  />
-                    <TextField label="Sub-headline" value={formData.title} onChange={(e) => set({ title: e.target.value })} fullWidth placeholder="e.g., On Train Ticket Bookings"  />
+                    <TextField 
+                      label="Headline (big text) *" 
+                      value={formData.discount} 
+                      onChange={(e) => set({ discount: e.target.value })} 
+                      fullWidth 
+                      placeholder="e.g., UP TO ₹200 OFF" 
+                      sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                    />
+                    <TextField 
+                      label="Sub-headline" 
+                      value={formData.title} 
+                      onChange={(e) => set({ title: e.target.value })} 
+                      fullWidth 
+                      placeholder="e.g., On Train Ticket Bookings" 
+                      sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                    />
                     <p className="text-xs font-bold text-slate-500 uppercase tracking-wider pt-1">Second Offer (below dashed line)</p>
-                    <TextField label="Second Discount" value={formData.secondDiscount} onChange={(e) => set({ secondDiscount: e.target.value })} fullWidth placeholder="e.g., FLAT ₹50 OFF"  />
-                    <TextField label="Second Discount Description" value={formData.secondDiscountDesc} onChange={(e) => set({ secondDiscountDesc: e.target.value })} fullWidth placeholder="e.g., On First Booking"  />
+                    <TextField 
+                      label="Second Discount" 
+                      value={formData.secondDiscount} 
+                      onChange={(e) => set({ secondDiscount: e.target.value })} 
+                      fullWidth 
+                      placeholder="e.g., FLAT ₹50 OFF" 
+                      sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                    />
+                    <TextField 
+                      label="Second Discount Description" 
+                      value={formData.secondDiscountDesc} 
+                      onChange={(e) => set({ secondDiscountDesc: e.target.value })} 
+                      fullWidth 
+                      placeholder="e.g., On First Booking" 
+                      sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                    />
                     <p className="text-xs font-bold text-slate-500 uppercase tracking-wider pt-1">Appearance</p>
                     <div className="grid grid-cols-2 gap-4">
-                      <TextField label="Background Color" value={formData.bgColor} onChange={(e) => set({ bgColor: e.target.value })} fullWidth placeholder="#1a5276" InputProps={{ sx: { height: 48 }, startAdornment: <span className="inline-block w-5 h-5 rounded mr-2 border border-slate-200" style={{ backgroundColor: formData.bgColor || '#4a1d96' }} /> }} />
-                      <TextField label="Emoji (right side)" value={formData.emoji} onChange={(e) => set({ emoji: e.target.value })} fullWidth placeholder="🚂"  />
+                      <TextField 
+                        label="Background Color" 
+                        value={formData.bgColor} 
+                        onChange={(e) => set({ bgColor: e.target.value })} 
+                        fullWidth 
+                        placeholder="#1a5276" 
+                        InputProps={{ 
+                          sx: { height: 48 }, 
+                          startAdornment: <span className="inline-block w-5 h-5 rounded mr-2 border border-slate-200" style={{ backgroundColor: formData.bgColor || '#4a1d96' }} /> 
+                        }} 
+                      />
+                      <TextField 
+                        label="Emoji (right side)" 
+                        value={formData.emoji} 
+                        onChange={(e) => set({ emoji: e.target.value })} 
+                        fullWidth 
+                        placeholder="🚂" 
+                        sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                      />
                     </div>
-                    <TextField label="CTA Button Text" value={formData.cta} onChange={(e) => set({ cta: e.target.value })} fullWidth placeholder="BOOK NOW"  />
-                    <TextField label="Image URL (replaces emoji)" value={formData.image} onChange={(e) => set({ image: e.target.value })} fullWidth placeholder="https://... (optional)" helperText="If set, shows image instead of emoji on right side"  />
+                    <TextField 
+                      label="CTA Button Text" 
+                      value={formData.cta} 
+                      onChange={(e) => set({ cta: e.target.value })} 
+                      fullWidth 
+                      placeholder="BOOK NOW" 
+                      sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                    />
+                    <TextField 
+                      label="Image URL (replaces emoji)" 
+                      value={formData.image} 
+                      onChange={(e) => set({ image: e.target.value })} 
+                      fullWidth 
+                      placeholder="https://... (optional)" 
+                      helperText="If set, shows image instead of emoji on right side" 
+                      sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                    />
                     {formData.image && <img src={formData.image} alt="preview" className="h-16 rounded-lg object-cover border border-slate-100" onError={(e) => { e.currentTarget.style.display = 'none'; }} />}
-                    <Button variant="outlined" onClick={() => fileInputRef.current?.click()} disabled={uploading} startIcon={uploading ? <CircularProgress size={16} /> : <CloudUpload />} style={{ textTransform: 'none', borderRadius: 10 }}>Upload Image</Button>
+                    <Button 
+                      variant="outlined" 
+                      onClick={() => fileInputRef.current?.click()} 
+                      disabled={uploading} 
+                      startIcon={uploading ? <CircularProgress size={16} /> : <CloudUpload />} 
+                      style={{ 
+                        textTransform: 'none', 
+                        borderRadius: 10,
+                        height: 48,
+                        fontWeight: 500
+                      }}
+                    >
+                      Upload Image
+                    </Button>
                     <p className="text-xs font-bold text-slate-500 uppercase tracking-wider pt-1">Link</p>
-                    <TextField label="Store URL (opens on CTA click)" value={formData.storeUrl} onChange={(e) => set({ storeUrl: e.target.value })} fullWidth placeholder="https://redrail.com"  />
+                    <TextField 
+                      label="Store URL (opens on CTA click)" 
+                      value={formData.storeUrl} 
+                      onChange={(e) => set({ storeUrl: e.target.value })} 
+                      fullWidth 
+                      placeholder="https://redrail.com" 
+                      sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                    />
                   </>
 
                 ) : (
                   <>
                     {/* RIGHT CARD */}
-                    <TextField label="Brand / Tab Name *" value={formData.label} onChange={(e) => set({ label: e.target.value })} fullWidth placeholder="e.g., UBER" helperText="Shown in the tab bar below the banner"  />
+                    <TextField 
+                      label="Brand / Tab Name *" 
+                      value={formData.label} 
+                      onChange={(e) => set({ label: e.target.value })} 
+                      fullWidth 
+                      placeholder="e.g., UBER" 
+                      helperText="Shown in the tab bar below the banner" 
+                      sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                    />
                     <p className="text-xs font-bold text-slate-500 uppercase tracking-wider pt-1">Card Content</p>
-                    <TextField label="Badge Text (top of card) *" value={formData.discount} onChange={(e) => set({ discount: e.target.value })} fullWidth placeholder="e.g., FLAT 50% OFF"  />
-                    <TextField label="Description *" value={formData.title} onChange={(e) => set({ title: e.target.value })} fullWidth placeholder="e.g., Flat 50% OFF On Your First 3 Rides"  />
-                    <TextField label="CTA Text" value={formData.cta} onChange={(e) => set({ cta: e.target.value })} fullWidth placeholder="GRAB NOW"  />
+                    <TextField 
+                      label="Badge Text (top of card) *" 
+                      value={formData.discount} 
+                      onChange={(e) => set({ discount: e.target.value })} 
+                      fullWidth 
+                      placeholder="e.g., FLAT 50% OFF" 
+                      sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                    />
+                    <TextField 
+                      label="Description *" 
+                      value={formData.title} 
+                      onChange={(e) => set({ title: e.target.value })} 
+                      fullWidth 
+                      placeholder="e.g., Flat 50% OFF On Your First 3 Rides" 
+                      sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                    />
+                    <TextField 
+                      label="CTA Text" 
+                      value={formData.cta} 
+                      onChange={(e) => set({ cta: e.target.value })} 
+                      fullWidth 
+                      placeholder="GRAB NOW" 
+                      sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                    />
                     <p className="text-xs font-bold text-slate-500 uppercase tracking-wider pt-1">Card Image</p>
-                    <TextField label="Card Image URL" value={formData.image} onChange={(e) => set({ image: e.target.value })} fullWidth placeholder="https://..." helperText="Image shown in the top section of the card"  />
+                    <TextField 
+                      label="Card Image URL" 
+                      value={formData.image} 
+                      onChange={(e) => set({ image: e.target.value })} 
+                      fullWidth 
+                      placeholder="https://..." 
+                      helperText="Image shown in the top section of the card" 
+                      sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                    />
                     {formData.image && <img src={formData.image} alt="preview" className="h-20 rounded-lg object-cover border border-slate-100" onError={(e) => { e.currentTarget.style.display = 'none'; }} />}
-                    <Button variant="outlined" onClick={() => fileInputRef.current?.click()} disabled={uploading} startIcon={uploading ? <CircularProgress size={16} /> : <CloudUpload />} style={{ textTransform: 'none', borderRadius: 10 }}>Upload Image</Button>
+                    <Button 
+                      variant="outlined" 
+                      onClick={() => fileInputRef.current?.click()} 
+                      disabled={uploading} 
+                      startIcon={uploading ? <CircularProgress size={16} /> : <CloudUpload />} 
+                      style={{ 
+                        textTransform: 'none', 
+                        borderRadius: 10,
+                        height: 48,
+                        fontWeight: 500
+                      }}
+                    >
+                      Upload Image
+                    </Button>
                     <p className="text-xs font-bold text-slate-500 uppercase tracking-wider pt-1">Fallback (if no image)</p>
                     <div className="grid grid-cols-2 gap-4">
-                      <TextField label="Card Top BG Color" value={formData.cardBgColor} onChange={(e) => set({ cardBgColor: e.target.value })} fullWidth placeholder="#1f2937" helperText="Used if no image uploaded" InputProps={{ sx: { height: 48 }, startAdornment: <span className="inline-block w-5 h-5 rounded mr-2 border border-slate-200" style={{ backgroundColor: formData.cardBgColor || '#1f2937' }} /> }} />
-                      <TextField label="Emoji" value={formData.emoji} onChange={(e) => set({ emoji: e.target.value })} fullWidth placeholder="🚕" helperText="Shown if no image"  />
+                      <TextField 
+                        label="Card Top BG Color" 
+                        value={formData.cardBgColor} 
+                        onChange={(e) => set({ cardBgColor: e.target.value })} 
+                        fullWidth 
+                        placeholder="#1f2937" 
+                        helperText="Used if no image uploaded" 
+                        InputProps={{ 
+                          sx: { height: 48 }, 
+                          startAdornment: <span className="inline-block w-5 h-5 rounded mr-2 border border-slate-200" style={{ backgroundColor: formData.cardBgColor || '#1f2937' }} /> 
+                        }} 
+                      />
+                      <TextField 
+                        label="Emoji" 
+                        value={formData.emoji} 
+                        onChange={(e) => set({ emoji: e.target.value })} 
+                        fullWidth 
+                        placeholder="🚕" 
+                        helperText="Shown if no image" 
+                        sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                      />
                     </div>
                     <p className="text-xs font-bold text-slate-500 uppercase tracking-wider pt-1">Link</p>
-                    <TextField label="URL (opens on CTA click)" value={formData.storeUrl} onChange={(e) => set({ storeUrl: e.target.value })} fullWidth placeholder="https://uber.com"  />
+                    <TextField 
+                      label="URL (opens on CTA click)" 
+                      value={formData.storeUrl} 
+                      onChange={(e) => set({ storeUrl: e.target.value })} 
+                      fullWidth 
+                      placeholder="https://uber.com" 
+                      sx={{ '& .MuiInputBase-root': { minHeight: 48 } }}
+                    />
                   </>
                 )}
 
                 <FormControlLabel
                   control={<Switch checked={formData.isActive} onChange={(e) => set({ isActive: e.target.checked })} />}
-                  label={<span className="text-sm font-medium text-slate-700">Active (visible on site)</span>} />
+                  label={<span className="text-sm font-medium text-slate-700">Active (visible on site)</span>}
+                  sx={{ 
+                    '& .MuiFormControlLabel-root': { minHeight: 48, alignItems: 'center' },
+                    marginTop: 1
+                  }}
+                />
               </>
             )}
 

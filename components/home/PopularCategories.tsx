@@ -34,7 +34,7 @@ export default function PopularCategories() {
                 return (
                   <a
                     key={i}
-                    href={`/coupons/${slug}-coupons`}
+                    href={`/coupons/${slug}`}
                     className="text-sm no-underline transition-colors"
                     style={{ color: mutedText }}
                     onMouseEnter={e => (e.currentTarget.style.color = primary)}

@@ -60,6 +60,19 @@ export default function AllCouponsPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  // Helper: get all category IDs from a coupon
+  const getCatIds = (coupon: any): string[] => {
+    const ids: string[] = [];
+    const cat = coupon.category;
+    if (cat) ids.push(typeof cat === 'string' ? cat : cat._id || '');
+    if (Array.isArray(coupon.categories)) {
+      coupon.categories.forEach((c: any) => ids.push(typeof c === 'string' ? c : c._id || ''));
+    }
+    const storeCat = coupon.store?.category;
+    if (storeCat) ids.push(typeof storeCat === 'string' ? storeCat : storeCat._id || '');
+    return ids.filter(Boolean);
+  };
+
   // Filter coupons based on current filters
   const filteredCoupons = useMemo(() => {
     return allCoupons.filter((coupon: any) => {
@@ -80,11 +93,8 @@ export default function AllCouponsPage() {
       
       // Category filter
       if (filters.selectedCategories.length > 0) {
-        const couponCategories = Array.isArray(coupon.categories) ? coupon.categories : [];
-        const hasMatchingCategory = couponCategories.some((cat: any) => 
-          filters.selectedCategories.includes(cat._id || cat)
-        );
-        if (!hasMatchingCategory) return false;
+        const ids = getCatIds(coupon);
+        if (!ids.some(id => filters.selectedCategories.includes(id))) return false;
       }
       
       return true;
@@ -133,15 +143,14 @@ export default function AllCouponsPage() {
     }).filter(store => store.couponCount > 0).slice(0, 10);
   }, [stores, allCoupons]);
 
-  // Get categories with coupon counts
+  // Get categories with coupon counts — show ALL categories so sidebar is never empty
   const categoriesWithCounts = useMemo(() => {
     return categories.map(category => {
-      const couponCount = allCoupons.filter(coupon => {
-        const couponCategories = Array.isArray(coupon.categories) ? coupon.categories : [];
-        return couponCategories.some((cat: any) => (cat._id || cat) === category._id);
-      }).length;
+      const couponCount = allCoupons.filter(coupon =>
+        getCatIds(coupon).includes(category._id)
+      ).length;
       return { ...category, couponCount };
-    }).filter(category => category.couponCount > 0).slice(0, 8);
+    }).slice(0, 10);
   }, [categories, allCoupons]);
 
   return (
@@ -154,9 +163,9 @@ export default function AllCouponsPage() {
           <span>All Coupons</span>
         </div>
 
-        <h1 className="text-2xl sm:text-3xl font-bold mb-2">All Coupons</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2">Coupons</h1>
         <p className="text-sm mb-8" style={{ color: textMuted }}>
-          {filteredCoupons.length} verified coupons & offers available today
+          Coupons
         </p>
 
         <div className="flex gap-8">
@@ -268,7 +277,7 @@ export default function AllCouponsPage() {
             <div className="mb-4">
               <p className="font-bold mb-2 text-lg" style={{ color: textMain }}>Related Categories</p>
               <div className="space-y-2">
-                {categoriesWithCounts.slice(0, 6).map((category) => (
+                {categories.slice(0, 6).map((category) => (
                   <Link
                     key={category._id}
                     className="block text-sm no-underline hover:underline"

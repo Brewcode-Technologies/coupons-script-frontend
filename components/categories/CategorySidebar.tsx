@@ -63,7 +63,7 @@ export default function CategorySidebar() {
           <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100 mb-3">Popular Merchants</h3>
           <div className="space-y-2">
             {visibleStores.map((store) => (
-              <Link key={store._id} href={`/coupons/${store.slug}-coupons`}
+              <Link key={store._id} href={`/stores/${store.slug}`}
                 className="block text-xs text-gray-500 dark:text-gray-400 hover:text-primary transition-colors no-underline">
                 {store.storeName} Coupons
               </Link>

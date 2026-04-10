@@ -1,7 +1,9 @@
 'use client';
+import { useState, useEffect } from 'react';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
 import { getImageUrl } from '@/utils/serverUrl';
+import { getPopularLinks } from '@/services/api';
 
 interface FooterFourProps { config: any; }
 
@@ -21,12 +23,29 @@ export default function FooterFour({ config }: FooterFourProps) {
   const logoUrl   = siteConfig?.logos?.footer;
   const accent    = siteConfig?.theme?.primaryColor || '#7c3aed';
 
+  const [popularLinks, setPopularLinks] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchPopularLinks = async () => {
+      try {
+        const response = await getPopularLinks();
+        setPopularLinks(response.data?.data || []);
+      } catch (error) {
+        console.error('Failed to fetch popular links:', error);
+      }
+    };
+    fetchPopularLinks();
+  }, []);
+
   const content = siteConfig?.footerContent;
   const tagline = content?.tagline || `Find the best deals, coupons, and discounts from top brands. Save money on your favorite products with ${siteName}.`;
+  
+  // Group popular links by type
+  const storeLinks = popularLinks.filter(link => link.type === 'store' && link.isActive).map(link => ({ label: link.name, href: link.href }));
+  
   const defaultCols = [
-    { heading: 'Products',  links: [{ label: 'All Coupons', href: '/coupons' }, { label: 'Top Stores', href: '/stores' }, { label: 'Categories', href: '/categories' }, { label: 'Trending', href: '/trending' }] },
-    { heading: 'Company',   links: [{ label: 'About Us', href: '#' }, { label: 'Careers', href: '#' }, { label: 'Blog', href: '#' }, { label: 'Contact', href: '#' }] },
-    { heading: 'Resources', links: [{ label: 'Help Center', href: '#' }, { label: 'Privacy Policy', href: '#' }, { label: 'Terms of Service', href: '#' }, { label: 'Sitemap', href: '#' }] },
+    { heading: 'Products',  links: [{ label: 'All Coupons', href: '/all-coupons' }, { label: 'Top Stores', href: '/stores' }, { label: 'Deals', href: '/deals' }, { label: 'Blog', href: '/blog' }] },
+    { heading: 'Popular Stores', links: storeLinks.length > 0 ? storeLinks.slice(0, 4) : [{ label: 'Amazon', href: '/coupons/amazon' }, { label: 'Walmart', href: '/coupons/walmart' }] },
   ];
   const columns = content?.columns?.length ? content.columns : defaultCols;
 
@@ -72,13 +91,13 @@ export default function FooterFour({ config }: FooterFourProps) {
             {columns.map((col: any) => (
               <div key={col.heading}>
                 <h3 className="text-base font-medium mb-6" style={{ color: textHead }}>{col.heading}</h3>
-                <ul className="flex flex-col gap-3 list-none">
-                  {col.links.map((item: any) => (
-                    <li key={item.label}>
-                      <a href={item.href} className="text-sm no-underline transition-opacity opacity-60 hover:opacity-100" style={{ color: '#d4d4d8' }}>{item.label}</a>
-                    </li>
-                  ))}
-                </ul>
+                  <ul className="flex flex-col gap-3 list-none">
+                    {col.links.map((item: any) => (
+                      <li key={item.label}>
+                        <a href={item.href.replace(/-coupons$/, '')} className="text-sm no-underline transition-opacity opacity-60 hover:opacity-100" style={{ color: '#d4d4d8' }}>{item.label}</a>
+                      </li>
+                    ))}
+                  </ul>
               </div>
             ))}
           </div>

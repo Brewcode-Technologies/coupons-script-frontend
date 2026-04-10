@@ -94,7 +94,7 @@ export default function TopCoupons() {
               : `${serverUrl}${c.store.logo}`
             : '';
           return {
-            badge: c.discount || c.labelType || 'DEAL',
+            badge: c.code || c.discount || c.labelType || 'DEAL',
             title: c.title || '',
             store: c.store?.storeName || '',
             storeSlug: c.store?.slug || '',
@@ -102,6 +102,7 @@ export default function TopCoupons() {
             category: c.category?.name || c.category || '',
             tags: c.tags || [],
             link: c.affiliateUrl || c.store?.websiteUrl || '',
+            hasCode: !!c.code,
           };
         });
         setAllCoupons(mapped);
@@ -205,7 +206,7 @@ export default function TopCoupons() {
             <div
               key={index}
               onClick={() => {
-                if (item.storeSlug) window.location.href = `/coupons/${item.storeSlug}-coupons`;
+                if (item.storeSlug) window.location.href = `/stores/${item.storeSlug}`;
               }}
               className="rounded-xl overflow-hidden border transition-all duration-300 hover:shadow-xl hover:-translate-y-2 flex flex-col cursor-pointer"
               style={{
@@ -216,11 +217,18 @@ export default function TopCoupons() {
               }}
             >
               <div className="flex p-4 sm:p-5 gap-3 sm:gap-4 flex-1 items-center">
-                <div
-                  className="min-w-[90px] sm:min-w-[120px] flex items-center justify-center font-extrabold text-center text-xl sm:text-2xl md:text-3xl"
-                  style={{ color: primary }}
-                >
-                  {item.badge}
+                <div className="min-w-[90px] sm:min-w-[120px] flex flex-col items-center justify-center text-center">
+                  {item.hasCode ? (
+                    <>
+                      <div className="font-extrabold text-sm sm:text-base md:text-lg px-2 py-1 rounded border-2 border-dashed" style={{ color: primary, borderColor: primary }}>
+                        {item.badge}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="font-extrabold text-xl sm:text-2xl md:text-3xl" style={{ color: primary }}>
+                      {item.badge}
+                    </div>
+                  )}
                 </div>
                 <div
                   className="border-l border-dashed self-stretch"
@@ -261,7 +269,7 @@ export default function TopCoupons() {
                     style={{ color: primary }}
                     onClick={() => {
                       if (item.storeSlug)
-                        window.location.href = `/coupons/${item.storeSlug}-coupons`;
+                        window.location.href = `/stores/${item.storeSlug}`;
                     }}
                   >
                     View All {item.store} Coupons

@@ -45,7 +45,7 @@ export default function FooterTwo({ config }: FooterTwoProps) {
                 <ul className="text-sm space-y-2">
                   {section.links.map((link: any) => (
                     <li key={link.label} className="list-none">
-                      <a href={link.href} className="hover:underline transition no-underline" style={{ color: textMuted }}
+                      <a href={link.href.replace(/-coupons$/, '')} className="hover:underline transition no-underline" style={{ color: textMuted }}
                         onMouseEnter={e => (e.currentTarget.style.color = '#ffffff')}
                         onMouseLeave={e => (e.currentTarget.style.color = textMuted)}
                       >{link.label}</a>

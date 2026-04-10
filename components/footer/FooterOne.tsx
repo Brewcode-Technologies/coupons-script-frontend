@@ -119,7 +119,7 @@ export default function FooterOne({ config }: FooterOneProps) {
                         <ul className="space-y-2">
                           {(group.links || []).filter((l: any) => l.label?.trim()).map((link: any, lIdx: number) => (
                             <li key={lIdx} className="list-none">
-                              <a href={link.href} className="footer-cat-link text-sm leading-relaxed">
+                              <a href={link.href.replace(/-coupons$/, '')} className="footer-cat-link text-sm leading-relaxed">
                                 {link.label}
                               </a>
                             </li>

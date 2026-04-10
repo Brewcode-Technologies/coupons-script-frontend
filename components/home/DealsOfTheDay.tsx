@@ -73,10 +73,10 @@ export default function DealsOfTheDay() {
   const [modalData, setModalData] = useState<any>(null);
 
   useEffect(() => {
-    getDeals({ section: 'deals_of_day', limit: 4 })
+    getDeals({ section: 'deals_of_day', limit: 8 })
       .then(res => {
         const data = res.data?.data ?? res.data ?? [];
-        setDeals((Array.isArray(data) ? data : []).filter((d: any) => d.isActive).slice(0, 4));
+        setDeals((Array.isArray(data) ? data : []).filter((d: any) => d.isActive).slice(0, 8));
       }).catch(() => {});
   }, []);
 
@@ -94,7 +94,7 @@ export default function DealsOfTheDay() {
           </Link>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {deals.map((deal, i) => (
+          {deals.slice(0, 8).map((deal, i) => (
             <DealCard key={deal._id || i} deal={deal} primary={primary} borderClr={borderClr}
               cardBg={cardBg} isDark={isDark} darkBg={darkPalette.bg} buyLabel={buyLabel} onBuy={setModalData} />
           ))}

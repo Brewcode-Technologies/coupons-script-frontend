@@ -125,8 +125,13 @@ export default function DealsManagement() {
     const store = (deal.store as any);
     const storeName = store?.storeName || '';
     const serverUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:5000';
-    const logo = deal.logo || (store?.logo ? (store.logo.startsWith('http') ? store.logo : `${serverUrl}${store.logo}`) : '');
-    const img = deal.image || '';
+    
+    const rawLogo = deal.logo || store?.logo || '';
+    const logo = rawLogo ? (rawLogo.startsWith('http') || rawLogo.startsWith('data:') ? rawLogo : `${serverUrl}${rawLogo}`) : '';
+    
+    const rawImg = deal.image || '';
+    const img = rawImg ? (rawImg.startsWith('http') || rawImg.startsWith('data:') ? rawImg : `${serverUrl}${rawImg}`) : '';
+
     return (
       <div key={deal._id} className="rounded-2xl p-4 bg-white border border-slate-100 shadow-sm hover:shadow-md transition-shadow" style={{ borderColor: selected.has(deal._id!) ? '#f97316' : undefined }}>
         <div className="flex items-start justify-between mb-2">
@@ -134,15 +139,20 @@ export default function DealsManagement() {
             <IconButton size="small" onClick={() => toggleSelect(deal._id!)} style={{ color: selected.has(deal._id!) ? '#f97316' : '#d1d5db' }}>
               {selected.has(deal._id!) ? <CheckBoxIcon /> : <CheckBoxOutlineBlank />}
             </IconButton>
-            {logo ? (
-              <img src={logo} alt={deal.title} className="w-10 h-10 rounded-full object-contain border border-slate-100 bg-white p-0.5" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-            ) : img ? (
-              <img src={img} alt={deal.title} className="w-10 h-10 rounded-lg object-cover border border-slate-100" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-            ) : (
-              <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center">
-                <LocalOffer style={{ color: '#f97316', fontSize: 16 }} />
-              </div>
-            )}
+            <div className="relative w-12 h-12 flex-shrink-0">
+              {img ? (
+                <img src={img} alt={deal.title} className="w-12 h-12 rounded-lg object-cover border border-slate-100" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+              ) : logo ? (
+                <img src={logo} alt={deal.title} className="w-12 h-12 rounded-full object-contain border border-slate-100 bg-white p-0.5" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+              ) : (
+                <div className="w-12 h-12 rounded-lg bg-orange-50 flex items-center justify-center">
+                  <LocalOffer style={{ color: '#f97316', fontSize: 20 }} />
+                </div>
+              )}
+              {img && logo && (
+                <img src={logo} alt="logo" className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full object-contain border border-slate-100 bg-white shadow-sm" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+              )}
+            </div>
             <div className="min-w-0">
               <p className="font-bold text-slate-800 text-sm truncate">{deal.title}</p>
               {storeName && <p className="text-slate-400 text-xs">{storeName}</p>}

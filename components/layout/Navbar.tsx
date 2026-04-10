@@ -6,7 +6,7 @@ import NavbarThree from '@/components/navbar/NavbarThree';
 import NavbarFour from '@/components/navbar/NavbarFour';
 
 const defaultNavLinks = [
-  { name: 'Categories', url: '/category' },
+  { name: 'Categories', url: '/categories' },
   { name: 'Stores', url: '/stores' },
   { name: 'Brands', url: '/brands' },
   { name: 'Banks', url: '/banks' },

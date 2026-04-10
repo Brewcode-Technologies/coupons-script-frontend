@@ -69,7 +69,7 @@ export default function StoresDropdown({ onClose }: { onClose: () => void }) {
 
   const handleStoreClick = (store: Store) => {
     onClose();
-    router.push(`/coupons/${store.slug}-coupons`);
+    router.push(`/stores/${store.slug}`);
   };
 
   const handleMouseEnter = () => { if (leaveTimer.current) clearTimeout(leaveTimer.current); };

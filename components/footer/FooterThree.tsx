@@ -58,7 +58,7 @@ export default function FooterThree({ config }: FooterThreeProps) {
           <ul className="flex flex-col gap-2 text-sm">
             {col0.links.map((item: any) => (
               <li key={item.label} className="list-none">
-                <a href={item.href} className="hover:underline transition no-underline opacity-70 hover:opacity-100" style={{ color: textMain }}>{item.label}</a>
+                <a href={item.href.replace(/-coupons$/, '')} className="hover:underline transition no-underline opacity-70 hover:opacity-100" style={{ color: textMain }}>{item.label}</a>
               </li>
             ))}
           </ul>
@@ -70,7 +70,7 @@ export default function FooterThree({ config }: FooterThreeProps) {
           <ul className="flex flex-col gap-2 text-sm">
             {col1.links.map((item: any) => (
               <li key={item.label} className="list-none">
-                <a href={item.href} className="hover:underline transition no-underline opacity-70 hover:opacity-100" style={{ color: textMain }}>{item.label}</a>
+                <a href={item.href.replace(/-coupons$/, '')} className="hover:underline transition no-underline opacity-70 hover:opacity-100" style={{ color: textMain }}>{item.label}</a>
               </li>
             ))}
           </ul>

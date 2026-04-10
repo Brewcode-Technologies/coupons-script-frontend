@@ -32,26 +32,29 @@ export default function HeroBanner() {
         const data = res.data?.data ?? res.data ?? [];
         const active = (Array.isArray(data) ? data : []).filter((b: any) => b.isActive);
 
-        const left = active.filter((b: any) => b.bannerType !== 'hero_right').map((b: any) => ({
-          name: b.label || b.title?.split(' ')[0] || '',
-          bgColor: b.bgColor || '#673de6',
-          title: b.discount || b.title || '',
-          sub1: (b.title && b.title !== b.label) ? b.title : '',
-          sub2: b.secondDiscount || (b.couponCode ? `CODE: ${b.couponCode}` : ''),
-          sub2desc: b.secondDiscountDesc ?? b.description ?? '',
-          cta: b.cta ?? '',
-          image: b.image || '',
-          emoji: b.emoji || '',
-          link: b.storeUrl || b.buttonLink || '',
-          isImageOnly: !!(b.image && !b.discount && !b.title && !b.cta),
-          // modal data
-          storeName: (b.store as any)?.storeName || b.label || '',
-          storeLogo: (b.store as any)?.logo || '',
-          code: b.couponCode || '',
-          discount: b.discount || '',
-          details: b.description || '',
-          expiryDate: b.expiryDate || '',
-        }));
+        const left = active.filter((b: any) => b.bannerType === 'hero_left' || b.description === 'QUICK_PROMO_MARKER').map((b: any) => {
+          const isQuickPromo = b.description === 'QUICK_PROMO_MARKER';
+          return {
+            name: b.label || b.title?.split(' ')[0] || '',
+            bgColor: b.bgColor || '#673de6',
+            title: b.discount || b.title || '',
+            sub1: (b.title && b.title !== b.label) ? b.title : '',
+            sub2: b.secondDiscount || (b.couponCode ? `CODE: ${b.couponCode}` : ''),
+            sub2desc: b.secondDiscountDesc ?? b.description ?? '',
+            cta: b.cta ?? '',
+            image: b.image || '',
+            emoji: b.emoji || '',
+            link: b.storeUrl || b.buttonLink || '',
+            isImageOnly: isQuickPromo,
+            // modal data
+            storeName: (b.store as any)?.storeName || b.label || '',
+            storeLogo: (b.store as any)?.logo || '',
+            code: b.couponCode || '',
+            discount: b.discount || '',
+            details: b.description || '',
+            expiryDate: b.expiryDate || '',
+          };
+        });
 
         const right = active.filter((b: any) => b.bannerType === 'hero_right').map((b: any) => ({
           name: b.label || b.title?.split(' ')[0] || '',
