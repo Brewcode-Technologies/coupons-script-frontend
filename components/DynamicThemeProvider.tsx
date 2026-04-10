@@ -266,7 +266,7 @@ export default function DynamicThemeProvider({ children }: { children: React.Rea
       }}
     >
       <ThemeProvider theme={muiTheme}>
-        <DynamicThemeWrapper siteConfig={resolvedConfig} fontFamily={siteConfig?.fonts?.body || 'Roboto'}>
+        <DynamicThemeWrapper siteConfig={resolvedConfig} fontFamily={getFontCombination(siteConfig?.fonts?.combination).body}>
           {children}
         </DynamicThemeWrapper>
       </ThemeProvider>

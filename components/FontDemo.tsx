@@ -52,12 +52,10 @@ export default function FontDemo() {
         <h2 className="text-2xl font-bold border-b pb-2">Code & Technical Text</h2>
         <div className="bg-gray-900 text-green-400 p-4 rounded-lg">
           <code className="block">
-            // Coupon validation function<br/>
-            function validateCoupon(code) {'{'}
-            <br/>
-            &nbsp;&nbsp;return code.length > 0 && !code.expired;
-            <br/>
-            {'}'}
+            {`// Coupon validation function
+function validateCoupon(code) {
+  return code.length > 0 && !code.expired;
+}`}
           </code>
         </div>
         <p>
