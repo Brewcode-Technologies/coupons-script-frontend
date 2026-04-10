@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
-import { getCoupons, getStoreBySlug, getCategories } from '@/services/api';
+import { getCoupons, getStoreBySlug, getCategories, getStores } from '@/services/api';
 import { getImageUrl } from '@/utils/serverUrl';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
@@ -26,8 +26,10 @@ export default function StorePage() {
   const [coupons, setCoupons] = useState<any[]>([]);
   const [store, setStore] = useState<any>(null);
   const [categories, setCategories] = useState<any[]>([]);
+  const [allStores, setAllStores] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedStores, setSelectedStores] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState('all');
 
   useEffect(() => {
@@ -35,14 +37,17 @@ export default function StorePage() {
       getStoreBySlug(slug),
       getCoupons({ limit: 1000 }),
       getCategories(),
+      getStores(),
     ])
-      .then(([storeRes, couponRes, catRes]) => {
+      .then(([storeRes, couponRes, catRes, storesRes]) => {
         const storeData = storeRes.data?.data ?? storeRes.data;
         const allCoupons = couponRes.data?.data ?? couponRes.data ?? [];
         const allCats = catRes.data?.data ?? catRes.data ?? [];
+        const stores = storesRes.data?.data ?? storesRes.data ?? [];
         
         setStore(storeData);
         setCategories(allCats);
+        setAllStores(Array.isArray(stores) ? stores : []);
 
         if (storeData) {
           const storeCoupons = allCoupons.filter((c: any) => 
@@ -57,6 +62,10 @@ export default function StorePage() {
 
   const toggleCategory = (c: string) => setSelectedCategories(prev => 
     prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]
+  );
+
+  const toggleStore = (s: string) => setSelectedStores(prev => 
+    prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]
   );
 
   const couponCount = coupons.filter(c => c.code).length;
@@ -80,9 +89,13 @@ export default function StorePage() {
     if (selectedCategories.length > 0) {
       list = list.filter(c => selectedCategories.includes(c.category || c.store?.category));
     }
+
+    if (selectedStores.length > 0) {
+      list = list.filter(c => selectedStores.includes(c.store?.storeName || c.storeName));
+    }
     
     return list;
-  }, [coupons, activeTab, selectedCategories]);
+  }, [coupons, activeTab, selectedCategories, selectedStores]);
 
   const storeName = store?.storeName || store?.name || 'Store';
   const storeLogo = store?.logo ? getImageUrl(store.logo) : '';
@@ -149,10 +162,10 @@ export default function StorePage() {
         <div className="flex gap-6">
           <CouponSidebar
             categoryName={storeName}
-            stores={[]}
+            stores={allStores}
             categories={categories}
-            selectedStores={[]}
-            onStoreToggle={() => {}}
+            selectedStores={selectedStores}
+            onStoreToggle={toggleStore}
             selectedCategories={selectedCategories}
             onCategoryToggle={toggleCategory}
             totalCoupons={coupons.length}
