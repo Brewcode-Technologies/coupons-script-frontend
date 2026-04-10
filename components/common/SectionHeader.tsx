@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 
 interface SectionHeaderProps {
   title?: string;
@@ -14,12 +15,14 @@ interface SectionHeaderProps {
 export default function SectionHeader({
   title = 'THE REAL DEAL',
   subtitle = 'by',
-  subtitleBold = 'CouponsFeast',
+  subtitleBold,
   href = '/',
   dotColor = 'hsl(168, 55%, 38%)',
   titleColor,
   subtitleColor,
 }: SectionHeaderProps) {
+  const { siteConfig } = useDynamicTheme();
+  const resolvedBold = subtitleBold || siteConfig?.siteName || 'Coupons Script';
   const resolvedTitleColor = titleColor || undefined;
   const resolvedSubtitleColor = subtitleColor || undefined;
 
@@ -51,7 +54,7 @@ export default function SectionHeader({
           className="text-sm tracking-wide text-gray-700 dark:text-gray-200"
           style={{ fontFamily: "'Georgia', serif", fontStyle: 'italic', ...(resolvedSubtitleColor ? { color: resolvedSubtitleColor } : {}) }}
         >
-          {subtitle} <span className="font-semibold">{subtitleBold}</span>
+          {subtitle} <span className="font-semibold">{resolvedBold}</span>
         </span>
       </Link>
     </div>

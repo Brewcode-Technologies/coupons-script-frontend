@@ -66,7 +66,7 @@ export default function FooterOne({ config }: FooterOneProps) {
             <img src={getImageUrl(siteConfig.logos.footer)} alt={siteConfig.siteName} className="h-16 w-auto mb-2" />
           ) : (
             <h2 className="text-3xl md:text-4xl font-bold italic tracking-tight">
-              {siteConfig?.siteName || 'CouponsFeast'}{' '}
+              {siteConfig?.siteName || 'Coupons Script'}{' '}
               <span className="text-4xl md:text-5xl font-extrabold" style={{ color: accent }}>20</span>
               <span className="text-sm align-top ml-0.5">YEARS</span>
             </h2>
@@ -164,7 +164,7 @@ export default function FooterOne({ config }: FooterOneProps) {
       <div style={{ backgroundColor: secondary }}>
         <div className="max-w-7xl mx-auto px-6 py-3">
           <p className="text-sm opacity-80 text-center leading-relaxed">
-            {siteConfig?.footer?.copyright || '© 2026 CouponsFeast. All rights reserved.'}
+            {siteConfig?.footer?.copyright || '© 2026 Coupons Script. All rights reserved.'}
           </p>
         </div>
       </div>

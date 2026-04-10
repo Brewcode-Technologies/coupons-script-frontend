@@ -34,7 +34,7 @@ const StoreCard: React.FC<StoreCardProps> = ({ store }) => {
     : `${store.slug}.com`;
 
   return (
-    <Link href={`/view/${domain}`} className="no-underline block group">
+    <Link href={`/coupons/${store.slug}-coupons`} className="no-underline block group">
       <div className="rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-4 flex flex-col items-center text-center h-full"
         style={{ backgroundColor: cardBg, border: `1px solid ${cardBorder}` }}>
         <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-3 overflow-hidden" style={{ backgroundColor: logoBg }}>

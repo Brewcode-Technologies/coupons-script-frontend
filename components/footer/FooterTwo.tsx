@@ -14,7 +14,7 @@ export default function FooterTwo({ config }: FooterTwoProps) {
   const textMain  = isDark ? darkPalette.text : (config?.textColor || '#ffffff');
   const textMuted = isDark ? (darkPalette.text + 'b3') : 'rgba(255,255,255,0.7)';
   const border    = isDark ? darkPalette.cardBg : 'rgba(107,114,128,0.3)';
-  const siteName  = siteConfig?.siteName || 'CouponsFeast';
+  const siteName  = siteConfig?.siteName || 'Coupons Script';
   const logoUrl   = siteConfig?.logos?.footer;
 
   const content = siteConfig?.footerContent;

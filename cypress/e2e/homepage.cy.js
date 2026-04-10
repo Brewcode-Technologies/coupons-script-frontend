@@ -4,7 +4,7 @@ describe('Homepage', () => {
   });
 
   it('should load homepage successfully', () => {
-    cy.contains('CouponsFeast').should('be.visible');
+    cy.contains('CouponsScript').should('be.visible');
   });
 
   it('should display hero carousel', () => {

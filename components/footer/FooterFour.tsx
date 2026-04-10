@@ -17,7 +17,7 @@ export default function FooterFour({ config }: FooterFourProps) {
   const border    = isDark ? darkPalette.cardBg : '#3f3f46';
   const iconBg    = '#27272a';
   const iconBorder = '#3f3f46';
-  const siteName  = siteConfig?.siteName || 'CouponsFeast';
+  const siteName  = siteConfig?.siteName || 'Coupons Script';
   const logoUrl   = siteConfig?.logos?.footer;
   const accent    = siteConfig?.theme?.primaryColor || '#7c3aed';
 

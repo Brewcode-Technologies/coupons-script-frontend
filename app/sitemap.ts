@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://couponsfeast.com';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';  // reads from .env
 
 async function fetchJSON(url: string) {

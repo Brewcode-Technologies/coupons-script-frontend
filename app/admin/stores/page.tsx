@@ -6,6 +6,8 @@ import {
   TextField, Drawer, IconButton, Accordion, AccordionSummary, AccordionDetails
 } from '@mui/material';
 import AdminShell from '@/components/admin/AdminShell';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
+import AdminLoader from '@/components/admin/AdminLoader';
 import { getStores, createStore, updateStore, deleteStore, bulkDeleteStores, getCoupons } from '@/services/api';
 import toast from 'react-hot-toast';
 import { Add, Edit, Delete, Store, Language, Close, ExpandMore, CheckBox, CheckBoxOutlineBlank, IndeterminateCheckBox } from '@mui/icons-material';
@@ -37,10 +39,12 @@ export default function AdminStores() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
   const [couponCounts, setCouponCounts] = useState<Record<string, number>>({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => { fetchStores(); }, []);
 
   const fetchStores = async () => {
+    setLoading(true);
     try {
       const [storeRes, couponRes] = await Promise.all([getStores(), getCoupons({ limit: 10000 })]);
       setStores(storeRes.data);
@@ -51,7 +55,12 @@ export default function AdminStores() {
         if (sid) counts[sid] = (counts[sid] || 0) + 1;
       });
       setCouponCounts(counts);
-    } catch (error) { console.error('Error fetching stores:', error); }
+    } catch (error) { 
+      console.error('Error fetching stores:', error);
+      toast.error('Failed to load stores');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const closeDrawer = () => { setOpen(false); setEditId(null); setFormData({ ...defaultForm }); setSlugManual(false); };
@@ -113,31 +122,32 @@ export default function AdminStores() {
 
   return (
     <AdminShell>
-      <div className="flex justify-between items-center mb-6 p-5 rounded-2xl" style={{ background: '#fff', boxShadow: '0 2px 16px rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.07)' }}>
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: 'rgba(99,102,241,0.08)' }}><Store style={{ color: '#6366f1', fontSize: 20 }} /></div>
-          <div>
-            <h2 className="font-bold text-gray-900 text-lg leading-tight">Store Management</h2>
-            <p className="text-gray-400 text-xs">Manage your stores, logos, and store information</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          {selected.size > 0 && (
-            <Button variant="contained" startIcon={<Delete />} onClick={() => setBulkDeleteOpen(true)} size="medium"
-              style={{ background: '#ef4444', borderRadius: 12, textTransform: 'none', fontWeight: 600 }}>Delete ({selected.size})</Button>
-          )}
-          {stores.length > 0 && (
-            <Button variant="outlined" onClick={toggleAll} size="small"
-              style={{ borderColor: '#6366f1', color: '#6366f1', borderRadius: 10, textTransform: 'none', fontSize: 12 }}>
-              {isAllSelected ? 'Deselect All' : 'Select All'}
-            </Button>
-          )}
-          <Button variant="contained" startIcon={<Add />} onClick={() => setOpen(true)} size="medium"
-            style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', borderRadius: 12, textTransform: 'none', fontWeight: 600, boxShadow: '0 4px 12px rgba(99,102,241,0.35)' }}>Add Store</Button>
-        </div>
-      </div>
+      <AdminPageHeader 
+        title="Stores"
+        subtitle="Manage your stores, logos, and store information"
+        icon={<Store style={{ color: '#6366f1', fontSize: 22 }} />}
+        actions={
+          <>
+            {selected.size > 0 && (
+              <Button variant="contained" startIcon={<Delete />} onClick={() => setBulkDeleteOpen(true)} size="medium"
+                style={{ background: '#ef4444', borderRadius: 12, textTransform: 'none', fontWeight: 600 }}>Delete ({selected.size})</Button>
+            )}
+            {stores.length > 0 && (
+              <Button variant="outlined" onClick={toggleAll} size="small"
+                style={{ borderColor: '#6366f1', color: '#6366f1', borderRadius: 10, textTransform: 'none', fontSize: 12 }}>
+                {isAllSelected ? 'Deselect All' : 'Select All'}
+              </Button>
+            )}
+            <Button variant="contained" startIcon={<Add />} onClick={() => setOpen(true)} size="medium"
+              style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', borderRadius: 12, textTransform: 'none', fontWeight: 600, boxShadow: '0 4px 12px rgba(99,102,241,0.35)' }}>Add Store</Button>
+          </>
+        }
+      />
 
-      <div className="rounded-2xl overflow-hidden" style={{ background: '#fff', boxShadow: '0 2px 16px rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.07)' }}>
+      {loading ? (
+        <AdminLoader message="Loading stores..." fullPage />
+      ) : (
+        <div className="rounded-2xl overflow-hidden" style={{ background: '#fff', boxShadow: '0 2px 16px rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.07)' }}>
         <Table>
           <TableHead>
             <TableRow style={{ background: 'rgba(99,102,241,0.04)' }}>
@@ -191,7 +201,8 @@ export default function AdminStores() {
             )}
           </TableBody>
         </Table>
-      </div>
+        </div>
+      )}
 
       {/* Right Drawer */}
       <Drawer anchor="right" open={open} onClose={closeDrawer}>

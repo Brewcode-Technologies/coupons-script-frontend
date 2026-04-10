@@ -118,7 +118,7 @@ export default function StoresPage() {
                   const rawLogo = store.logo || '';
                   const logo = rawLogo.startsWith('http') ? rawLogo : rawLogo ? `${serverUrl}${rawLogo}` : '';
                   return (
-                    <Link key={store._id} href={`/${store.slug}-coupons`}
+                    <Link key={store._id} href={`/coupons/${store.slug}-coupons`}
                       className="rounded-2xl overflow-hidden hover:-translate-y-1 transition-all duration-300 cursor-pointer group no-underline block h-[100px] sm:h-[120px] md:h-[150px]"
                       style={{ boxShadow: 'rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px' }}>
                       {logo ? (
@@ -212,7 +212,7 @@ export default function StoresPage() {
                 const rawLogo = store.logo || '';
                 const logo = rawLogo.startsWith('http') ? rawLogo : rawLogo ? `${serverUrl}${rawLogo}` : '';
                 return (
-                  <Link key={store._id} href={`/${store.slug}-coupons`} className="text-center cursor-pointer group no-underline block animate-scaleIn" style={{ animationDelay: `${i * 20}ms` }}>
+                  <Link key={store._id} href={`/coupons/${store.slug}-coupons`} className="text-center cursor-pointer group no-underline block animate-scaleIn" style={{ animationDelay: `${i * 20}ms` }}>
                     <div
                       className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden flex items-center justify-center hover:border-primary/30 transition-all h-[80px] p-3"
                       style={{ boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px' }}

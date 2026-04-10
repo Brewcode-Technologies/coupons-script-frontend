@@ -1,4 +1,4 @@
-# 🎟️ CouponsFeast
+# 🎟️ CouponsScript
 
 A full-stack coupons & deals marketplace built with **Next.js 14** (App Router) and **Express.js**, featuring a dynamic admin CMS, multi-layout theming, and a responsive storefront.
 
@@ -127,18 +127,18 @@ coupons-script-backend/           # Express.js Backend
 
 ## ⚙️ Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| **Frontend** | Next.js 14 (App Router), React 18, TypeScript |
-| **Styling** | Tailwind CSS 3, MUI 5 (admin), Framer Motion |
-| **State** | Redux Toolkit, React hooks |
-| **Backend** | Express.js 4, Node.js |
-| **Database** | MongoDB (Mongoose 8) |
-| **Auth** | JWT (jsonwebtoken), bcryptjs |
-| **Images** | Cloudinary |
-| **Analytics** | Google Analytics 4 (server-side) |
-| **Testing** | Cypress 15 (E2E) |
-| **Icons** | Lucide React, React Icons, MUI Icons |
+| Layer         | Technology                                    |
+| ------------- | --------------------------------------------- |
+| **Frontend**  | Next.js 14 (App Router), React 18, TypeScript |
+| **Styling**   | Tailwind CSS 3, MUI 5 (admin), Framer Motion  |
+| **State**     | Redux Toolkit, React hooks                    |
+| **Backend**   | Express.js 4, Node.js                         |
+| **Database**  | MongoDB (Mongoose 8)                          |
+| **Auth**      | JWT (jsonwebtoken), bcryptjs                  |
+| **Images**    | Cloudinary                                    |
+| **Analytics** | Google Analytics 4 (server-side)              |
+| **Testing**   | Cypress 15 (E2E)                              |
+| **Icons**     | Lucide React, React Icons, MUI Icons          |
 
 ---
 
@@ -153,8 +153,8 @@ coupons-script-backend/           # Express.js Backend
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/couponsfeast.git
-cd couponsfeast
+git clone https://github.com/<your-username>/CouponsScript.git
+cd CouponsScript
 ```
 
 ### 2. Backend Setup
@@ -217,22 +217,22 @@ npm start          # Start production server
 
 ### Frontend (`.env`)
 
-| Variable | Description | Default |
-|----------|-------------|---------|
+| Variable        | Description          | Default                 |
+| --------------- | -------------------- | ----------------------- |
 | `NEXT_BASE_URL` | Backend API base URL | `http://localhost:5000` |
 
 ### Backend (`.env`)
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `MONGODB_URI` | MongoDB connection string | ✅ |
-| `PORT` | Server port | `5000` |
-| `JWT_SECRET` | JWT signing secret | ✅ |
-| `GA4_MEASUREMENT_ID` | Google Analytics 4 Measurement ID | ❌ |
-| `GA4_API_SECRET` | Google Analytics 4 API Secret | ❌ |
-| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | ✅ |
-| `CLOUDINARY_API_KEY` | Cloudinary API key | ✅ |
-| `CLOUDINARY_API_SECRET` | Cloudinary API secret | ✅ |
+| Variable                | Description                       | Required |
+| ----------------------- | --------------------------------- | -------- |
+| `MONGODB_URI`           | MongoDB connection string         | ✅       |
+| `PORT`                  | Server port                       | `5000`   |
+| `JWT_SECRET`            | JWT signing secret                | ✅       |
+| `GA4_MEASUREMENT_ID`    | Google Analytics 4 Measurement ID | ❌       |
+| `GA4_API_SECRET`        | Google Analytics 4 API Secret     | ❌       |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name             | ✅       |
+| `CLOUDINARY_API_KEY`    | Cloudinary API key                | ✅       |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret             | ✅       |
 
 ---
 
@@ -240,33 +240,33 @@ npm start          # Start production server
 
 ### Public Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/public/stores/list` | List all stores |
-| GET | `/api/public/stores/details/:slug` | Store by slug |
-| GET | `/api/public/coupons/list` | List coupons (with filters) |
-| GET | `/api/public/coupons/search` | Search coupons |
-| POST | `/api/public/coupons/track-click/:id` | Track coupon click |
-| GET | `/api/public/categories/list` | List categories |
-| GET | `/api/public/deals/list` | List deals |
-| GET | `/api/public/blog/list` | List blog articles |
-| GET | `/api/public/site/config` | Site configuration |
-| GET | `/api/public/site/banners/list` | Hero banners |
-| GET | `/api/public/site/:pageName` | CMS page content |
+| Method | Endpoint                              | Description                 |
+| ------ | ------------------------------------- | --------------------------- |
+| GET    | `/api/public/stores/list`             | List all stores             |
+| GET    | `/api/public/stores/details/:slug`    | Store by slug               |
+| GET    | `/api/public/coupons/list`            | List coupons (with filters) |
+| GET    | `/api/public/coupons/search`          | Search coupons              |
+| POST   | `/api/public/coupons/track-click/:id` | Track coupon click          |
+| GET    | `/api/public/categories/list`         | List categories             |
+| GET    | `/api/public/deals/list`              | List deals                  |
+| GET    | `/api/public/blog/list`               | List blog articles          |
+| GET    | `/api/public/site/config`             | Site configuration          |
+| GET    | `/api/public/site/banners/list`       | Hero banners                |
+| GET    | `/api/public/site/:pageName`          | CMS page content            |
 
 ### Admin Endpoints (JWT Protected)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/login` | Admin login |
-| CRUD | `/api/admin/stores/*` | Store management |
-| CRUD | `/api/admin/coupons/*` | Coupon management |
-| CRUD | `/api/admin/deals/*` | Deal management |
-| CRUD | `/api/admin/categories/*` | Category management |
-| CRUD | `/api/admin/blog/*` | Blog management |
-| CRUD | `/api/admin/banner/*` | Banner management |
-| CRUD | `/api/admin/pages/*` | CMS pages management |
-| PUT | `/api/admin/pages/site-config/update` | Site config update |
+| Method | Endpoint                              | Description          |
+| ------ | ------------------------------------- | -------------------- |
+| POST   | `/api/auth/login`                     | Admin login          |
+| CRUD   | `/api/admin/stores/*`                 | Store management     |
+| CRUD   | `/api/admin/coupons/*`                | Coupon management    |
+| CRUD   | `/api/admin/deals/*`                  | Deal management      |
+| CRUD   | `/api/admin/categories/*`             | Category management  |
+| CRUD   | `/api/admin/blog/*`                   | Blog management      |
+| CRUD   | `/api/admin/banner/*`                 | Banner management    |
+| CRUD   | `/api/admin/pages/*`                  | CMS pages management |
+| PUT    | `/api/admin/pages/site-config/update` | Site config update   |
 
 ---
 
@@ -333,20 +333,20 @@ The app supports fully dynamic theming configured from the admin panel:
 
 Access at `/admin/login`
 
-| Module | Features |
-|--------|----------|
-| **Dashboard** | Stats overview, analytics |
-| **Stores** | CRUD, logo upload, promo info, FAQs, sidebar data |
-| **Coupons** | CRUD, store association, click tracking, expiry |
-| **Deals** | CRUD, featured images, deal types |
-| **Categories** | CRUD, nav link toggle, slug management |
-| **Banners** | Hero carousel management |
-| **Blog** | Rich text editor, article management |
-| **Pages** | CMS pages with legal templates (Privacy, Terms, Cookie) |
-| **CMS** | Site name, logos, theme colors, navbar/footer selection |
-| **Promo Banners** | Promotional banner management |
-| **Popular Links** | Footer popular links |
-| **Tags** | Tag management for coupons |
+| Module            | Features                                                |
+| ----------------- | ------------------------------------------------------- |
+| **Dashboard**     | Stats overview, analytics                               |
+| **Stores**        | CRUD, logo upload, promo info, FAQs, sidebar data       |
+| **Coupons**       | CRUD, store association, click tracking, expiry         |
+| **Deals**         | CRUD, featured images, deal types                       |
+| **Categories**    | CRUD, nav link toggle, slug management                  |
+| **Banners**       | Hero carousel management                                |
+| **Blog**          | Rich text editor, article management                    |
+| **Pages**         | CMS pages with legal templates (Privacy, Terms, Cookie) |
+| **CMS**           | Site name, logos, theme colors, navbar/footer selection |
+| **Promo Banners** | Promotional banner management                           |
+| **Popular Links** | Footer popular links                                    |
+| **Tags**          | Tag management for coupons                              |
 
 ---
 

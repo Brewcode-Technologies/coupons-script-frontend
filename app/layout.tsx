@@ -4,6 +4,7 @@ import { store } from '@/store';
 import CssBaseline from '@mui/material/CssBaseline';
 import DynamicThemeProvider from '@/components/DynamicThemeProvider';
 import { ThemeProvider as CustomThemeProvider } from '@/components/ThemeProvider';
+import DynamicFontLoader from '@/components/DynamicFontLoader';
 import { Toaster } from 'react-hot-toast';
 import '@/styles/globals.css';
 import PublicLayout from '@/components/layout/PublicLayout';
@@ -25,8 +26,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
 
-        {/* Fonts */}
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+        {/* Default font - will be overridden by DynamicFontLoader */}
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet" />
 
         {/* Structured Data - Organization */}
         <script
@@ -35,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebSite",
-              "name": "Coupons Site",
+              "name": "Coupons Script",
               "url": process.env.NEXT_PUBLIC_SITE_URL || "https://example.com",
               "potentialAction": {
                 "@type": "SearchAction",
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Provider store={store}>
           <CustomThemeProvider>
           <DynamicThemeProvider>
+            <DynamicFontLoader />
             <CssBaseline />
             <PublicLayout>{children}</PublicLayout>
             <Toaster

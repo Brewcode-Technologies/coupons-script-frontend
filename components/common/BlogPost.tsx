@@ -24,7 +24,7 @@ export default function BlogPost({
   backLabel = 'Back to Home',
 }: BlogPostProps) {
   const { siteConfig } = useDynamicTheme();
-  const siteName = siteConfig?.siteName || 'CouponsFeast';
+  const siteName = siteConfig?.siteName || 'Coupons Script';
 
   if (!post) {
     return (

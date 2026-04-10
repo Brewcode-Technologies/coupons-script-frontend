@@ -22,7 +22,7 @@ export default function NavbarOne({ navLinks, config }: NavbarOneProps) {
 
   const isDark = theme === 'dark';
   const primary = siteConfig?.theme?.primaryColor || '#7c3aed';
-  const siteName = siteConfig?.siteName || 'CouponsFeast';
+  const siteName = siteConfig?.siteName || 'Coupons Script';
   const logoUrl = siteConfig?.logos?.navbar;
   const showThemeToggle = config?.showThemeToggle ?? true;
   const ctaText = config?.ctaText || 'Get Started';

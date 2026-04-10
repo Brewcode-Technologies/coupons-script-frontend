@@ -55,9 +55,9 @@ const StoreCard: React.FC<StoreCardProps> = ({
         </Typography>
 
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-          <Link href={`/view/${store.websiteUrl ? store.websiteUrl.replace(/https?:\/\/(www\.)?/, '').replace(/\/$/, '') : `${store.slug}.com`}`} passHref>
+          <Link href={`/coupons/${store.slug}-coupons`} passHref>
             <Button variant="contained" size="small">
-              View Store
+              View Coupons
             </Button>
           </Link>
 

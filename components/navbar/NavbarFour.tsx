@@ -67,7 +67,7 @@ export default function NavbarFour() {
   const isDark = theme === 'dark';
   const primary = siteConfig?.theme?.primaryColor || '#7c3aed';
   const secondary = siteConfig?.theme?.secondaryColor || '#9333ea';
-  const siteName = siteConfig?.siteName || 'CouponsFeast';
+  const siteName = siteConfig?.siteName || 'Coupons Script';
   const customNavBg = siteConfig?.navbar?.bgColor;
   const hasCustomNavBg =
     customNavBg &&

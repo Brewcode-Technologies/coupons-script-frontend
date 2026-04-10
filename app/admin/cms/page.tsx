@@ -26,6 +26,8 @@ import { getNavigation, updateNavigation, getPage, updatePage, getCategories, cr
 
 import SiteConfigAdmin from '@/components/admin/SiteConfigAdmin';
 import AdminShell from '@/components/admin/AdminShell';
+import FontDemo from '@/components/FontDemo';
+import LiveFontPreview from '@/components/admin/LiveFontPreview';
 import toast from 'react-hot-toast';
 import { HelpCircle, Home, Store as StoreIcon, Globe, CheckCircle, XCircle } from 'lucide-react';
 
@@ -470,8 +472,24 @@ export default function CMSAdmin() {
         CMS Admin Panel
       </Typography>
 
+      {/* Live Font Preview */}
+      <LiveFontPreview />
+
       {/* Comprehensive Site Configuration */}
       <SiteConfigAdmin />
+
+      {/* Font Demo Section */}
+      <Accordion>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography variant="h6">Font Preview & Testing</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography variant="body2" color="text.secondary" gutterBottom sx={{ mb: 3 }}>
+            Preview how different font combinations look across your application. Changes apply instantly when you select a new font combination in the Site Configuration above.
+          </Typography>
+          <FontDemo />
+        </AccordionDetails>
+      </Accordion>
 
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -1424,6 +1442,98 @@ export default function CMSAdmin() {
               </Box>
             );
           })}
+        </AccordionDetails>
+      </Accordion>
+
+      <Accordion>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography variant="h6">Blog Configuration</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography variant="body2" color="text.secondary" gutterBottom sx={{ mb: 3 }}>
+            Configure blog-related features like social sidebar, sharing options, and display settings.
+          </Typography>
+          
+          {/* Social Sidebar Configuration */}
+          <Card variant="outlined" sx={{ mb: 3, p: 3, backgroundColor: '#f8f9fa' }}>
+            <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
+              Social Sidebar Settings
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              Control the floating social sidebar that appears on blog post pages.
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={3}>
+                <FormControl fullWidth>
+                  <InputLabel>Enable Social Sidebar</InputLabel>
+                  <Select
+                    value="true"
+                    label="Enable Social Sidebar"
+                  >
+                    <MenuItem value="true">Enabled</MenuItem>
+                    <MenuItem value="false">Disabled</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <FormControl fullWidth>
+                  <InputLabel>Show Like Button</InputLabel>
+                  <Select
+                    value="true"
+                    label="Show Like Button"
+                  >
+                    <MenuItem value="true">Show</MenuItem>
+                    <MenuItem value="false">Hide</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <FormControl fullWidth>
+                  <InputLabel>Show Share Button</InputLabel>
+                  <Select
+                    value="true"
+                    label="Show Share Button"
+                  >
+                    <MenuItem value="true">Show</MenuItem>
+                    <MenuItem value="false">Hide</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <FormControl fullWidth>
+                  <InputLabel>Show Email Button</InputLabel>
+                  <Select
+                    value="true"
+                    label="Show Email Button"
+                  >
+                    <MenuItem value="true">Show</MenuItem>
+                    <MenuItem value="false">Hide</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <FormControl fullWidth>
+                  <InputLabel>Sidebar Position</InputLabel>
+                  <Select
+                    value="left"
+                    label="Sidebar Position"
+                  >
+                    <MenuItem value="left">Left Side</MenuItem>
+                    <MenuItem value="right">Right Side</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} md={9}>
+                <Button 
+                  variant="contained" 
+                  sx={{ mt: 2 }}
+                  onClick={() => toast.success('Blog settings saved!')}
+                >
+                  Save Blog Settings
+                </Button>
+              </Grid>
+            </Grid>
+          </Card>
         </AccordionDetails>
       </Accordion>
 

@@ -13,8 +13,9 @@
   --color-success:   16 185 129;
   --color-error:     239 68 68;
   --color-warning:   245 158 11;
-  --heading-font: Roboto;
-  --body-font: Roboto;
+  --heading-font: Inter, system-ui, -apple-system, sans-serif;
+  --body-font: Roboto, system-ui, -apple-system, sans-serif;
+  --mono-font: "Fira Code", "JetBrains Mono", Consolas, monospace;
 }
 
 [data-theme="blue"] {
@@ -231,12 +232,31 @@ body {
   scroll-behavior: smooth;
 }
 
-/* ── Use dynamic font from theme (set via --body-font CSS var) ── */
+/* ── Use dynamic font from theme (set via CSS vars) ── */
 html, body, *, *::before, *::after {
-  font-family: var(--body-font, 'Roboto'), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  font-family: var(--body-font, 'Roboto, system-ui, -apple-system, sans-serif') !important;
 }
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--heading-font, var(--body-font, 'Roboto')), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+h1, h2, h3, h4, h5, h6, .heading-font {
+  font-family: var(--heading-font, var(--body-font, 'Inter, system-ui, -apple-system, sans-serif')) !important;
+}
+code, pre, .font-mono, .monospace {
+  font-family: var(--mono-font, '"Fira Code", "JetBrains Mono", Consolas, monospace') !important;
+}
+
+/* Override Material-UI typography */
+.MuiTypography-h1, .MuiTypography-h2, .MuiTypography-h3, 
+.MuiTypography-h4, .MuiTypography-h5, .MuiTypography-h6 {
+  font-family: var(--heading-font, var(--body-font, 'Inter, system-ui, -apple-system, sans-serif')) !important;
+}
+
+.MuiTypography-body1, .MuiTypography-body2, .MuiTypography-caption,
+.MuiTypography-subtitle1, .MuiTypography-subtitle2 {
+  font-family: var(--body-font, 'Roboto, system-ui, -apple-system, sans-serif') !important;
+}
+
+/* Force font application on common elements */
+p, span, div, a, button, input, textarea, select, label {
+  font-family: var(--body-font, 'Roboto, system-ui, -apple-system, sans-serif') !important;
 }
 
 /* ── Reset anchor defaults — no underline, inherit color ── */
@@ -334,6 +354,12 @@ a {
 }
 .animate-pulse {
   animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+}
+
+/* Theme-aware shimmer animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 /* Better button press feedback */

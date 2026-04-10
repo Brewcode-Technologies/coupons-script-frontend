@@ -196,7 +196,7 @@ export default function NavbarTwo({ navLinks, config }: NavbarTwoProps) {
               <img src={getImageUrl(siteConfig.logos.navbar)} alt={siteConfig.siteName || 'Logo'} className="h-8 w-auto" />
             ) : (
               <span className="font-extrabold text-2xl tracking-tight" style={{ color: navText }}>
-                {siteConfig?.siteName || 'CouponsFeast'}
+                {siteConfig?.siteName || 'Coupons Script'}
               </span>
             )}
           </Link>

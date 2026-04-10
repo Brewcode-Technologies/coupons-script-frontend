@@ -87,9 +87,7 @@ export default function SiteConfigAdmin() {
       ]
     },
     fonts: {
-      heading: 'Inter',
-      body: 'Roboto',
-      mono: 'Fira Code'
+      combination: 'modern'
     },
     logos: {
       navbar: '',
@@ -505,44 +503,100 @@ export default function SiteConfigAdmin() {
           <Typography variant="h6">Typography & Fonts</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={4}>
-              <TextField
-                fullWidth
-                label="Heading Font"
-                value={config.fonts.heading}
-                onChange={(e) => setConfig({
-                  ...config, 
-                  fonts: {...config.fonts, heading: e.target.value}
-                })}
-                helperText="Font for headings (h1, h2, h3, etc.)"
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <TextField
-                fullWidth
-                label="Body Font"
-                value={config.fonts.body}
-                onChange={(e) => setConfig({
-                  ...config, 
-                  fonts: {...config.fonts, body: e.target.value}
-                })}
-                helperText="Font for body text and paragraphs"
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <TextField
-                fullWidth
-                label="Monospace Font"
-                value={config.fonts.mono}
-                onChange={(e) => setConfig({
-                  ...config, 
-                  fonts: {...config.fonts, mono: e.target.value}
-                })}
-                helperText="Font for code and technical text"
-              />
-            </Grid>
+          <Alert severity="info" sx={{ mb: 3 }}>
+            Choose from carefully curated font combinations optimized for coupon applications. Each combination includes heading, body, and monospace fonts that work perfectly together.
+          </Alert>
+          
+          <Typography variant="subtitle1" fontWeight="bold" gutterBottom>Font Combination</Typography>
+          <Grid container spacing={2} sx={{ mb: 3 }}>
+            {[
+              { key: 'modern', label: 'Modern', desc: 'Inter + Roboto + Fira Code', preview: { heading: 'Inter', body: 'Roboto', mono: 'Fira Code' } },
+              { key: 'classic', label: 'Classic', desc: 'Playfair Display + Source Sans Pro + Monaco', preview: { heading: 'Playfair Display', body: 'Source Sans Pro', mono: 'Monaco' } },
+              { key: 'minimal', label: 'Minimal', desc: 'Poppins + Open Sans + Consolas', preview: { heading: 'Poppins', body: 'Open Sans', mono: 'Consolas' } },
+              { key: 'elegant', label: 'Elegant', desc: 'Crimson Text + Lato + Courier New', preview: { heading: 'Crimson Text', body: 'Lato', mono: 'Courier New' } },
+              { key: 'tech', label: 'Tech', desc: 'JetBrains Mono + IBM Plex Sans + JetBrains Mono', preview: { heading: 'JetBrains Mono', body: 'IBM Plex Sans', mono: 'JetBrains Mono' } },
+              { key: 'friendly', label: 'Friendly', desc: 'Nunito + Nunito Sans + Source Code Pro', preview: { heading: 'Nunito', body: 'Nunito Sans', mono: 'Source Code Pro' } },
+              { key: 'professional', label: 'Professional', desc: 'Merriweather + PT Sans + Menlo', preview: { heading: 'Merriweather', body: 'PT Sans', mono: 'Menlo' } },
+              { key: 'creative', label: 'Creative', desc: 'Montserrat + Raleway + SF Mono', preview: { heading: 'Montserrat', body: 'Raleway', mono: 'SF Mono' } },
+              { key: 'clean', label: 'Clean', desc: 'System UI + Apple System + UI Monospace', preview: { heading: 'System UI', body: '-apple-system', mono: 'ui-monospace' } },
+              { key: 'bold', label: 'Bold', desc: 'Oswald + Roboto Condensed + Roboto Mono', preview: { heading: 'Oswald', body: 'Roboto Condensed', mono: 'Roboto Mono' } }
+            ].map((font) => {
+              const selected = (config.fonts?.combination || 'modern') === font.key;
+              return (
+                <Grid item xs={12} sm={6} md={4} key={font.key}>
+                  <Box
+                    onClick={() => {
+                      const newConfig = {
+                        ...config, 
+                        fonts: { combination: font.key }
+                      };
+                      setConfig(newConfig);
+                      
+                      // Apply fonts immediately for preview
+                      const fontCombination = {
+                        modern: { heading: 'Inter, system-ui, sans-serif', body: 'Roboto, system-ui, sans-serif', mono: '"Fira Code", monospace' },
+                        classic: { heading: '"Playfair Display", Georgia, serif', body: '"Source Sans Pro", system-ui, sans-serif', mono: 'Monaco, monospace' },
+                        minimal: { heading: 'Poppins, system-ui, sans-serif', body: '"Open Sans", system-ui, sans-serif', mono: 'Consolas, monospace' },
+                        elegant: { heading: '"Crimson Text", Georgia, serif', body: 'Lato, system-ui, sans-serif', mono: '"Courier New", monospace' },
+                        tech: { heading: '"JetBrains Mono", monospace', body: '"IBM Plex Sans", system-ui, sans-serif', mono: '"JetBrains Mono", monospace' },
+                        friendly: { heading: 'Nunito, system-ui, sans-serif', body: '"Nunito Sans", system-ui, sans-serif', mono: '"Source Code Pro", monospace' },
+                        professional: { heading: 'Merriweather, Georgia, serif', body: '"PT Sans", system-ui, sans-serif', mono: 'Menlo, monospace' },
+                        creative: { heading: 'Montserrat, system-ui, sans-serif', body: 'Raleway, system-ui, sans-serif', mono: '"SF Mono", monospace' },
+                        clean: { heading: 'system-ui, -apple-system, sans-serif', body: 'system-ui, -apple-system, sans-serif', mono: 'ui-monospace, monospace' },
+                        bold: { heading: 'Oswald, Impact, sans-serif', body: '"Roboto Condensed", system-ui, sans-serif', mono: '"Roboto Mono", monospace' }
+                      }[font.key] || { heading: 'Inter', body: 'Roboto', mono: 'Fira Code' };
+                      
+                      // Apply immediately to CSS variables
+                      document.documentElement.style.setProperty('--heading-font', fontCombination.heading);
+                      document.documentElement.style.setProperty('--body-font', fontCombination.body);
+                      document.documentElement.style.setProperty('--mono-font', fontCombination.mono);
+                      
+                      // Force immediate re-render
+                      document.body.style.fontFamily = fontCombination.body;
+                      
+                      // Show preview toast
+                      toast.success(`Font changed to ${font.label}! Save configuration to apply permanently.`);
+                    }}
+                    sx={{
+                      cursor: 'pointer', 
+                      borderRadius: 2, 
+                      overflow: 'hidden',
+                      border: selected ? `3px solid ${config.theme.primaryColor}` : '3px solid #e5e7eb',
+                      boxShadow: selected ? 4 : 1,
+                      transition: 'transform 0.15s, box-shadow 0.15s',
+                      '&:hover': { transform: 'scale(1.02)' },
+                      height: 120
+                    }}
+                  >
+                    <Box sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                      <Typography variant="h6" sx={{ fontFamily: font.preview.heading, fontSize: 16, fontWeight: 'bold', mb: 0.5 }}>
+                        {font.label}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: font.preview.body, fontSize: 12, color: 'text.secondary', mb: 1, flex: 1 }}>
+                        {font.desc}
+                      </Typography>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                        <Typography variant="caption" sx={{ fontFamily: font.preview.heading, fontSize: 11 }}>Heading: {font.preview.heading}</Typography>
+                        <Typography variant="caption" sx={{ fontFamily: font.preview.body, fontSize: 11 }}>Body: {font.preview.body}</Typography>
+                        <Typography variant="caption" sx={{ fontFamily: font.preview.mono, fontSize: 10 }}>Code: {font.preview.mono}</Typography>
+                      </Box>
+                      {selected && (
+                        <Typography variant="caption" color="success.main" fontWeight="bold" sx={{ textAlign: 'center', mt: 1 }}>
+                          Active
+                        </Typography>
+                      )}
+                    </Box>
+                  </Box>
+                </Grid>
+              );
+            })}
           </Grid>
+          
+          <Alert severity="success" sx={{ mt: 2 }}>
+            <Typography variant="body2">
+              <strong>Performance Optimized:</strong> Each combination loads only the necessary fonts, ensuring fast page loads while maintaining beautiful typography.
+            </Typography>
+          </Alert>
         </AccordionDetails>
       </Accordion>
 

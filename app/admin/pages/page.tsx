@@ -31,9 +31,7 @@ const emptyPage = { title: '', slug: '', description: '', template: 'default', i
 const emptySection = { type: 'customHTML', title: '', content: '', image: '', backgroundColor: '', buttonText: '', buttonLink: '', limit: 8, order: 1 };
 
 const PRIVACY_TEMPLATE = `
-<p><strong>COUPON FEAST</strong> IS OWNED AND OPERATED BY Coupon Feast Pvt. Ltd. BY USING THE WEBSITE, YOU AGREE TO THE TERMS AND CONDITIONS OF THIS POLICY. IF YOU DO NOT AGREE WITH THE TERMS AND CONDITIONS OF THIS POLICY, PLEASE DO NOT PROCEED FURTHER TO USE THIS WEBSITE.</p>
-
-<p>We are committed to protecting and respecting your privacy. This policy (together with our website terms and conditions) sets in place the fundamentals based on which any personal data we collect from you or that you provide us, will be processed. Please read the following points carefully to understand our views and practices regarding your personal data and how we will treat it.</p>
+<p><strong>YOUR COMPANY NAME</strong> IS OWNED AND OPERATED BY Your Company. BY USING THE WEBSITE, YOU AGREE TO THE TERMS AND CONDITIONS OF THIS POLICY. IF YOU DO NOT AGREE WITH THE TERMS AND CONDITIONS OF THIS POLICY, PLEASE DO NOT PROCEED FURTHER TO USE THIS WEBSITE.</p>
 
 <h2>INFORMATION WE MAY COLLECT FROM YOU</h2>
 <ul>
@@ -81,49 +79,49 @@ const PRIVACY_TEMPLATE = `
 </ul>
 
 <h2>We Value Your Privacy</h2>
-<p>If you have any questions or complaints concerning this Privacy Policy, please contact us by e-mail at <a href="mailto:support@couponsfeast.com">support@couponsfeast.com</a></p>
+<p>If you have any questions or complaints concerning this Privacy Policy, please contact us by e-mail at <a href="mailto:support@example.com">support@example.com</a></p>
 `.trim();
 
 const TERMS_TEMPLATE = `
 <h2>TERMS ACCEPTANCE</h2>
-<p>Coupon Feast (hereinafter referred to as "Coupon Feast", "we", "us", or "our") provides a digital coupon marketplace (the "Services") which includes, and is accessible via the website. The Services allow users to access coupons of certain third-party merchants ("Merchants") for online use. By using the Services, you agree to comply with and be legally bound by the terms and conditions of these Terms of Use ("Terms").</p>
+<p>Coupons Script (hereinafter referred to as "Coupons Script", "we", "us", or "our") provides a digital coupon marketplace (the "Services") which includes, and is accessible via the website. The Services allow users to access coupons of certain third-party merchants ("Merchants") for online use. By using the Services, you agree to comply with and be legally bound by the terms and conditions of these Terms of Use ("Terms").</p>
 <p>If you do not agree to these terms, please do not use the Services.</p>
 <p><strong>Unauthorized access, distribution, reproduction, copying, retransmission, publication, sale, exploitation (commercial or otherwise), or any other form of transfer of any portion of the Site, Application or Services is hereby expressly prohibited.</strong></p>
 
 <h2>INTRODUCTION</h2>
-<p>Coupon Feast offers you the specified discount against items/products belonging to the concerned merchants that are widely sold online. These discount vouchers are set-up by the promotional criteria by the merchants themselves and can be availed by anyone. These coupons usually last for a certain amount of time and will expire after a specified period.</p>
+<p>Coupons Script offers you the specified discount against items/products belonging to the concerned merchants that are widely sold online. These discount vouchers are set-up by the promotional criteria by the merchants themselves and can be availed by anyone. These coupons usually last for a certain amount of time and will expire after a specified period.</p>
 <p>"Login" means we have enabled the "User" to register and have access to certain elements of the website under our terms of use.</p>
 <p>"User" means any person who visits or uses the website.</p>
 
 <h2>PARTICIPATION</h2>
 <h3>Registration</h3>
-<p>To utilize certain portions of the Services, you may be required to complete a registration process and establish an account with Coupon Feast ("Account"). You represent and warrant that all information provided by you is current, accurate, and complete.</p>
+<p>To utilize certain portions of the Services, you may be required to complete a registration process and establish an account with Coupons Script ("Account"). You represent and warrant that all information provided by you is current, accurate, and complete.</p>
 
 <h3>Password and Security</h3>
 <p>As a registered user of the Services, you may receive or establish a user name and one or more passwords. You are solely responsible for maintaining the confidentiality and security of your password(s) and account(s).</p>
 
 <h3>Privacy</h3>
-<p>Coupon Feast respects the privacy of the users. The Privacy Policy provided via the Site is expressly incorporated herein by reference and made a part of these Terms.</p>
+<p>Coupons Script respects the privacy of the users. The Privacy Policy provided via the Site is expressly incorporated herein by reference and made a part of these Terms.</p>
 
 <h2>ACCURACY</h2>
-<p>Coupon Feast makes no representation or warranty as to the accuracy or fitness for use of any offers, including, but not limited to, coupons, rebates, discounts, etc. posted via the Services or that any third party will honor or acknowledge any such offers.</p>
-<p>Coupon Feast is not responsible for providing any value for any offers, coupons, rebates, discounts, etc. posted via the Services.</p>
+<p>Coupons Script makes no representation or warranty as to the accuracy or fitness for use of any offers, including, but not limited to, coupons, rebates, discounts, etc. posted via the Services or that any third party will honor or acknowledge any such offers.</p>
+<p>Coupons Script is not responsible for providing any value for any offers, coupons, rebates, discounts, etc. posted via the Services.</p>
 
 <h2>TRADEMARK INFORMATION</h2>
-<p>You agree that all of Coupon Feast trademarks, trade names, service marks, and other logos and brand features that are displayed via the Services are trademarks and the property of Coupon Feast. You agree not to display or use Coupon Feast's Marks in any manner without prior permission.</p>
+<p>You agree that all of Coupons Script trademarks, trade names, service marks, and other logos and brand features that are displayed via the Services are trademarks and the property of Coupons Script. You agree not to display or use Coupons Script's Marks in any manner without prior permission.</p>
 
 <h2>INTELLECTUAL PROPERTY OWNERSHIP</h2>
-<p>All right, title and interest in the Services, including technology and trade secrets embodied therein, shall belong solely and exclusively to Coupon Feast or its licensors. You shall have no rights whatsoever in any of the foregoing.</p>
+<p>All right, title and interest in the Services, including technology and trade secrets embodied therein, shall belong solely and exclusively to Coupons Script or its licensors. You shall have no rights whatsoever in any of the foregoing.</p>
 
 <h2>DISCLAIMER, RELEASE &amp; LIMITATION OF LIABILITY</h2>
 <h3>Disclaimer</h3>
-<p>The services are provided by Coupon Feast on an "As is" and "As available" basis. Coupon Feast makes no representations or warranties of any kind, express or implied.</p>
+<p>The services are provided by Coupons Script on an "As is" and "As available" basis. Coupons Script makes no representations or warranties of any kind, express or implied.</p>
 
 <h3>Release</h3>
 <p>You are solely responsible for your interactions with merchants and other users of the site.</p>
 
 <h3>Limitation of Liability</h3>
-<p>Coupon Feast will not be liable for any damages of any kind arising from the use of this service, including, but not limited to direct, indirect, incidental, punitive, and consequential damages.</p>
+<p>Coupons Script will not be liable for any damages of any kind arising from the use of this service, including, but not limited to direct, indirect, incidental, punitive, and consequential damages.</p>
 
 <h2>RESTRICTED ACCESS</h2>
 <ol>
@@ -133,9 +131,9 @@ const TERMS_TEMPLATE = `
 `.trim();
 
 const COOKIE_TEMPLATE = `
-<p><strong>COUPON FEAST</strong> IS OWNED AND OPERATED BY Coupon Feast Pvt. Ltd. BY USING THE WEBSITE, YOU AGREE TO THE TERMS AND CONDITIONS OF THIS COOKIE POLICY. IF YOU DO NOT AGREE WITH THE TERMS AND CONDITIONS OF THIS POLICY, PLEASE DO NOT PROCEED FURTHER TO USE THIS WEBSITE.</p>
+<p><strong>YOUR COMPANY NAME</strong> IS OWNED AND OPERATED BY Your Company. BY USING THE WEBSITE, YOU AGREE TO THE TERMS AND CONDITIONS OF THIS COOKIE POLICY. IF YOU DO NOT AGREE WITH THE TERMS AND CONDITIONS OF THIS POLICY, PLEASE DO NOT PROCEED FURTHER TO USE THIS WEBSITE.</p>
 
-<p>This Cookie Policy explains how Coupon Feast ("we", "us", or "our") uses cookies and similar technologies when you visit our website. We are committed to being transparent about the technologies we use and how they affect your experience.</p>
+<p>This Cookie Policy explains how Coupons Script ("we", "us", or "our") uses cookies and similar technologies when you visit our website. We are committed to being transparent about the technologies we use and how they affect your experience.</p>
 
 <h2>WHAT ARE COOKIES?</h2>
 <p>Cookies are small text files that are placed on your computer or mobile device when you visit a website. They are widely used to make websites work more efficiently, as well as to provide information to the owners of the site. Cookies help us improve your browsing experience and deliver personalized content.</p>
@@ -192,7 +190,7 @@ const COOKIE_TEMPLATE = `
 <p>We may update this Cookie Policy from time to time to reflect changes in technology, legislation, or our data practices. When we make changes, we will update the date at the top of this policy. We encourage you to review this policy periodically to stay informed about how we use cookies.</p>
 
 <h2>CONTACT US</h2>
-<p>If you have any questions about our use of cookies or this Cookie Policy, please contact us by e-mail at <a href="mailto:support@couponsfeast.com">support@couponsfeast.com</a></p>
+<p>If you have any questions about our use of cookies or this Cookie Policy, please contact us by e-mail at <a href="mailto:support@example.com">support@example.com</a></p>
 `.trim();
 
 export default function AdminPagesManager() {

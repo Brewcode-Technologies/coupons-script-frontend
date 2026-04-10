@@ -24,7 +24,7 @@ export default function NavbarThree({ navLinks, config }: NavbarThreeProps) {
   const primary = siteConfig?.theme?.primaryColor || '#7c3aed';
   const secondary = siteConfig?.theme?.secondaryColor || '#9333ea';
   const accent = (siteConfig?.theme as any)?.accentColor || '#f59e0b';
-  const siteName = siteConfig?.siteName || 'CouponsFeast';
+  const siteName = siteConfig?.siteName || 'Coupons Script';
   const logoUrl = siteConfig?.logos?.navbar;
   const showThemeToggle = config?.showThemeToggle ?? true;
   const ctaText = config?.ctaText || 'Get Started';

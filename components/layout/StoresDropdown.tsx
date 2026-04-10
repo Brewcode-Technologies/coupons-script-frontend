@@ -69,10 +69,7 @@ export default function StoresDropdown({ onClose }: { onClose: () => void }) {
 
   const handleStoreClick = (store: Store) => {
     onClose();
-    const domain = store.websiteUrl
-      ? store.websiteUrl.replace(/https?:\/\/(www\.)?/, '').replace(/\/$/, '')
-      : `${store.slug}.com`;
-    router.push(`/view/${domain}`);
+    router.push(`/coupons/${store.slug}-coupons`);
   };
 
   const handleMouseEnter = () => { if (leaveTimer.current) clearTimeout(leaveTimer.current); };
@@ -142,7 +139,7 @@ export default function StoresDropdown({ onClose }: { onClose: () => void }) {
             ))}
             <li className="mt-2 py-1 px-2 col-span-2 list-none">
               <button
-                onClick={() => { onClose(); router.push('/view'); }}
+                onClick={() => { onClose(); router.push('/stores'); }}
                 className="text-sm font-semibold hover:underline transition-colors bg-transparent border-none outline-none cursor-pointer"
                 style={{ color: primary }}
               >

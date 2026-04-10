@@ -2,13 +2,12 @@
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-// /view with no domain just shows the full store browser
-// We reuse the same view/[domain] page logic by redirecting to a neutral state
+// /view with no domain redirects to stores page
 export default function ViewIndex() {
   const router = useRouter();
   useEffect(() => {
-    // redirect to a placeholder that shows all stores
-    router.replace('/view/all');
-  }, []);
+    // redirect to stores page
+    router.replace('/stores');
+  }, [router]);
   return null;
 }

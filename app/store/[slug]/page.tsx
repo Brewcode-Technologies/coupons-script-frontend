@@ -11,10 +11,7 @@ export default function StorePage() {
   useEffect(() => {
     getStoreBySlug(slug).then(res => {
       const store = res.data;
-      const domain = store.websiteUrl
-        ? store.websiteUrl.replace(/https?:\/\/(www\.)?/, '').replace(/\/$/, '')
-        : `${store.slug}.com`;
-      router.replace(`/view/${domain}`);
+      router.replace(`/coupons/${store.slug}-coupons`);
     }).catch(() => router.replace('/stores'));
   }, [slug, router]);
 

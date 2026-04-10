@@ -16,7 +16,7 @@ export default function FooterThree({ config }: FooterThreeProps) {
   const border   = isDark ? darkPalette.cardBg : '#d1d5db';
   const inputBg  = isDark ? darkPalette.cardBg : '#ffffff';
   const btnBg    = isDark ? siteConfig?.theme?.primaryColor || '#6d28d9' : '#111827';
-  const siteName = siteConfig?.siteName || 'CouponsFeast';
+  const siteName = siteConfig?.siteName || 'Coupons Script';
   const logoUrl  = siteConfig?.logos?.footer;
   const accent   = siteConfig?.theme?.primaryColor || '#7c3aed';
 

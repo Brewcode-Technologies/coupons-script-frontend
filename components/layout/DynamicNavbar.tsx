@@ -17,11 +17,8 @@ export default function DynamicNavbar() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [navRes, configRes] = await Promise.all([
-          getNavigation(),
-          getSiteConfig()
-        ]);
-        
+        const [navRes, configRes] = await Promise.all([getNavigation(), getSiteConfig()]);
+
         setMenuItems(navRes.data.menu || []);
         setSiteConfig(configRes.data);
       } catch (error) {
@@ -33,28 +30,23 @@ export default function DynamicNavbar() {
   }, []);
 
   return (
-    <AppBar 
-      position="static" 
-      sx={{ 
+    <AppBar
+      position="static"
+      sx={{
         bgcolor: siteConfig?.theme?.primaryColor || '#7c3aed',
-        fontFamily: siteConfig?.fonts?.heading || 'Inter'
+        fontFamily: siteConfig?.fonts?.heading || 'Inter',
       }}
     >
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-            {siteConfig?.siteName || 'CouponsFeast'}
+            {siteConfig?.siteName || 'CouponsScript'}
           </Link>
         </Typography>
-        
+
         <Box sx={{ display: 'flex', gap: 2 }}>
           {menuItems.map((item) => (
-            <Button 
-              key={item.name} 
-              color="inherit" 
-              component={Link} 
-              href={item.url}
-            >
+            <Button key={item.name} color="inherit" component={Link} href={item.url}>
               {item.name}
             </Button>
           ))}

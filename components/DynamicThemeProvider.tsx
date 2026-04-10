@@ -5,6 +5,8 @@ import { getSiteConfig } from '@/services/api';
 import { useTheme } from '@/components/ThemeProvider';
 import { getImageUrl } from '@/utils/serverUrl';
 
+import { getFontCombination, getFontUrl, type FontCombination } from '@/utils/fontCombinations';
+
 interface SiteTheme {
   primaryColor: string;
   secondaryColor: string;
@@ -14,8 +16,7 @@ interface SiteTheme {
 }
 
 interface SiteFonts {
-  heading: string;
-  body: string;
+  combination: FontCombination;
 }
 
 interface SiteConfigData {
@@ -111,7 +112,7 @@ export default function DynamicThemeProvider({ children }: { children: React.Rea
       console.error('Error fetching site config:', error);
       // Fallback theme
       setSiteConfig({
-        siteName: 'Coupons Site',
+        siteName: 'Coupons Script',
         theme: {
           primaryColor: '#7c3aed',
           secondaryColor: '#9333ea',
@@ -119,12 +120,11 @@ export default function DynamicThemeProvider({ children }: { children: React.Rea
           textColor: '#111827'
         },
         fonts: {
-          heading: 'Inter',
-          body: 'Roboto'
+          combination: 'modern'
         },
         logo: '/uploads/logo.png',
         footer: {
-          copyright: '© Coupons Site',
+          copyright: '© Coupons Script',
           email: 'support@example.com'
         }
       });
@@ -158,6 +158,8 @@ export default function DynamicThemeProvider({ children }: { children: React.Rea
   // Create Material-UI theme based on backend config
   const themeName = (siteConfig as any)?.themeName || 'purple';
   const palette = THEME_PALETTES[themeName] || THEME_PALETTES.purple;
+  const fontCombination = getFontCombination(siteConfig?.fonts?.combination);
+  
   const muiTheme = createTheme({
     palette: {
       primary:    { main: palette.primary },
@@ -166,13 +168,13 @@ export default function DynamicThemeProvider({ children }: { children: React.Rea
       text:       { primary: palette.text },
     },
     typography: {
-      fontFamily: siteConfig?.fonts?.body || 'Roboto',
-      h1: { fontFamily: siteConfig?.fonts?.heading || 'Roboto' },
-      h2: { fontFamily: siteConfig?.fonts?.heading || 'Roboto' },
-      h3: { fontFamily: siteConfig?.fonts?.heading || 'Roboto' },
-      h4: { fontFamily: siteConfig?.fonts?.heading || 'Roboto' },
-      h5: { fontFamily: siteConfig?.fonts?.heading || 'Roboto' },
-      h6: { fontFamily: siteConfig?.fonts?.heading || 'Roboto' },
+      fontFamily: fontCombination.body,
+      h1: { fontFamily: fontCombination.heading },
+      h2: { fontFamily: fontCombination.heading },
+      h3: { fontFamily: fontCombination.heading },
+      h4: { fontFamily: fontCombination.heading },
+      h5: { fontFamily: fontCombination.heading },
+      h6: { fontFamily: fontCombination.heading },
     },
   });
 
@@ -180,22 +182,25 @@ export default function DynamicThemeProvider({ children }: { children: React.Rea
   useEffect(() => {
     if (!siteConfig) return;
     const themeName = (siteConfig as any).themeName || 'purple';
+    const fontCombination = getFontCombination(siteConfig.fonts?.combination);
+    
     document.documentElement.setAttribute('data-theme', themeName);
-    document.documentElement.style.setProperty('--heading-font', siteConfig.fonts?.heading || 'Roboto');
-    document.documentElement.style.setProperty('--body-font',    siteConfig.fonts?.body    || 'Roboto');
+    document.documentElement.style.setProperty('--heading-font', fontCombination.heading);
+    document.documentElement.style.setProperty('--body-font', fontCombination.body);
+    document.documentElement.style.setProperty('--mono-font', fontCombination.mono);
 
-    // Dynamically load Google Fonts for configured fonts
-    const fontsToLoad = new Set([siteConfig.fonts?.heading, siteConfig.fonts?.body].filter(Boolean) as string[]);
-    fontsToLoad.forEach(font => {
-      const fontId = `gfont-${font.replace(/\s+/g, '-').toLowerCase()}`;
+    // Load Google Fonts for the selected combination
+    const fontUrl = getFontUrl(siteConfig.fonts?.combination);
+    if (fontUrl) {
+      const fontId = `gfont-combination-${siteConfig.fonts?.combination || 'modern'}`;
       if (!document.getElementById(fontId)) {
         const link = document.createElement('link');
         link.id = fontId;
         link.rel = 'stylesheet';
-        link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}:wght@300;400;500;600;700;800;900&display=swap`;
+        link.href = fontUrl;
         document.head.appendChild(link);
       }
-    });
+    }
 
     // Set favicon from config
     const faviconUrl = (siteConfig as any).logos?.favicon;
@@ -213,8 +218,16 @@ export default function DynamicThemeProvider({ children }: { children: React.Rea
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-gray-500">Loading theme...</div>
+      <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: '#faf8ff' }}>
+        <div className="flex flex-col items-center gap-3">
+          <div 
+            className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin"
+            style={{ 
+              borderColor: 'rgba(124, 58, 237, 0.2)',
+              borderTopColor: '#7c3aed'
+            }}
+          />
+        </div>
       </div>
     );
   }
@@ -268,13 +281,14 @@ function DynamicThemeWrapper({ children, siteConfig, fontFamily }: { children: R
   const darkPalette = DARK_PALETTES[themeName] || DARK_PALETTES.purple;
   const bg = isDark ? darkPalette.bg : (siteConfig?.theme?.backgroundColor || '#faf8ff');
   const color = isDark ? darkPalette.text : (siteConfig?.theme?.textColor || '#111827');
+  const fontCombination = getFontCombination(siteConfig?.fonts?.combination);
 
   useEffect(() => {
     document.documentElement.style.setProperty('--dark-card-bg', darkPalette.cardBg);
   }, [darkPalette.cardBg]);
 
   return (
-    <div style={{ backgroundColor: bg, color, fontFamily, minHeight: '100vh' }}>
+    <div style={{ backgroundColor: bg, color, fontFamily: fontCombination.body, minHeight: '100vh' }}>
       {children}
     </div>
   );
