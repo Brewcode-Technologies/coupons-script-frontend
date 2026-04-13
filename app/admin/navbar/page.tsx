@@ -167,6 +167,11 @@ export default function NavbarMenuBuilder() {
 
     try {
       const itemId = editingItem._id || editingItem.id;
+      if (!itemId) {
+        toast.error('Invalid item ID');
+        return;
+      }
+      
       // Generate URL from slug if it doesn't start with /
       const finalUrl = editingItem.slug && !editingItem.slug.startsWith('/') 
         ? `/${editingItem.slug}` 
@@ -203,6 +208,11 @@ export default function NavbarMenuBuilder() {
 
     try {
       const itemId = item._id || item.id;
+      if (!itemId) {
+        toast.error('Invalid item ID');
+        return;
+      }
+      
       await deleteNavbarItem(itemId);
       loadData();
       toast.success('Menu item deleted successfully');
@@ -238,12 +248,12 @@ export default function NavbarMenuBuilder() {
   const handleDragStart = (e: React.DragEvent, item: MenuItem, index: number) => {
     setDraggedItem(item);
     e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/html', e.currentTarget.outerHTML);
-    e.currentTarget.style.opacity = '0.5';
+    e.dataTransfer.setData('text/html', (e.currentTarget as HTMLElement).outerHTML);
+    (e.currentTarget as HTMLElement).style.opacity = '0.5';
   };
 
   const handleDragEnd = (e: React.DragEvent) => {
-    e.currentTarget.style.opacity = '1';
+    (e.currentTarget as HTMLElement).style.opacity = '1';
     setDraggedItem(null);
     setDragOverIndex(null);
   };
@@ -291,6 +301,8 @@ export default function NavbarMenuBuilder() {
       // Update each item in the backend
       for (const item of updatedItems) {
         const itemId = item._id || item.id;
+        if (!itemId) continue; // Skip items without valid ID
+        
         await updateNavbarItem(itemId, {
           title: item.title,
           url: item.url,
