@@ -105,30 +105,50 @@ export default function NavbarFour() {
   const [dynamicStores, setDynamicStores] = useState<any[]>([]);
   const [dynamicCategories, setDynamicCategories] = useState<any[]>([]);
   const [dynamicCoupons, setDynamicCoupons] = useState<any[]>([]);
+  const [storeCouponCounts, setStoreCouponCounts] = useState<Record<string, number>>({});
+  const [categoryCouponCounts, setCategoryCouponCounts] = useState<Record<string, number>>({});
 
   const serverUrl = getServerUrl();
   const logoUrl = (raw: string) => getImageUrl(raw || '');
 
   // Fetch dynamic data for search
   useEffect(() => {
-    getStores()
-      .then((res) => {
-        const data = res.data?.data ?? res.data ?? [];
-        setDynamicStores(Array.isArray(data) ? data : []);
-      })
-      .catch(() => {});
-    getCategories()
-      .then((res) => {
-        const data = res.data?.data ?? res.data ?? [];
-        setDynamicCategories(Array.isArray(data) ? data : []);
-      })
-      .catch(() => {});
-    getCoupons({ limit: 20, sortBy: 'clickCount', sortOrder: 'desc' })
-      .then((res) => {
-        const data = res.data?.data ?? res.data ?? [];
-        setDynamicCoupons(Array.isArray(data) ? data : []);
-      })
-      .catch(() => {});
+    const fetchAll = async () => {
+      try {
+        const [storesRes, catsRes, couponsRes] = await Promise.all([
+          getStores().catch(() => null),
+          getCategories().catch(() => null),
+          getCoupons({ limit: 50, sortBy: 'clickCount', sortOrder: 'desc' }).catch(() => null),
+        ]);
+
+        const stores = Array.isArray(storesRes?.data?.data ?? storesRes?.data)
+          ? (storesRes?.data?.data ?? storesRes?.data)
+          : [];
+        const cats = Array.isArray(catsRes?.data?.data ?? catsRes?.data)
+          ? (catsRes?.data?.data ?? catsRes?.data)
+          : [];
+        const coupons = Array.isArray(couponsRes?.data?.data ?? couponsRes?.data)
+          ? (couponsRes?.data?.data ?? couponsRes?.data)
+          : [];
+
+        setDynamicStores(stores);
+        setDynamicCategories(cats);
+        setDynamicCoupons(coupons);
+
+        // Compute coupon counts per store
+        const sCounts: Record<string, number> = {};
+        const cCounts: Record<string, number> = {};
+        coupons.forEach((c: any) => {
+          const storeId = c.store?._id || c.store;
+          if (storeId) sCounts[storeId] = (sCounts[storeId] || 0) + 1;
+          const catId = c.category?._id || c.category;
+          if (catId) cCounts[catId] = (cCounts[catId] || 0) + 1;
+        });
+        setStoreCouponCounts(sCounts);
+        setCategoryCouponCounts(cCounts);
+      } catch {}
+    };
+    fetchAll();
   }, []);
 
   // Drawer animation
@@ -209,19 +229,17 @@ export default function NavbarFour() {
 
           {/* Search Bar — desktop */}
           <div className="hidden md:flex flex-1 max-w-lg mx-4">
-            <div className="relative w-full">
+            <button
+              className="relative w-full flex items-center gap-2 pl-10 pr-4 py-2.5 rounded-full border text-sm transition-all cursor-pointer"
+              style={{ borderColor, backgroundColor: inputBg, color: mutedText,  }}
+              onClick={() => setSearchOpen(true)}
+            >
               <Search
                 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
-                style={{ color: mutedText }}
+                style={{ color: mutedText, }}
               />
-              <input
-                type="text"
-                placeholder="Search for stores, coupons & offers..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-full border text-sm focus:outline-none focus:ring-2 transition-all placeholder:text-white/70"
-                style={{ borderColor, backgroundColor: inputBg, color: navText }}
-                onFocus={() => setSearchOpen(true)}
-              />
-            </div>
+              Search for stores, coupons & offers...
+            </button>
           </div>
 
           {/* Right Actions */}
@@ -294,7 +312,7 @@ export default function NavbarFour() {
           {/* Search Header */}
           <div
             className="flex items-center gap-3 px-4 py-4 border-b shrink-0"
-            style={{ borderColor }}
+            // style={{ borderColor }}
           >
             <div
               className="flex items-center flex-1 gap-3 rounded-full px-4 py-2.5 border-2 transition-all"
@@ -307,7 +325,7 @@ export default function NavbarFour() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search for stores, coupons & offers..."
-                className="flex-1 bg-transparent border-none outline-none text-sm placeholder:text-gray-400"
+                className="flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 focus:ring-transparent text-sm placeholder:text-gray-400"
                 style={{ color: isDark ? navText : '#111827' }}
               />
               {query && (
@@ -368,7 +386,7 @@ export default function NavbarFour() {
                             {s.storeName || s.name}
                           </p>
                           <p className="text-xs mt-0.5" style={{ color: mutedText }}>
-                            {s.couponCount || 0} offers
+                            {s.couponCount || storeCouponCounts[s._id] || 0} offers
                           </p>
                         </div>
                       </Link>
@@ -451,7 +469,7 @@ export default function NavbarFour() {
                             {c.name}
                           </p>
                           <p className="text-xs mt-0.5" style={{ color: mutedText }}>
-                            {c.couponCount || 0} offers
+                            {c.couponCount || categoryCouponCounts[c._id] || 0} offers
                           </p>
                         </div>
                       </Link>
