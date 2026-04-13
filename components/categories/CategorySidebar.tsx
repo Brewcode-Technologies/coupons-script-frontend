@@ -8,7 +8,7 @@ import { getStores, getSiteConfig } from '@/services/api';
 const menuItems = [
   { icon: Grid3X3, label: "Categories", href: "/categories" },
   { icon: Store, label: "Stores", href: "/stores" },
-  { icon: Tag, label: "All Coupons", href: "/all-coupons" },
+  { icon: Tag, label: "All Coupons", href: "/coupons" },
   { icon: ShoppingBag, label: "Deals", href: "/deals" },
   { icon: BookOpen, label: "Blog", href: "/blog" },
 ];

@@ -10,7 +10,6 @@ import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
 import CouponBanner from '@/components/coupons-page/CouponBanner';
 import CouponListCard from '@/components/coupons-page/CouponListCard';
-import CouponSidebar from '@/components/coupons-page/CouponSidebar';
 
 export default function StorePage() {
   const params = useParams();
@@ -28,8 +27,6 @@ export default function StorePage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [allStores, setAllStores] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedStores, setSelectedStores] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState('all');
 
   useEffect(() => {
@@ -60,14 +57,6 @@ export default function StorePage() {
       .finally(() => setLoading(false));
   }, [slug]);
 
-  const toggleCategory = (c: string) => setSelectedCategories(prev => 
-    prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]
-  );
-
-  const toggleStore = (s: string) => setSelectedStores(prev => 
-    prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]
-  );
-
   const couponCount = coupons.filter(c => c.code).length;
   const offerCount = coupons.filter(c => !c.code).length;
   const freshCount = coupons.filter(c => {
@@ -85,17 +74,9 @@ export default function StorePage() {
       if (!c.createdAt) return false;
       return Date.now() - new Date(c.createdAt).getTime() < 7 * 24 * 60 * 60 * 1000;
     });
-
-    if (selectedCategories.length > 0) {
-      list = list.filter(c => selectedCategories.includes(c.category || c.store?.category));
-    }
-
-    if (selectedStores.length > 0) {
-      list = list.filter(c => selectedStores.includes(c.store?.storeName || c.storeName));
-    }
     
     return list;
-  }, [coupons, activeTab, selectedCategories, selectedStores]);
+  }, [coupons, activeTab]);
 
   const storeName = store?.storeName || store?.name || 'Store';
   const storeLogo = store?.logo ? getImageUrl(store.logo) : '';
@@ -158,39 +139,25 @@ export default function StorePage() {
           onTabChange={setActiveTab}
         />
 
-        {/* Main Layout */}
-        <div className="flex gap-6">
-          <CouponSidebar
-            categoryName={storeName}
-            stores={allStores}
-            categories={categories}
-            selectedStores={selectedStores}
-            onStoreToggle={toggleStore}
-            selectedCategories={selectedCategories}
-            onCategoryToggle={toggleCategory}
-            totalCoupons={coupons.length}
-            verifiedCount={Math.max(1, coupons.length - 5)}
-          />
-
-          <div className="flex-1 min-w-0">
-            {filteredCoupons.length === 0 ? (
-              <div className="text-center py-16 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-                <p className="text-lg font-semibold" style={{ color: textMain }}>No coupons found</p>
-                <p className="text-sm mt-1" style={{ color: textMuted }}>
-                  No {storeName} coupons available right now
-                </p>
-                <Link href="/stores" className="mt-4 inline-block text-sm font-semibold no-underline" style={{ color: primary }}>
-                  Browse All Stores →
-                </Link>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {filteredCoupons.map(coupon => (
-                  <CouponListCard key={coupon._id} coupon={coupon} />
-                ))}
-              </div>
-            )}
-          </div>
+        {/* Main Layout - Full Width without Sidebar */}
+        <div className="w-full">
+          {filteredCoupons.length === 0 ? (
+            <div className="text-center py-16 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+              <p className="text-lg font-semibold" style={{ color: textMain }}>No coupons found</p>
+              <p className="text-sm mt-1" style={{ color: textMuted }}>
+                No {storeName} coupons available right now
+              </p>
+              <Link href="/stores" className="mt-4 inline-block text-sm font-semibold no-underline" style={{ color: primary }}>
+                Browse All Stores →
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {filteredCoupons.map(coupon => (
+                <CouponListCard key={coupon._id} coupon={coupon} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

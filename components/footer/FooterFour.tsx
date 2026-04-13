@@ -44,7 +44,7 @@ export default function FooterFour({ config }: FooterFourProps) {
   const storeLinks = popularLinks.filter(link => link.type === 'store' && link.isActive).map(link => ({ label: link.name, href: link.href }));
   
   const defaultCols = [
-    { heading: 'Products',  links: [{ label: 'All Coupons', href: '/all-coupons' }, { label: 'Top Stores', href: '/stores' }, { label: 'Deals', href: '/deals' }, { label: 'Blog', href: '/blog' }] },
+    { heading: 'Products',  links: [{ label: 'All Coupons', href: '/coupons' }, { label: 'Top Stores', href: '/stores' }, { label: 'Deals', href: '/deals' }, { label: 'Blog', href: '/blog' }] },
     { heading: 'Popular Stores', links: storeLinks.length > 0 ? storeLinks.slice(0, 4) : [{ label: 'Amazon', href: '/coupons/amazon' }, { label: 'Walmart', href: '/coupons/walmart' }] },
   ];
   const columns = content?.columns?.length ? content.columns : defaultCols;

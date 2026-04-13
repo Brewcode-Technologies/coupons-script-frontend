@@ -2,13 +2,19 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { ChevronRight, ExternalLink } from 'lucide-react';
-import { getDeals, getStores, getCoupons } from '@/services/api';
+import { ChevronRight, ExternalLink, Search, ChevronUp, ChevronDown, Tag, Zap } from 'lucide-react';
+import { getDeals, getStores, getCoupons, getCategories } from '@/services/api';
 import { getServerUrl, getImageUrl } from '@/utils/serverUrl';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
 import PromoModal from '@/components/coupon/PromoModal';
 import ColumnSwitcher from '@/components/common/ColumnSwitcher';
+
+interface FilterState {
+  searchQuery: string;
+  selectedStores: string[];
+  selectedCategories: string[];
+}
 
 export default function DealsPage() {
   const { siteConfig, darkPalette } = useDynamicTheme();
@@ -24,12 +30,21 @@ export default function DealsPage() {
 
   const [deals, setDeals] = useState<any[]>([]);
   const [stores, setStores] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [trending, setTrending] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeStore, setActiveStore] = useState('All');
   const [modalData, setModalData] = useState<any>(null);
   const [dealCols, setDealCols] = useState(4);
   const [storeCols, setStoreCols] = useState(7);
+  const [storesExpanded, setStoresExpanded] = useState(true);
+  const [categoriesExpanded, setCategoriesExpanded] = useState(true);
+  
+  const [filters, setFilters] = useState<FilterState>({
+    searchQuery: '',
+    selectedStores: [],
+    selectedCategories: []
+  });
 
   const serverUrl = getServerUrl();
 
@@ -37,18 +52,76 @@ export default function DealsPage() {
     Promise.all([
       getDeals({ limit: 100 }),
       getStores(),
+      getCategories(),
       getCoupons({ limit: 10, sortBy: 'clickCount', sortOrder: 'desc' }),
     ])
-      .then(([dealRes, storeRes, couponRes]) => {
+      .then(([dealRes, storeRes, categoryRes, couponRes]) => {
         const d = dealRes.data?.data ?? dealRes.data ?? [];
         setDeals((Array.isArray(d) ? d : []).filter((x: any) => x.isActive));
         setStores(storeRes.data?.data ?? storeRes.data ?? []);
+        setCategories(categoryRes.data?.data ?? categoryRes.data ?? []);
         setTrending(couponRes.data?.data ?? couponRes.data ?? []);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
+
+  // Helper: get all category IDs from a deal
+  const getDealCategoryIds = (deal: any): string[] => {
+    const ids: string[] = [];
+    const cat = deal.category;
+    if (cat) ids.push(typeof cat === 'string' ? cat : cat._id || '');
+    if (Array.isArray(deal.categories)) {
+      deal.categories.forEach((c: any) => ids.push(typeof c === 'string' ? c : c._id || ''));
+    }
+    const storeCat = deal.store?.category;
+    if (storeCat) ids.push(typeof storeCat === 'string' ? storeCat : storeCat._id || '');
+    return ids.filter(Boolean);
+  };
+
+  // Handle filter changes
+  const handleSearchChange = (query: string) => {
+    setFilters(prev => ({ ...prev, searchQuery: query }));
+  };
+
+  const handleStoreToggle = (storeId: string) => {
+    setFilters(prev => ({
+      ...prev,
+      selectedStores: prev.selectedStores.includes(storeId)
+        ? prev.selectedStores.filter(id => id !== storeId)
+        : [...prev.selectedStores, storeId]
+    }));
+  };
+
+  const handleCategoryToggle = (categoryId: string) => {
+    setFilters(prev => ({
+      ...prev,
+      selectedCategories: prev.selectedCategories.includes(categoryId)
+        ? prev.selectedCategories.filter(id => id !== categoryId)
+        : [...prev.selectedCategories, categoryId]
+    }));
+  };
+
+  // Get stores with deal counts
+  const storesWithCounts = useMemo(() => {
+    return stores.map(store => {
+      const dealCount = deals.filter(deal => 
+        (deal.store?._id || deal.store) === store._id
+      ).length;
+      return { ...store, dealCount };
+    }).filter(store => store.dealCount > 0).slice(0, 10);
+  }, [stores, deals]);
+
+  // Get categories with deal counts
+  const categoriesWithCounts = useMemo(() => {
+    return categories.map(category => {
+      const dealCount = deals.filter(deal =>
+        getDealCategoryIds(deal).includes(category._id)
+      ).length;
+      return { ...category, dealCount };
+    }).slice(0, 10);
+  }, [categories, deals]);
 
   const getImage = (deal: any) => {
     const raw = deal.image || deal.store?.logo || '';
@@ -62,9 +135,42 @@ export default function DealsPage() {
   }, [deals]);
 
   const filteredDeals = useMemo(() => {
-    if (activeStore === 'All') return deals;
-    return deals.filter(d => d.store?.storeName === activeStore);
-  }, [deals, activeStore]);
+    let list = deals;
+    
+    // Store tab filter
+    if (activeStore !== 'All') {
+      list = list.filter(d => d.store?.storeName === activeStore);
+    }
+    
+    // Search filter
+    if (filters.searchQuery) {
+      const query = filters.searchQuery.toLowerCase();
+      list = list.filter(deal => {
+        const matchesTitle = deal.title?.toLowerCase().includes(query);
+        const matchesDescription = deal.description?.toLowerCase().includes(query);
+        const matchesStore = deal.store?.storeName?.toLowerCase().includes(query);
+        return matchesTitle || matchesDescription || matchesStore;
+      });
+    }
+    
+    // Store filter
+    if (filters.selectedStores.length > 0) {
+      list = list.filter(deal => {
+        const storeId = deal.store?._id || deal.store;
+        return filters.selectedStores.includes(storeId);
+      });
+    }
+    
+    // Category filter
+    if (filters.selectedCategories.length > 0) {
+      list = list.filter(deal => {
+        const ids = getDealCategoryIds(deal);
+        return ids.some(id => filters.selectedCategories.includes(id));
+      });
+    }
+    
+    return list;
+  }, [deals, activeStore, filters]);
 
   const openDeal = (deal: any) => {
     const url = deal.link || deal.store?.websiteUrl;
@@ -113,7 +219,7 @@ export default function DealsPage() {
               <button
                 key={tab}
                 onClick={() => setActiveStore(tab)}
-                className="px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer border"
+                className="px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all cursor-pointer border"
                 style={{
                   backgroundColor: activeStore === tab ? primary : 'transparent',
                   color: activeStore === tab ? '#fff' : textMuted,
@@ -128,6 +234,150 @@ export default function DealsPage() {
       </section>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <div className="flex gap-8">
+          {/* Filters Sidebar */}
+          <aside className="w-72 shrink-0 hidden lg:flex flex-col gap-0 text-base">
+            {/* Search Filter */}
+            <div className="relative mb-4">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: textMuted }} />
+              <input
+                placeholder="Search Deals"
+                className="w-full pl-9 pr-3 py-2.5 rounded-lg border focus:outline-none focus:ring-2"
+                style={{
+                  borderColor: borderCol,
+                  backgroundColor: cardBg,
+                  color: textMain,
+                  '--tw-ring-color': primary
+                } as any}
+                value={filters.searchQuery}
+                onChange={(e) => handleSearchChange(e.target.value)}
+              />
+            </div>
+
+            {/* Stores Filter */}
+            <div className="mb-4">
+              <button
+                onClick={() => setStoresExpanded(!storesExpanded)}
+                className="flex items-center justify-between w-full font-bold py-1 mb-2 text-lg"
+                style={{ color: textMain }}
+              >
+                Stores
+                {storesExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+              </button>
+              {storesExpanded && (
+                <div className="space-y-2 pl-1 max-h-48 overflow-y-auto">
+                  {storesWithCounts.map((store) => (
+                    <label key={store._id} className="flex items-center gap-2.5 cursor-pointer hover:opacity-80 text-sm">
+                      <input
+                        className="w-4 h-4 rounded"
+                        type="checkbox"
+                        style={{ accentColor: primary }}
+                        checked={filters.selectedStores.includes(store._id)}
+                        onChange={() => handleStoreToggle(store._id)}
+                      />
+                      <span style={{ color: textMuted }}>
+                        {store.storeName || store.name} ({store.dealCount})
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <hr style={{ borderColor: borderCol }} className="mb-4" />
+
+            {/* Categories Filter */}
+            <div className="mb-4">
+              <button
+                onClick={() => setCategoriesExpanded(!categoriesExpanded)}
+                className="flex items-center justify-between w-full font-bold py-1 mb-2 text-lg"
+                style={{ color: textMain }}
+              >
+                Categories
+                {categoriesExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+              </button>
+              {categoriesExpanded && (
+                <div className="space-y-2 pl-1 max-h-48 overflow-y-auto">
+                  {categoriesWithCounts.map((category) => (
+                    <label key={category._id} className="flex items-center gap-2.5 cursor-pointer hover:opacity-80 text-sm">
+                      <input
+                        className="w-4 h-4 rounded"
+                        type="checkbox"
+                        style={{ accentColor: primary }}
+                        checked={filters.selectedCategories.includes(category._id)}
+                        onChange={() => handleCategoryToggle(category._id)}
+                      />
+                      <span style={{ color: textMuted }}>
+                        {category.name} ({category.dealCount})
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <hr style={{ borderColor: borderCol }} className="mb-4" />
+
+            {/* Deals Info */}
+            <div className="mb-4">
+              <p className="font-bold mb-2 text-lg" style={{ color: textMain }}>Deals Info</p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2.5 text-sm" style={{ color: textMuted }}>
+                  <Tag className="w-4 h-4" style={{ color: primary }} />
+                  <span>
+                    Total Deals : <strong style={{ color: textMain }}>{filteredDeals.length}</strong>
+                  </span>
+                </div>
+                <div className="flex items-center gap-2.5 text-sm" style={{ color: textMuted }}>
+                  <Zap className="w-4 h-4 text-yellow-500" />
+                  <span>
+                    Active Deals : <strong style={{ color: textMain }}>{filteredDeals.filter(d => d.isActive).length}</strong>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <hr style={{ borderColor: borderCol }} className="mb-4" />
+
+            {/* Related Categories */}
+            <div className="mb-4">
+              <p className="font-bold mb-2 text-lg" style={{ color: textMain }}>Related Categories</p>
+              <div className="space-y-2">
+                {categories.slice(0, 6).map((category) => (
+                  <Link
+                    key={category._id}
+                    className="block text-sm no-underline hover:underline"
+                    href={`/category/${category.slug || category.name.toLowerCase().replace(/\s+/g, '-')}`}
+                    style={{ color: primary }}
+                  >
+                    {category.name} Deals
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <hr style={{ borderColor: borderCol }} className="mb-4" />
+
+            {/* Top Stores */}
+            <div className="mb-4">
+              <p className="font-bold mb-2 text-lg" style={{ color: textMain }}>Top Stores</p>
+              <div className="space-y-2">
+                {storesWithCounts.slice(0, 6).map((store) => (
+                  <Link
+                    key={store._id}
+                    className="block text-sm no-underline hover:underline"
+                    href={`/coupons/${store.slug || (store.storeName || store.name).toLowerCase().replace(/\s+/g, '-')}-coupons`}
+                    style={{ color: primary }}
+                  >
+                    {store.storeName || store.name} Deals
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </aside>
+
+          {/* Main Content */}
+          <div className="flex-1">
 
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -289,6 +539,8 @@ export default function DealsPage() {
             </div>
           </div>
         )}
+          </div>
+        </div>
       </div>
 
       {/* Bottom Strip */}
