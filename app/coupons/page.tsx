@@ -1,5 +1,6 @@
 'use client';
 
+// All coupons page - shows complete coupon listing with filters
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { ChevronRight, Search, ChevronUp, ChevronDown, Tag, Zap } from 'lucide-react';
