@@ -67,7 +67,7 @@ export default function AdminDashboard() {
         {kpiCards.map((c) => {
           const Icon = c.icon;
           return (
-            <div key={c.title} className={`${card} p-5 flex flex-col gap-4 hover:-translate-y-0.5 hover:shadow-md transition-all`}>
+            <div key={c.title} className={`${card} p-5 flex flex-col gap-4 hover:-translate-y-0.5 hover:shadow-md transition-all min-h-[140px]`}>
               <div className="flex items-center justify-between">
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: c.lightBg }}>
                   <Icon size={22} style={{ color: c.iconColor }} />
@@ -76,7 +76,7 @@ export default function AdminDashboard() {
                   {c.change}
                 </span>
               </div>
-              <div>
+              <div className="flex-1 flex flex-col justify-end">
                 <p className="text-3xl font-extrabold text-slate-800 leading-tight">
                   {loading ? <span className="inline-block w-16 h-8 bg-slate-100 animate-pulse rounded" /> : c.value.toLocaleString()}
                 </p>
@@ -94,11 +94,11 @@ export default function AdminDashboard() {
             const Icon = c.icon;
             return (
               <Link key={c.title} href={c.href}
-                className={`${card} no-underline group p-5 flex flex-col gap-3 hover:-translate-y-0.5 hover:shadow-md transition-all`}>
+                className={`${card} no-underline group p-5 flex flex-col gap-3 hover:-translate-y-0.5 hover:shadow-md transition-all min-h-[160px]`}>
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: c.bg }}>
                   <Icon size={22} style={{ color: c.color }} />
                 </div>
-                <div>
+                <div className="flex-1">
                   <p className="font-bold text-slate-800 text-base">{c.title}</p>
                   <p className="text-sm text-slate-500 mt-1 leading-relaxed">{c.desc}</p>
                 </div>
@@ -111,37 +111,41 @@ export default function AdminDashboard() {
         </div>
 
         {/* Recent Activity */}
-        <div className={`${card} p-5`}>
+        <div className={`${card} p-5 min-h-[400px] flex flex-col`}>
           <div className="flex items-center gap-2 mb-5">
             <Activity size={18} className="text-indigo-500" />
             <p className="font-bold text-slate-800 text-base">Recent Activity</p>
           </div>
-          {recentActivity.length === 0 ? (
-            <p className="text-sm text-slate-400 text-center py-8">No activity yet. Start by adding stores and coupons.</p>
-          ) : (
-            <div className="flex flex-col gap-4">
-              {recentActivity.map((item: any, i: number) => (
-                <div key={i} className="flex items-start gap-3">
-                  <div className="w-2.5 h-2.5 rounded-full mt-1 flex-shrink-0" style={{ background: item.color }} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-700 leading-snug">{item.label}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{item.time}</p>
+          <div className="flex-1 flex flex-col">
+            {recentActivity.length === 0 ? (
+              <div className="flex-1 flex items-center justify-center">
+                <p className="text-sm text-slate-400 text-center">No activity yet. Start by adding stores and coupons.</p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-4 flex-1">
+                {recentActivity.map((item: any, i: number) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <div className="w-2.5 h-2.5 rounded-full mt-1 flex-shrink-0" style={{ background: item.color }} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-slate-700 leading-snug">{item.label}</p>
+                      <p className="text-xs text-slate-400 mt-0.5">{item.time}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Quick Actions + System Status */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        <div className={`${card} p-5`}>
+        <div className={`${card} p-5 min-h-[320px] flex flex-col`}>
           <div className="flex items-center gap-2 mb-5">
             <Plus size={18} className="text-indigo-500" />
             <p className="font-bold text-slate-800 text-base">Quick Actions</p>
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 flex-1">
             {[
               { label: 'Add New Store',    href: '/admin/stores',     color: '#6366f1', bg: 'rgba(99,102,241,0.07)',  icon: Store },
               { label: 'Add New Coupon',   href: '/admin/coupons',    color: '#10b981', bg: 'rgba(16,185,129,0.07)', icon: Tag },
@@ -163,12 +167,12 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className={`${card} p-5`}>
+        <div className={`${card} p-5 min-h-[320px] flex flex-col`}>
           <div className="flex items-center gap-2 mb-5">
             <CheckCircle size={18} className="text-emerald-500" />
             <p className="font-bold text-slate-800 text-base">System Status</p>
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 flex-1">
             {[{ label: 'API Server', status: 'Operational' }, { label: 'Database', status: 'Connected' }, { label: 'Frontend', status: 'Active' }].map((item) => (
               <div key={item.label} className="flex items-center justify-between px-4 py-3.5 rounded-xl bg-emerald-50">
                 <span className="text-sm font-medium text-slate-700">{item.label}</span>

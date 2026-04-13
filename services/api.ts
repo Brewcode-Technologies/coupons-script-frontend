@@ -134,4 +134,8 @@ export const bulkDeleteCategories = (ids: string[]) => api.post('/admin/categori
 export const adminLogin = (data: { email: string; password: string }) => api.post('/auth/login', data);
 export const adminVerify = () => api.get('/auth/verify');
 
+// Analytics
+export const getAnalyticsConfig = () => api.get('/public/site/analytics');
+export const updateAnalyticsConfig = (data: any) => api.put('/admin/pages/analytics/update', data);
+
 export default api;

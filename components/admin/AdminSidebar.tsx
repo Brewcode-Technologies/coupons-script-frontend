@@ -22,6 +22,7 @@ import {
   Megaphone,
   Link2,
   Hash,
+  BarChart3,
 } from 'lucide-react';
 
 const navItems = [
@@ -36,6 +37,7 @@ const navItems = [
   { href: '/admin/tags', label: 'Tags', icon: Hash, badge: null },
   { href: '/admin/banners', label: 'Banners', icon: Image, badge: null },
   { href: '/admin/pages', label: 'Pages', icon: FileText, badge: null },
+  { href: '/admin/integration', label: 'Integration', icon: BarChart3, badge: null },
   { href: '/admin/cms', label: 'CMS & Config', icon: Settings, badge: null },
 ];
 
@@ -75,7 +77,7 @@ function SidebarInner({
           </div>
           {!narrow && (
             <div className="flex-1 min-w-0">
-              <p className="text-slate-800 font-bold text-base leading-tight">Admin Panel</p>
+              <p className="text-slate-800 font-bold text-base leading-tight">CouponsScript</p>
               <p className="text-indigo-400 text-[10px] font-semibold tracking-widest uppercase mt-0.5">
                 Admin Panel
               </p>

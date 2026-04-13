@@ -5,6 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import DynamicThemeProvider from '@/components/DynamicThemeProvider';
 import { ThemeProvider as CustomThemeProvider } from '@/components/ThemeProvider';
 import DynamicFontLoader from '@/components/DynamicFontLoader';
+import DynamicAnalyticsLoader from '@/components/DynamicAnalyticsLoader';
 import { Toaster } from 'react-hot-toast';
 import '@/styles/globals.css';
 import PublicLayout from '@/components/layout/PublicLayout';
@@ -59,6 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <CustomThemeProvider>
           <DynamicThemeProvider>
             <DynamicFontLoader />
+            <DynamicAnalyticsLoader />
             <CssBaseline />
             <PublicLayout>{children}</PublicLayout>
             <Toaster
