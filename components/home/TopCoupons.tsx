@@ -59,7 +59,7 @@ export default function TopCoupons() {
   const textColor = isDark ? darkPalette.text : siteConfig?.theme?.textColor || '#111827';
   const mutedText = isDark ? `${darkPalette.text}99` : `${textColor}80`;
   const cardBg = isDark ? darkPalette.cardBg : '#ffffff';
-  const borderClr = isDark ? `${darkPalette.text}15` : `${textColor}12`;
+  const borderClr = isDark ? 'rgba(255,255,255,0.25)' : `${textColor}12`;
   const sectionBg = isDark ? darkPalette.bg : '#f9fafb';
 
   const [tabs, setTabs] = useState<{ label: string; slug: string; Icon: IconType }[]>([]);
@@ -94,7 +94,7 @@ export default function TopCoupons() {
               : `${serverUrl}${c.store.logo}`
             : '';
           return {
-            badge: c.code || c.discount || c.labelType || 'DEAL',
+            badge: c.discount || c.labelType || 'DEAL',
             title: c.title || '',
             store: c.store?.storeName || '',
             storeSlug: c.store?.slug || '',
@@ -208,27 +208,21 @@ export default function TopCoupons() {
               onClick={() => {
                 if (item.storeSlug) window.location.href = `/stores/${item.storeSlug}`;
               }}
-              className="rounded-xl overflow-hidden border transition-all duration-300 hover:shadow-xl hover:-translate-y-2 flex flex-col cursor-pointer"
+              className="rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-2 flex flex-col cursor-pointer"
               style={{
                 backgroundColor: cardBg,
-                borderColor: borderClr,
-                boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px',
+                border: isDark ? '1px solid transparent' : `1px solid ${borderClr}`,
+                boxShadow: isDark ? 'none' : 'rgba(0, 0, 0, 0.16) 0px 1px 4px',
                 minHeight: 180,
               }}
+              onMouseEnter={(e) => { if (isDark) { e.currentTarget.style.border = `2px solid ${primary}`; e.currentTarget.style.boxShadow = `0 0 12px ${primary}40`; } }}
+              onMouseLeave={(e) => { if (isDark) { e.currentTarget.style.border = '1px solid transparent'; e.currentTarget.style.boxShadow = 'none'; } }}
             >
               <div className="flex p-4 sm:p-5 gap-3 sm:gap-4 flex-1 items-center">
                 <div className="min-w-[90px] sm:min-w-[120px] flex flex-col items-center justify-center text-center">
-                  {item.hasCode ? (
-                    <>
-                      <div className="font-extrabold text-sm sm:text-base md:text-lg px-2 py-1 rounded border-2 border-dashed" style={{ color: primary, borderColor: primary }}>
-                        {item.badge}
-                      </div>
-                    </>
-                  ) : (
-                    <div className="font-extrabold text-xl sm:text-2xl md:text-3xl" style={{ color: primary }}>
-                      {item.badge}
-                    </div>
-                  )}
+                  <div className="font-extrabold text-xl sm:text-2xl md:text-3xl" style={{ color: primary }}>
+                    {item.badge}
+                  </div>
                 </div>
                 <div
                   className="border-l border-dashed self-stretch"
@@ -257,11 +251,7 @@ export default function TopCoupons() {
                       }}
                     />
                   )}
-                  {!item.logo && item.store && (
-                    <span className="text-sm sm:text-base font-bold" style={{ color: textColor }}>
-                      {item.store}
-                    </span>
-                  )}
+
                 </div>
                 {item.store && (
                   <div

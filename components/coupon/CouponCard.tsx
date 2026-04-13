@@ -30,6 +30,7 @@ interface Coupon {
     websiteUrl?: string;
     slug?: string;
   };
+  tags?: string[];
 }
 
 export default function CouponCard({ coupon }: { coupon: Coupon }) {
@@ -59,17 +60,17 @@ export default function CouponCard({ coupon }: { coupon: Coupon }) {
   };
 
   const renderDiscount = () => {
-    const base = "text-primary flex w-fit flex-col self-center text-center text-lg font-extrabold uppercase tracking-tight mx-auto sm:text-xl md:text-3xl";
+    const base = "text-primary flex w-fit flex-col self-center text-center font-black uppercase tracking-tight mx-auto text-2xl sm:text-4xl md:text-5xl";
     if (isCashBack) return (
       <div className={base}>
-        <p className="text-sm sm:text-base md:text-xl leading-[0.75] whitespace-nowrap">Cash</p>
+        <p className="leading-none">Cash</p>
         <p className="leading-none">{rawDiscount}%</p>
         <p className="leading-none">Back</p>
       </div>
     );
     if (isFreeShipping) return (
       <div className={base}>
-        <p className="text-sm sm:text-base md:text-xl leading-[0.75] whitespace-nowrap">Free</p>
+        <p className="leading-none">Free</p>
         <p className="leading-none">Ship</p>
         <p className="leading-none">ping</p>
       </div>
@@ -77,14 +78,15 @@ export default function CouponCard({ coupon }: { coupon: Coupon }) {
     if (isSale) return <div className={base}><p className="leading-none">SALE</p></div>;
     if (isNumeric) return (
       <div className={base}>
-        <p className="text-sm sm:text-base md:text-xl leading-[0.75] whitespace-nowrap">Up To</p>
         <p className="leading-none">{numericValue}%</p>
         <p className="leading-none">Off</p>
       </div>
     );
+    const cleaned = rawDiscount.replace(/\s*(off|OFF|Off)\s*/gi, '').trim();
     return (
       <div className={base}>
-        {rawDiscount.split(/\n|\\n/).map((line, i) => <p key={i} className="leading-none">{line}</p>)}
+        <p className="leading-none">{cleaned}</p>
+        <p className="leading-none">OFF</p>
       </div>
     );
   };
@@ -115,6 +117,13 @@ export default function CouponCard({ coupon }: { coupon: Coupon }) {
                 {labelText}
               </span>
               <h3 className="font-bold text-base sm:text-lg md:text-xl text-gray-900 dark:text-gray-100 leading-snug mb-2">{coupon.title}</h3>
+              {coupon.tags && coupon.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {coupon.tags.map((tag: string, i: number) => (
+                    <span key={i} className="bg-primary/10 text-primary text-[10px] sm:text-xs font-medium px-2 py-0.5 rounded-full">#{tag}</span>
+                  ))}
+                </div>
+              )}
               <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                 {!!coupon.interestedUsers && (
                   <span className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-[10px] sm:text-xs px-2 py-0.5 sm:py-1 rounded-full">

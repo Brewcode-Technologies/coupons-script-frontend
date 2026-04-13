@@ -33,7 +33,7 @@ export default function CouponBanner({ storeName, logoUrl, storeDescription, tot
   ];
 
   return (
-    <div className="rounded-2xl overflow-hidden border" style={{ backgroundColor: cardBg, borderColor }}>
+    <div className="rounded-2xl overflow-hidden border mb-6" style={{ backgroundColor: cardBg, borderColor }}>
       <div className="flex flex-col lg:flex-row">
         {/* Left Section */}
         <div className="p-6">

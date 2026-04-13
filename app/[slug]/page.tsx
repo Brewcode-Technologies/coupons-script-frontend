@@ -104,13 +104,11 @@ export default function DynamicPage() {
   return (
     <div style={{ background: pageBg, minHeight: '100vh' }}>
       {isLegal && (
-        <div style={{ borderBottom: `1px solid ${borderColor}` }}>
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="flex items-center gap-2 text-sm py-3">
-              <Link href="/" className="no-underline hover:underline" style={{ color: primary }}>Home</Link>
-              <ChevronRight size={14} style={{ color: textSecondary }} />
-              <span style={{ color: textPrimary }}>{page?.title}</span>
-            </div>
+        <div className="max-w-7xl mx-auto px-4 pt-6">
+          <div className="flex items-center gap-1 text-xs mb-6" style={{ color: textSecondary }}>
+            <Link href="/" className="no-underline hover:underline" style={{ color: primary }}>Home</Link>
+            <ChevronRight className="w-3 h-3" />
+            <span>{page?.title}</span>
           </div>
         </div>
       )}

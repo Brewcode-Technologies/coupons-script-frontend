@@ -29,6 +29,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Default font - will be overridden by DynamicFontLoader */}
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet" />
 
+        {/* Sync dark mode before React hydrates to prevent flash */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.classList.add('dark')}catch(e){}})()`
+          }}
+        />
+
         {/* Structured Data - Organization */}
         <script
           type="application/ld+json"

@@ -40,30 +40,26 @@ export default function CouponListCard({ coupon }: Props) {
       style={{ boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px' }}>
       <div className="flex items-stretch">
         {/* Left: Logo / Discount */}
-        <div className="w-40 sm:w-52 shrink-0 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-6 gap-3">
+        <div className="w-40 sm:w-52 shrink-0 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-3 sm:p-6 gap-3">
           {isExclusive ? (
-            <div className="flex flex-col items-center gap-2">
-              <div className="text-center">
-                <span className="block text-sm font-bold text-gray-400 uppercase tracking-widest leading-tight">{storeName || 'EXCLUSIVE'}</span>
-                <span className="block text-sm font-black uppercase tracking-widest leading-tight" style={{ color: primary }}>EXCLUSIVE</span>
-              </div>
-            </div>
-          ) : code ? (
-            <div className="text-center">
-              <span className="block text-lg sm:text-xl font-black px-3 py-2 rounded border-2 border-dashed" style={{ color: primary, borderColor: primary }}>{code}</span>
+            <div className="text-center flex flex-col items-center w-full">
+              <span className="block text-2xl sm:text-4xl font-black leading-tight uppercase" style={{ color: primary }}>EXCLUSIVE</span>
             </div>
           ) : discount ? (
-            <div className="text-center">
-              <span className="block text-3xl sm:text-4xl font-black leading-none" style={{ color: primary }}>{discount.split(' ')[0]}</span>
-              <span className="block text-sm sm:text-base font-bold" style={{ color: `${primary}cc` }}>{discount.split(' ').slice(1).join(' ')}</span>
+            <div className="text-center flex flex-col items-center">
+              <span className="block text-3xl sm:text-5xl font-black leading-none" style={{ color: primary }}>{discount.replace(/\s*(off|OFF|Off)\s*/gi, '').trim()}</span>
+              <span className="block text-3xl sm:text-5xl font-black leading-none mt-1" style={{ color: primary }}>OFF</span>
             </div>
           ) : (
-            <span className="text-lg font-bold" style={{ color: primary }}>{storeName?.charAt(0) || '?'}</span>
+            <span className="block text-3xl sm:text-5xl font-black leading-none" style={{ color: primary }}>{storeName?.charAt(0) || '?'}</span>
           )}
         </div>
 
         {/* Middle: Info */}
         <div className="flex-1 px-5 sm:px-6 py-5 flex flex-col justify-center gap-2 min-w-0">
+          {storeName && (
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: primary }}>{storeName}</span>
+          )}
           {isExclusive && (
             <span className="inline-block text-white text-sm font-bold uppercase px-3 py-1.5 rounded w-fit tracking-wide" style={{ backgroundColor: '#14b8a6' }}>
               EXCLUSIVE
@@ -72,6 +68,13 @@ export default function CouponListCard({ coupon }: Props) {
           <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 leading-snug line-clamp-2">{coupon.title}</h3>
           {coupon.details && (
             <p className="text-base text-gray-500 dark:text-gray-400 line-clamp-1">{coupon.details}</p>
+          )}
+          {coupon.tags && coupon.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {coupon.tags.map((tag: string, i: number) => (
+                <span key={i} className="text-[10px] sm:text-xs font-medium px-2 py-0.5 rounded-full" style={{ backgroundColor: `${primary}15`, color: primary }}>#{tag}</span>
+              ))}
+            </div>
           )}
         </div>
 
@@ -83,11 +86,7 @@ export default function CouponListCard({ coupon }: Props) {
               className="text-white font-bold text-sm px-6 py-3.5 rounded-lg transition-all w-full text-center"
               style={{ backgroundColor: primary }}
             >
-              {revealed ? (
-                <span className="tracking-widest text-base">{code}</span>
-              ) : (
-                'SHOW CODE'
-              )}
+              SHOW CODE
             </button>
           ) : (
             <button
@@ -101,8 +100,7 @@ export default function CouponListCard({ coupon }: Props) {
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between px-5 sm:px-6 py-3 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
-        <span className="text-base font-bold" style={{ color: primary }}>{storeName}</span>
+      <div className="flex items-center justify-end px-5 sm:px-6 py-3 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
         <a href={`/stores/${store.slug || storeName.toLowerCase().replace(/\s+/g, '-')}`}
           className="flex items-center gap-1 text-sm font-medium no-underline" style={{ color: primary }}>
           View All {storeName} Offers <ExternalLink className="w-4 h-4" />

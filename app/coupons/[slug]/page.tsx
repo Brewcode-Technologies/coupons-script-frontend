@@ -131,15 +131,6 @@ export default function CouponsPage() {
           onTabChange={setActiveTab}
         />
 
-        {/* Title */}
-        <div className="mt-6 mb-4">
-          <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: textMain }}>
-            {categoryName} Coupons & Offers
-          </h2>
-          <p className="text-base mt-1" style={{ color: textMuted }}>
-            {filteredCoupons.length} verified coupons available today
-          </p>
-        </div>
 
         {/* Main Layout */}
         <div className="flex gap-6">

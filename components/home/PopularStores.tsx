@@ -38,6 +38,7 @@ export default function PopularStores() {
 
   const [stores, setStores] = useState<any[]>([]);
   const [featuredStore, setFeaturedStore] = useState<any>(null);
+  const [loaded, setLoaded] = useState(false);
   const [page, setPage] = useState(0);
   const [columns, setColumns] = useState(5);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -94,7 +95,7 @@ export default function PopularStores() {
       }
 
       setStores(list);
-    }).catch(() => setStores(fallbackStores));
+    }).catch(() => setStores(fallbackStores)).finally(() => setLoaded(true));
   }, []);
 
   const totalPages = Math.ceil(stores.length / perPage);
@@ -108,6 +109,8 @@ export default function PopularStores() {
     store.slug || (store.name || store.storeName || '').toLowerCase().replace(/\s+/g, '-');
 
   const logoUrl = (store: any) => getImageUrl(store.logo || '');
+
+  if (!loaded) return null;
 
   return (
     <section className="max-w-7xl mx-auto px-4 py-8">
