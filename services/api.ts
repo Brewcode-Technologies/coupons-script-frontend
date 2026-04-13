@@ -37,6 +37,13 @@ export const getSiteConfig = () => api.get('/public/site/config');
 export const updateSiteConfig = (data: any) => api.put('/admin/pages/site-config/update', data);
 export const getNavigation = () => api.get('/public/navbar/navigation');
 export const updateNavigation = (data: any) => api.put('/admin/navbar/navigation/update', data);
+
+// Navbar Menu Items
+export const getNavbarItems = () => api.get('/admin/navbar');
+export const createNavbarItem = (data: any) => api.post('/admin/navbar/create', data);
+export const updateNavbarItem = (id: string, data: any) => api.put(`/admin/navbar/${id}`, data);
+export const deleteNavbarItem = (id: string) => api.delete(`/admin/navbar/${id}`);
+
 export const getBanners = () => api.get('/public/site/banners/list');
 export const getPage = (pageName: string) => api.get(`/public/site/${pageName}`);
 export const getCategories = () => api.get('/public/categories/list');

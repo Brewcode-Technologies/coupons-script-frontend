@@ -33,7 +33,14 @@ import { useTheme } from '@/components/ThemeProvider';
 import { getStores, getCategories, getCoupons } from '@/services/api';
 import { getServerUrl, getImageUrl } from '@/utils/serverUrl';
 
-const navLinks = [
+interface NavLink { name: string; url: string; target?: string; }
+
+interface NavbarFourProps {
+  navLinks?: NavLink[];
+  config?: any;
+}
+
+const defaultNavLinks = [
   {
     label: 'Stores',
     href: '/stores',
@@ -46,7 +53,7 @@ const navLinks = [
   },
   {
     label: 'All Coupons',
-    href: '/coupons',
+    href: '/all-coupons',
     icon: 'https://cdn.grabon.in/gograbon/v8/icons/calendar-v3.svg',
   },
   {
@@ -61,10 +68,32 @@ const navLinks = [
   },
 ];
 
-export default function NavbarFour() {
+export default function NavbarFour({ navLinks: propNavLinks, config }: NavbarFourProps) {
   const { siteConfig, refreshConfig, darkPalette } = useDynamicTheme();
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === 'dark';
+  
+  // CTA Button configuration
+  const ctaText = config?.ctaText || 'Get Started';
+  const ctaLink = config?.ctaLink || (ctaText.toLowerCase() === 'get started' ? '/contact-us' : '/');
+  
+  // Helper function to get default icons based on link name
+  function getDefaultIcon(name: string) {
+    const lowerName = name.toLowerCase();
+    if (lowerName.includes('store')) return 'https://cdn.grabon.in/gograbon/v8/icons/header-store-icon-v2.png';
+    if (lowerName.includes('categor')) return 'https://cdn.grabon.in/gograbon/v8/icons/header-category-icon-v2.png';
+    if (lowerName.includes('coupon')) return 'https://cdn.grabon.in/gograbon/v8/icons/calendar-v3.svg';
+    if (lowerName.includes('deal')) return 'https://cdn.grabon.in/gograbon/v8/icons/header-deals.png';
+    if (lowerName.includes('blog')) return 'https://cdn.grabon.in/gograbon/v8/icons/header-blog-icon-v2.png';
+    return 'https://cdn.grabon.in/gograbon/v8/icons/calendar-v3.svg'; // Default icon
+  }
+
+  // Convert navLinks from props to the format expected by NavbarFour
+  const navLinks = propNavLinks ? propNavLinks.map(link => ({
+    label: link.name,
+    href: link.url,
+    icon: getDefaultIcon(link.name),
+  })) : defaultNavLinks;
   const primary = siteConfig?.theme?.primaryColor || '#7c3aed';
   const secondary = siteConfig?.theme?.secondaryColor || '#9333ea';
   const siteName = siteConfig?.siteName || 'Coupons Script';
@@ -252,6 +281,27 @@ export default function NavbarFour() {
             >
               {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
+
+            {/* CTA Button - Desktop */}
+            {ctaText && (
+              <Link
+                href={ctaLink}
+                className="hidden md:inline-block px-6 py-2 rounded-full text-sm font-medium transition-all hover:opacity-90 no-underline"
+                style={{ 
+                  backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.2)', 
+                  color: navText, 
+                  border: `1px solid ${borderColor}` 
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = isDark ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.2)';
+                }}
+              >
+                {ctaText}
+              </Link>
+            )}
 
             {/* Mobile Search Icon */}
             <button
@@ -607,33 +657,7 @@ export default function NavbarFour() {
 
             {/* Nav vertical list */}
             <div className="flex flex-col flex-1">
-              {[
-                {
-                  label: 'Stores',
-                  href: '/stores',
-                  icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-store-icon-v2.png',
-                },
-                {
-                  label: 'Categories',
-                  href: '/categories',
-                  icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-category-icon-v2.png',
-                },
-                {
-                  label: 'All Coupons',
-                  href: '/coupons',
-                  icon: 'https://cdn.grabon.in/gograbon/v8/icons/calendar-v3.svg',
-                },
-                {
-                  label: 'Deals',
-                  href: '/deals',
-                  icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-deals.png',
-                },
-                {
-                  label: 'Blog',
-                  href: '/blog',
-                  icon: 'https://cdn.grabon.in/gograbon/v8/icons/header-blog-icon-v2.png',
-                },
-              ].map((link) => (
+              {navLinks.map((link) => (
                 <Link
                   key={link.label}
                   href={link.href}
@@ -662,6 +686,24 @@ export default function NavbarFour() {
                 </Link>
               ))}
             </div>
+            
+            {/* Mobile CTA Button */}
+            {ctaText && (
+              <div className="px-5 py-4 border-t" style={{ borderColor: isDark ? borderColor : '#f3f4f6' }}>
+                <Link
+                  href={ctaLink}
+                  onClick={closeDrawer}
+                  className="block w-full text-center px-6 py-3 rounded-full text-sm font-medium transition-all no-underline"
+                  style={{
+                    backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : primary,
+                    color: isDark ? navText : '#ffffff',
+                    border: `1px solid ${isDark ? borderColor : primary}`
+                  }}
+                >
+                  {ctaText}
+                </Link>
+              </div>
+            )}
           </nav>
         </div>
       )}

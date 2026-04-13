@@ -26,7 +26,7 @@ export default function NavbarOne({ navLinks, config }: NavbarOneProps) {
   const logoUrl = siteConfig?.logos?.navbar;
   const showThemeToggle = config?.showThemeToggle ?? true;
   const ctaText = config?.ctaText || 'Get Started';
-  const ctaLink = config?.ctaLink || '/';
+  const ctaLink = config?.ctaLink || (ctaText.toLowerCase() === 'get started' ? '/contact-us' : '/');
 
   const navBg = isDark
     ? 'bg-gray-900/80 border-gray-700/70'
@@ -41,7 +41,7 @@ export default function NavbarOne({ navLinks, config }: NavbarOneProps) {
 
   return (
     <>
-      <nav className={`sticky top-0 z-50 flex w-full items-center justify-between border-b ${navBg} px-4 py-3.5 backdrop-blur-md md:px-16 lg:px-24`}>
+      <nav className={`fixed top-0 z-50 flex w-full items-center justify-between border-b ${navBg} px-4 py-3.5 backdrop-blur-md md:px-16 lg:px-24`}>
         {/* Logo */}
         <Link href="/">
           {logoUrl ? (
@@ -53,23 +53,48 @@ export default function NavbarOne({ navLinks, config }: NavbarOneProps) {
 
         {/* Desktop Links */}
         <div className={`hidden items-center space-x-6 md:flex ${textColor}`}>
-          {navLinks.map((link) => link.hasDropdown ? (
-            <div key={link.name} className="group relative"
-              onMouseEnter={() => setOpenDropdown(link.name)}
-              onMouseLeave={() => setTimeout(() => setOpenDropdown(null), 150)}
-            >
-              <div className={`flex cursor-pointer items-center gap-1 ${hoverText}`}
-                onClick={() => setOpenDropdown(openDropdown === link.name ? null : link.name)}>
-                {link.name}
-                <ChevronDown className={`mt-px size-4 transition-transform duration-200 ${openDropdown === link.name ? 'rotate-180' : ''}`} />
+          {navLinks.map((link) => {
+            // Check if this is a contact-related link (excluding 'get started' which should be handled by CTA)
+            const isContactLink = ['contact us', 'contact'].includes(link.name.toLowerCase());
+            
+            return link.hasDropdown ? (
+              <div key={link.name} className="group relative"
+                onMouseEnter={() => setOpenDropdown(link.name)}
+                onMouseLeave={() => setTimeout(() => setOpenDropdown(null), 150)}
+              >
+                <div className={`flex cursor-pointer items-center gap-1 ${hoverText}`}
+                  onClick={() => setOpenDropdown(openDropdown === link.name ? null : link.name)}>
+                  {link.name}
+                  <ChevronDown className={`mt-px size-4 transition-transform duration-200 ${openDropdown === link.name ? 'rotate-180' : ''}`} />
+                </div>
+                {openDropdown === link.name && <StoresDropdown onClose={() => setOpenDropdown(null)} />}
               </div>
-              {openDropdown === link.name && <StoresDropdown onClose={() => setOpenDropdown(null)} />}
-            </div>
-          ) : (
-            <Link key={link.name} href={link.url} className={`transition ${hoverText} no-underline ${textColor}`}>
-              {link.name}
-            </Link>
-          ))}
+            ) : isContactLink && !ctaText ? (
+              // Only show contact button styling if there's no existing CTA button
+              <Link key={link.name} href={link.url} 
+                className="px-4 py-2 rounded-full text-sm font-medium transition-all no-underline"
+                style={{ 
+                  backgroundColor: primary, 
+                  color: '#ffffff',
+                  border: `2px solid ${primary}`
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = primary;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = primary;
+                  e.currentTarget.style.color = '#ffffff';
+                }}
+              >
+                {link.name}
+              </Link>
+            ) : (
+              <Link key={link.name} href={link.url} className={`transition ${hoverText} no-underline ${textColor}`}>
+                {link.name}
+              </Link>
+            );
+          })}
         </div>
 
         {/* Right Side */}
@@ -79,9 +104,12 @@ export default function NavbarOne({ navLinks, config }: NavbarOneProps) {
               {isDark ? <Sun className="size-5" /> : <Moon className="size-5" />}
             </button>
           )}
-          <Link href={ctaLink} className={`hidden rounded-full px-6 py-2 text-sm font-medium transition md:inline-block ${ctaBg}`}>
-            {ctaText}
-          </Link>
+          {/* Only show CTA button if it doesn't conflict with existing nav links */}
+          {ctaText && !navLinks.some(link => link.name.toLowerCase() === ctaText.toLowerCase()) && (
+            <Link href={ctaLink} className={`hidden rounded-full px-6 py-2 text-sm font-medium transition md:inline-block ${ctaBg}`}>
+              {ctaText}
+            </Link>
+          )}
           <button onClick={() => setIsOpen(true)} className={`transition active:scale-90 md:hidden ${textColor}`}>
             <MenuIcon className="size-6" />
           </button>
@@ -90,33 +118,53 @@ export default function NavbarOne({ navLinks, config }: NavbarOneProps) {
 
       {/* Mobile Menu */}
       <div className={`fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 text-lg font-medium backdrop-blur-2xl transition duration-300 md:hidden ${mobileBg} ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        {navLinks.map((link) => (
-          <div key={link.name} className="text-center">
-            {link.hasDropdown ? (
-              <>
-                <button onClick={() => setOpenDropdown(openDropdown === link.name ? null : link.name)}
-                  className={`flex items-center justify-center gap-1 ${textColor}`}>
+        {navLinks.map((link) => {
+          const isContactLink = ['contact us', 'contact'].includes(link.name.toLowerCase());
+          
+          return (
+            <div key={link.name} className="text-center">
+              {link.hasDropdown ? (
+                <>
+                  <button onClick={() => setOpenDropdown(openDropdown === link.name ? null : link.name)}
+                    className={`flex items-center justify-center gap-1 ${textColor}`}>
+                    {link.name}
+                    <ChevronDown className={`size-4 transition-transform ${openDropdown === link.name ? 'rotate-180' : ''}`} />
+                  </button>
+                  {openDropdown === link.name && (
+                    <div className="mt-2 flex flex-col gap-2 text-sm">
+                      <Link href={link.url} className={`block ${textColor} transition ${hoverText} no-underline`} onClick={() => setIsOpen(false)}>
+                        View All {link.name}
+                      </Link>
+                    </div>
+                  )}
+                </>
+              ) : isContactLink && !ctaText ? (
+                // Only show contact button styling if there's no existing CTA button
+                <Link href={link.url} 
+                  className="inline-block px-6 py-3 rounded-full text-sm font-medium transition-all no-underline"
+                  style={{ 
+                    backgroundColor: primary, 
+                    color: '#ffffff',
+                    border: `2px solid ${primary}`
+                  }}
+                  onClick={() => setIsOpen(false)}
+                >
                   {link.name}
-                  <ChevronDown className={`size-4 transition-transform ${openDropdown === link.name ? 'rotate-180' : ''}`} />
-                </button>
-                {openDropdown === link.name && (
-                  <div className="mt-2 flex flex-col gap-2 text-sm">
-                    <Link href={link.url} className={`block ${textColor} transition ${hoverText} no-underline`} onClick={() => setIsOpen(false)}>
-                      View All {link.name}
-                    </Link>
-                  </div>
-                )}
-              </>
-            ) : (
-              <Link href={link.url} className={`block ${textColor} transition ${hoverText} no-underline`} onClick={() => setIsOpen(false)}>
-                {link.name}
-              </Link>
-            )}
-          </div>
-        ))}
-        <Link href={ctaLink} className={`rounded-full px-8 py-2.5 text-sm font-medium transition ${ctaBg}`} onClick={() => setIsOpen(false)}>
-          {ctaText}
-        </Link>
+                </Link>
+              ) : (
+                <Link href={link.url} className={`block ${textColor} transition ${hoverText} no-underline`} onClick={() => setIsOpen(false)}>
+                  {link.name}
+                </Link>
+              )}
+            </div>
+          );
+        })}
+        {/* Only show CTA button if it doesn't conflict with existing nav links */}
+        {ctaText && !navLinks.some(link => link.name.toLowerCase() === ctaText.toLowerCase()) && (
+          <Link href={ctaLink} className={`rounded-full px-8 py-2.5 text-sm font-medium transition ${ctaBg}`} onClick={() => setIsOpen(false)}>
+            {ctaText}
+          </Link>
+        )}
         <button onClick={() => setIsOpen(false)} className="rounded-md bg-gray-900 p-2 text-white ring-white active:ring-2">
           <XIcon />
         </button>

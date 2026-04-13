@@ -28,7 +28,7 @@ export default function NavbarThree({ navLinks, config }: NavbarThreeProps) {
   const logoUrl = siteConfig?.logos?.navbar;
   const showThemeToggle = config?.showThemeToggle ?? true;
   const ctaText = config?.ctaText || 'Get Started';
-  const ctaLink = config?.ctaLink || '/';
+  const ctaLink = config?.ctaLink || (ctaText.toLowerCase() === 'get started' ? '/contact-us' : '/');
   const bannerText = config?.bannerText || 'Exclusive Price Drop! Hurry,';
   const bannerHighlight = config?.bannerHighlight || 'Offer Ends Soon!';
   const showBanner = config?.showBanner ?? true;
@@ -58,7 +58,7 @@ export default function NavbarThree({ navLinks, config }: NavbarThreeProps) {
 
       {/* Main Nav */}
       <nav
-        className="relative h-[70px] flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 shadow transition-all"
+        className="fixed top-0 left-0 right-0 h-[70px] flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 shadow transition-all z-50"
         style={{ backgroundColor: navBg, color: navText, borderBottom: `1px solid ${navBorder}` }}
       >
         {/* Logo */}
@@ -136,7 +136,7 @@ export default function NavbarThree({ navLinks, config }: NavbarThreeProps) {
         {/* Mobile Menu */}
         {mobileOpen && (
           <div
-            className="absolute top-[70px] left-0 w-full shadow-sm p-6 md:hidden z-50"
+            className="fixed top-[102px] left-0 w-full shadow-sm p-6 md:hidden z-40"
             style={{ backgroundColor: mobileBg, borderTop: `1px solid ${navBorder}` }}
           >
             <ul className="flex flex-col space-y-4">

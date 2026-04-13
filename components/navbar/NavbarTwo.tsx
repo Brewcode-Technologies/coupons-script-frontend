@@ -36,6 +36,8 @@ export default function NavbarTwo({ navLinks, config }: NavbarTwoProps) {
   const showSearch = config?.showSearch ?? true;
   const showThemeToggle = config?.showThemeToggle ?? true;
   const isSticky = config?.sticky ?? true;
+  const ctaText = config?.ctaText || 'Get Started';
+  const ctaLink = config?.ctaLink || (ctaText.toLowerCase() === 'get started' ? '/contact-us' : '/');
 
   const getNavBg = () => {
     if (isDark) return darkPalette.cardBg;
@@ -187,8 +189,8 @@ export default function NavbarTwo({ navLinks, config }: NavbarTwoProps) {
   };
 
   return (
-    <nav className={`${isSticky ? 'sticky top-0' : 'relative'} z-50`} style={{ background: navBg, color: navText }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+    <nav className={`${isSticky ? 'fixed top-0' : 'relative'} z-50 w-full`} style={{ background: navBg, color: navText }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
@@ -263,6 +265,20 @@ export default function NavbarTwo({ navLinks, config }: NavbarTwoProps) {
                 {isDark ? <Sun className="w-5 h-5" style={{ color: navText }} /> : <Moon className="w-5 h-5" style={{ color: navText }} />}
               </div>
             )}
+            {/* CTA Button */}
+            {ctaText && (
+              <Link href={ctaLink} className="hidden md:inline-block px-6 py-2 rounded-full text-sm font-medium transition-all hover:opacity-90 no-underline"
+                style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: navText, border: `1px solid rgba(255,255,255,0.3)` }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.2)';
+                }}
+              >
+                {ctaText}
+              </Link>
+            )}
             <div className="lg:hidden cursor-pointer" onClick={() => setMobileOpen(!mobileOpen)}>
               {mobileOpen ? <X className="w-6 h-6 stroke-2" style={{ color: navText }} /> : <Menu className="w-6 h-6 stroke-2" style={{ color: navText }} />}
             </div>
@@ -272,7 +288,7 @@ export default function NavbarTwo({ navLinks, config }: NavbarTwoProps) {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="lg:hidden border-t px-4 pb-4" style={{ backgroundColor: mobileBg, borderColor: 'rgba(255,255,255,0.2)' }}>
+        <div className="lg:hidden fixed top-16 left-0 right-0 w-full border-t px-4 pb-4 z-40" style={{ backgroundColor: mobileBg, borderColor: 'rgba(255,255,255,0.2)' }}>
           {/* Mobile Search */}
           <div className="relative my-3">
             <div className="flex items-center bg-white/15 rounded-full px-4 py-2.5">
@@ -372,6 +388,15 @@ export default function NavbarTwo({ navLinks, config }: NavbarTwoProps) {
               </Link>
             );
           })}
+          {/* Mobile CTA Button */}
+          {ctaText && (
+            <Link href={ctaLink} className="mx-4 mt-4 px-6 py-3 rounded-full text-sm font-medium transition-all text-center no-underline"
+              style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: navText, border: `1px solid rgba(255,255,255,0.3)` }}
+              onClick={() => setMobileOpen(false)}
+            >
+              {ctaText}
+            </Link>
+          )}
         </div>
       )}
     </nav>

@@ -23,6 +23,7 @@ import {
   Link2,
   Hash,
   BarChart3,
+  Navigation,
 } from 'lucide-react';
 
 const navItems = [
@@ -31,6 +32,7 @@ const navItems = [
   { href: '/admin/coupons', label: 'Coupons', icon: Tag, badge: null },
   { href: '/admin/deals', label: 'Deals', icon: Flame, badge: null },
   { href: '/admin/blog', label: 'Blog Articles', icon: BookOpen, badge: null },
+  { href: '/admin/navbar', label: 'Menu Builder', icon: Navigation, badge: null },
   { href: '/admin/promo-banners', label: 'Promo Banners', icon: Megaphone, badge: null },
   { href: '/admin/popular-links', label: 'Popular Links', icon: Link2, badge: null },
   { href: '/admin/categories', label: 'Categories', icon: LayoutGrid, badge: null },

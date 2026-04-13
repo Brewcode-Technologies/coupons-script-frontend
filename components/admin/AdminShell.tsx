@@ -16,6 +16,7 @@ const pageNames: Record<string, string> = {
   '/admin/tags': 'Tags',
   '/admin/banners': 'Banners',
   '/admin/pages': 'Pages',
+  '/admin/navbar': 'Menu Builder',
   '/admin/integration': 'Integration',
   '/admin/cms': 'CMS & Config',
 };

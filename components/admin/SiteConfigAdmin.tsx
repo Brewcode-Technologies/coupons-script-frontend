@@ -985,7 +985,25 @@ export default function SiteConfigAdmin() {
                     helperText="Text shown on the top-right button" />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <TextField fullWidth label="CTA Button Link" value={config.navbar?.ctaLink || '/'}
+                  <TextField fullWidth label="CTA Button Link" value={config.navbar?.ctaLink || '/contact-us'}
+                    onChange={(e) => setConfig({ ...config, navbar: { ...config.navbar, ctaLink: e.target.value } })}
+                    helperText="URL the CTA button links to" />
+                </Grid>
+              </>
+            )}
+            {/* Layout 2 specific fields */}
+            {config.navbar?.layout === 'navbar2' && (
+              <>
+                <Grid item xs={12}>
+                  <Divider><Typography variant="caption" color="text.secondary">Layout 2 — CTA Button</Typography></Divider>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField fullWidth label="CTA Button Text" value={config.navbar?.ctaText || 'Get Started'}
+                    onChange={(e) => setConfig({ ...config, navbar: { ...config.navbar, ctaText: e.target.value } })}
+                    helperText="Text shown on the top-right button" />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField fullWidth label="CTA Button Link" value={config.navbar?.ctaLink || '/contact-us'}
                     onChange={(e) => setConfig({ ...config, navbar: { ...config.navbar, ctaLink: e.target.value } })}
                     helperText="URL the CTA button links to" />
                 </Grid>
@@ -1003,7 +1021,7 @@ export default function SiteConfigAdmin() {
                     helperText="Top-right button label" />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <TextField fullWidth label="CTA Button Link" value={config.navbar?.ctaLink || '/'}
+                  <TextField fullWidth label="CTA Button Link" value={config.navbar?.ctaLink || '/contact-us'}
                     onChange={(e) => setConfig({ ...config, navbar: { ...config.navbar, ctaLink: e.target.value } })}
                     helperText="URL the CTA button links to" />
                 </Grid>
@@ -1019,6 +1037,24 @@ export default function SiteConfigAdmin() {
                 </Grid>
                 <Grid item xs={12} md={4}>
                   <FormControlLabel control={<Switch checked={config.navbar?.showBanner ?? true} onChange={(e) => setConfig({ ...config, navbar: { ...config.navbar, showBanner: e.target.checked } })} />} label="Show Announcement Banner" />
+                </Grid>
+              </>
+            )}
+            {/* Layout 4 specific fields */}
+            {config.navbar?.layout === 'navbar4' && (
+              <>
+                <Grid item xs={12}>
+                  <Divider><Typography variant="caption" color="text.secondary">Layout 4 — CTA Button</Typography></Divider>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField fullWidth label="CTA Button Text" value={config.navbar?.ctaText || 'Get Started'}
+                    onChange={(e) => setConfig({ ...config, navbar: { ...config.navbar, ctaText: e.target.value } })}
+                    helperText="Text shown on the top-right button" />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField fullWidth label="CTA Button Link" value={config.navbar?.ctaLink || '/contact-us'}
+                    onChange={(e) => setConfig({ ...config, navbar: { ...config.navbar, ctaLink: e.target.value } })}
+                    helperText="URL the CTA button links to" />
                 </Grid>
               </>
             )}
