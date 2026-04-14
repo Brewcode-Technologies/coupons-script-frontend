@@ -1,5 +1,6 @@
 'use client';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { getSiteConfig } from '@/services/api';
 import { useTheme } from '@/components/ThemeProvider';
@@ -276,6 +277,8 @@ export default function DynamicThemeProvider({ children }: { children: React.Rea
 
 function DynamicThemeWrapper({ children, siteConfig, fontFamily }: { children: React.ReactNode; siteConfig: any; fontFamily: string }) {
   const { theme } = useTheme();
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith('/admin');
   const isDark = theme === 'dark';
   const themeName = (siteConfig as any)?.themeName || 'purple';
   const darkPalette = DARK_PALETTES[themeName] || DARK_PALETTES.purple;
@@ -286,6 +289,10 @@ function DynamicThemeWrapper({ children, siteConfig, fontFamily }: { children: R
   useEffect(() => {
     document.documentElement.style.setProperty('--dark-card-bg', darkPalette.cardBg);
   }, [darkPalette.cardBg]);
+
+  if (isAdmin) {
+    return <div style={{ minHeight: '100vh' }}>{children}</div>;
+  }
 
   return (
     <div style={{ backgroundColor: bg, color, fontFamily: fontCombination.body, minHeight: '100vh' }}>

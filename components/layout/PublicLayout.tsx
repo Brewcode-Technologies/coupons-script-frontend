@@ -11,7 +11,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
   const pathname = usePathname();
   const [isClient, setIsClient] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const hideRecentBlogs = pathname === '/blog' || pathname?.startsWith('/blog/') || pathname === '/coupons' || pathname?.startsWith('/coupons/') || pathname === '/stores' || pathname?.startsWith('/stores/') || pathname === '/deals' || pathname?.startsWith('/deals/') || pathname === '/categories' || pathname?.startsWith('/categories/');
+  const showRecentBlogs = pathname === '/';
 
   useEffect(() => {
     setIsClient(true);
@@ -24,7 +24,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <>
         <Navbar />
         <ThemedMain>{children}</ThemedMain>
-        {!hideRecentBlogs && <RecentBlogs />}
+        {showRecentBlogs && <RecentBlogs />}
         <Footer />
         <BackToTop />
       </>
@@ -39,7 +39,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
     <>
       <Navbar />
       <ThemedMain>{children}</ThemedMain>
-      {!hideRecentBlogs && <RecentBlogs />}
+      {showRecentBlogs && <RecentBlogs />}
       <Footer />
       <BackToTop />
     </>
