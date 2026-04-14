@@ -17,8 +17,7 @@ export default function ThemedMain({ children }: { children: React.ReactNode }) 
       case 'navbar2':
         return 'pt-16'; // ~64px
       case 'navbar3':
-        const showBanner = siteConfig?.navbar?.showBanner ?? true;
-        return showBanner ? 'pt-[102px]' : 'pt-[70px]'; // banner + nav or just nav
+        return 'pt-0'; // No padding needed since navbar is sticky, not fixed
       case 'navbar4':
         return 'pt-28'; // ~112px (already fixed)
       default:

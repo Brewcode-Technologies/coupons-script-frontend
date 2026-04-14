@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
 import { getStores, getCategories, getCoupons } from '@/services/api';
@@ -72,6 +73,7 @@ export default function NavbarFour({ navLinks: propNavLinks, config }: NavbarFou
   const { siteConfig, refreshConfig, darkPalette } = useDynamicTheme();
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === 'dark';
+  const pathname = usePathname();
   
   // CTA Button configuration
   const ctaText = config?.ctaText || 'Get Started';
@@ -321,30 +323,38 @@ export default function NavbarFour({ navLinks: propNavLinks, config }: NavbarFou
         />
         <div className="hidden lg:flex items-center justify-between py-2.5" style={{ borderColor }}>
           <div className="flex items-center gap-1">
-            {navLinks.map((link) => (
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
+              
+              return (
               <Link
                 key={link.label}
                 href={link.href}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-base font-normal transition-all no-underline"
-                style={{ color: mutedText }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-base transition-all no-underline ${isActive ? 'font-semibold' : 'font-normal'}`}
+                style={{ 
+                  color: isActive ? navText : mutedText,
+                  backgroundColor: isActive ? hoverBg : 'transparent'
+                }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = hoverBg;
                   e.currentTarget.style.color = navText;
+                  e.currentTarget.style.fontWeight = '600';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.color = mutedText;
+                  e.currentTarget.style.backgroundColor = isActive ? hoverBg : 'transparent';
+                  e.currentTarget.style.color = isActive ? navText : mutedText;
+                  e.currentTarget.style.fontWeight = isActive ? '600' : '400';
                 }}
               >
                 <img
                   src={link.icon}
                   alt=""
                   className="w-5 h-5 object-contain"
-                  style={{ filter: iconFilter, opacity: 0.8 }}
+                  style={{ filter: iconFilter, opacity: isActive ? 1 : 0.8 }}
                 />
                 {link.label}
               </Link>
-            ))}
+            )})}
           </div>
         </div>
       </div>
@@ -657,23 +667,31 @@ export default function NavbarFour({ navLinks: propNavLinks, config }: NavbarFou
 
             {/* Nav vertical list */}
             <div className="flex flex-col flex-1">
-              {navLinks.map((link) => (
+              {navLinks.map((link) => {
+                const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
+                
+                return (
                 <Link
                   key={link.label}
                   href={link.href}
                   onClick={closeDrawer}
-                  className="flex items-center gap-3 px-5 py-4 text-base font-normal transition-colors no-underline border-b"
+                  className={`flex items-center gap-3 px-5 py-4 text-base font-normal transition-colors no-underline border-b ${isActive ? 'font-semibold' : ''}`}
                   style={{
-                    color: isDark ? darkPalette.text : '#1f2937',
+                    color: isActive ? primary : (isDark ? darkPalette.text : '#1f2937'),
                     borderColor: isDark ? borderColor : '#f3f4f6',
+                    backgroundColor: isActive ? `${primary}10` : 'transparent'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.color = primary;
-                    e.currentTarget.style.backgroundColor = `${primary}10`;
+                    if (!isActive) {
+                      e.currentTarget.style.color = primary;
+                      e.currentTarget.style.backgroundColor = `${primary}10`;
+                    }
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.color = isDark ? darkPalette.text : '#1f2937';
-                    e.currentTarget.style.backgroundColor = 'transparent';
+                    if (!isActive) {
+                      e.currentTarget.style.color = isDark ? darkPalette.text : '#1f2937';
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }
                   }}
                 >
                   <img
@@ -684,7 +702,7 @@ export default function NavbarFour({ navLinks: propNavLinks, config }: NavbarFou
                   />
                   {link.label}
                 </Link>
-              ))}
+              )})}
             </div>
             
             {/* Mobile CTA Button */}

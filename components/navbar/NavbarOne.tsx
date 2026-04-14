@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { MenuIcon, XIcon, ChevronDown, Sun, Moon } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
@@ -19,6 +20,7 @@ export default function NavbarOne({ navLinks, config }: NavbarOneProps) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const { theme, toggleTheme } = useTheme();
   const { siteConfig } = useDynamicTheme();
+  const pathname = usePathname();
 
   const isDark = theme === 'dark';
   const primary = siteConfig?.theme?.primaryColor || '#7c3aed';
@@ -56,16 +58,19 @@ export default function NavbarOne({ navLinks, config }: NavbarOneProps) {
           {navLinks.map((link) => {
             // Check if this is a contact-related link (excluding 'get started' which should be handled by CTA)
             const isContactLink = ['contact us', 'contact'].includes(link.name.toLowerCase());
+            const isActive = pathname === link.url || (link.url !== '/' && pathname.startsWith(link.url));
             
             return link.hasDropdown ? (
               <div key={link.name} className="group relative"
                 onMouseEnter={() => setOpenDropdown(link.name)}
                 onMouseLeave={() => setTimeout(() => setOpenDropdown(null), 150)}
               >
-                <div className={`flex cursor-pointer items-center gap-1 ${hoverText}`}
+                <div className={`flex cursor-pointer items-center gap-1 px-3 py-2 rounded-md transition-all duration-300 relative group ${hoverText} ${isActive || openDropdown === link.name ? 'bg-white/10' : 'hover:bg-white/10'}`}
+                  style={{ color: textColor }}
                   onClick={() => setOpenDropdown(openDropdown === link.name ? null : link.name)}>
                   {link.name}
                   <ChevronDown className={`mt-px size-4 transition-transform duration-200 ${openDropdown === link.name ? 'rotate-180' : ''}`} />
+                  <span className={`absolute bottom-0 left-0 h-0.5 transition-all duration-300 ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`} style={{ backgroundColor: textColor }} />
                 </div>
                 {openDropdown === link.name && <StoresDropdown onClose={() => setOpenDropdown(null)} />}
               </div>
@@ -90,8 +95,10 @@ export default function NavbarOne({ navLinks, config }: NavbarOneProps) {
                 {link.name}
               </Link>
             ) : (
-              <Link key={link.name} href={link.url} className={`transition ${hoverText} no-underline ${textColor}`}>
+              <Link key={link.name} href={link.url} className={`px-3 py-2 rounded-md transition-all duration-300 relative group no-underline ${isActive ? 'bg-white/10 font-bold' : 'hover:bg-white/10'}`}
+                style={{ color: textColor }}>
                 {link.name}
+                <span className={`absolute bottom-0 left-0 h-0.5 transition-all duration-300 ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`} style={{ backgroundColor: textColor }} />
               </Link>
             );
           })}
@@ -120,13 +127,15 @@ export default function NavbarOne({ navLinks, config }: NavbarOneProps) {
       <div className={`fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 text-lg font-medium backdrop-blur-2xl transition duration-300 md:hidden ${mobileBg} ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         {navLinks.map((link) => {
           const isContactLink = ['contact us', 'contact'].includes(link.name.toLowerCase());
+          const isActive = pathname === link.url || (link.url !== '/' && pathname.startsWith(link.url));
           
           return (
             <div key={link.name} className="text-center">
               {link.hasDropdown ? (
                 <>
                   <button onClick={() => setOpenDropdown(openDropdown === link.name ? null : link.name)}
-                    className={`flex items-center justify-center gap-1 ${textColor}`}>
+                    className={`flex items-center justify-center gap-1 ${isActive ? 'font-bold' : ''}`}
+                    style={{ color: isActive ? primary : textColor }}>
                     {link.name}
                     <ChevronDown className={`size-4 transition-transform ${openDropdown === link.name ? 'rotate-180' : ''}`} />
                   </button>
@@ -152,7 +161,8 @@ export default function NavbarOne({ navLinks, config }: NavbarOneProps) {
                   {link.name}
                 </Link>
               ) : (
-                <Link href={link.url} className={`block ${textColor} transition ${hoverText} no-underline`} onClick={() => setIsOpen(false)}>
+                <Link href={link.url} className={`block transition ${hoverText} no-underline ${isActive ? 'font-bold' : ''}`} 
+                  style={{ color: isActive ? primary : textColor }} onClick={() => setIsOpen(false)}>
                   {link.name}
                 </Link>
               )}

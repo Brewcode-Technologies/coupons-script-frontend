@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, X, Sun, Moon, ChevronDown } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
@@ -19,6 +20,7 @@ export default function NavbarThree({ navLinks, config }: NavbarThreeProps) {
   const [storesDropdownOpen, setStoresDropdownOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const { siteConfig, darkPalette } = useDynamicTheme();
+  const pathname = usePathname();
 
   const isDark = theme === 'dark';
   const primary = siteConfig?.theme?.primaryColor || '#7c3aed';
@@ -58,7 +60,7 @@ export default function NavbarThree({ navLinks, config }: NavbarThreeProps) {
 
       {/* Main Nav */}
       <nav
-        className="fixed top-0 left-0 right-0 h-[70px] flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 shadow transition-all z-50"
+        className="sticky top-0 left-0 right-0 h-16 flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 shadow transition-all z-50"
         style={{ backgroundColor: navBg, color: navText, borderBottom: `1px solid ${navBorder}` }}
       >
         {/* Logo */}
@@ -74,14 +76,17 @@ export default function NavbarThree({ navLinks, config }: NavbarThreeProps) {
 
         {/* Desktop Links */}
         <ul className="hidden md:flex items-center space-x-8 md:pl-16">
-          {navLinks.map((link) => link.hasDropdown ? (
+          {navLinks.map((link) => {
+            const isActive = pathname === link.url || (link.url !== '/' && pathname.startsWith(link.url));
+            
+            return link.hasDropdown ? (
             <li key={link.name} className="list-none relative"
               onMouseEnter={() => setStoresDropdownOpen(true)}
               onMouseLeave={() => setTimeout(() => setStoresDropdownOpen(false), 150)}
             >
               <button
-                className={`transition font-medium flex items-center gap-1 bg-transparent border-none outline-none cursor-pointer ${linkHover}`}
-                style={{ color: navText }}
+                className={`transition font-medium flex items-center gap-1 bg-transparent border-none outline-none cursor-pointer ${linkHover} ${isActive ? 'font-bold' : ''}`}
+                style={{ color: isActive ? primary : navText }}
                 onClick={() => setStoresDropdownOpen(!storesDropdownOpen)}
               >
                 {link.name}
@@ -93,13 +98,19 @@ export default function NavbarThree({ navLinks, config }: NavbarThreeProps) {
             <li key={link.name} className="list-none">
               <Link
                 href={link.url}
-                className={`transition no-underline font-medium ${linkHover}`}
-                style={{ color: navText }}
+                className={`transition no-underline font-medium relative ${linkHover} ${isActive ? 'font-bold' : ''}`}
+                style={{ color: isActive ? primary : navText }}
               >
                 {link.name}
+                {isActive && (
+                  <span 
+                    className="absolute -bottom-1 left-0 w-full h-0.5 bg-white"
+                  />
+                )}
               </Link>
             </li>
-          ))}
+          );
+          })}
         </ul>
 
         {/* Right side */}
@@ -136,22 +147,31 @@ export default function NavbarThree({ navLinks, config }: NavbarThreeProps) {
         {/* Mobile Menu */}
         {mobileOpen && (
           <div
-            className="fixed top-[102px] left-0 w-full shadow-sm p-6 md:hidden z-40"
+            className="absolute top-full left-0 w-full shadow-sm p-6 md:hidden z-40"
             style={{ backgroundColor: mobileBg, borderTop: `1px solid ${navBorder}` }}
           >
             <ul className="flex flex-col space-y-4">
-              {navLinks.map((link) => (
+              {navLinks.map((link) => {
+                const isActive = pathname === link.url || (link.url !== '/' && pathname.startsWith(link.url));
+                
+                return (
                 <li key={link.name} className="list-none">
                   <Link
                     href={link.url}
-                    className={`text-sm font-medium transition no-underline ${linkHover}`}
-                    style={{ color: navText }}
+                    className={`text-sm font-medium transition no-underline relative ${linkHover} ${isActive ? 'font-bold' : ''}`}
+                    style={{ color: isActive ? primary : navText }}
                     onClick={() => setMobileOpen(false)}
                   >
                     {link.name}
+                    {isActive && (
+                      <span 
+                        className="absolute -bottom-1 left-0 w-full h-0.5 bg-white"
+                      />
+                    )}
                   </Link>
                 </li>
-              ))}
+              );
+              })}
             </ul>
             <Link
               href={ctaLink}
