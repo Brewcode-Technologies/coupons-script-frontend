@@ -536,7 +536,7 @@ export default function NavbarMenuBuilder() {
 
         {/* Right Side - Menu Structure */}
         <div className={`${card} p-5 lg:col-span-2`}>
-          <h3 className="font-bold text-slate-800 mb-4">Menu Structure</h3>
+          <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">Menu Structure <span className="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-600 text-xs font-semibold">Layout {navbarLayout.replace('navbar', '')}</span></h3>
           
           {!Array.isArray(menuItems) || menuItems.length === 0 ? (
             <div className="text-center py-16">
