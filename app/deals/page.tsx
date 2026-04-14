@@ -474,36 +474,7 @@ export default function DealsPage() {
           </>
         )}
 
-        {/* Top Stores */}
-        {stores.length > 0 && (
-          <div className="mt-12">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold" style={{ color: textMain }}>Top Stores</h2>
-              <ColumnSwitcher columns={storeCols} onChange={setStoreCols} mobileOptions={[3, 4]} desktopOptions={[4, 5, 6, 7]} />
-            </div>
-            <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${storeCols}, minmax(0, 1fr))` }}>
-              {stores.slice(0, storeCols <= 4 ? 12 : storeCols <= 6 ? 12 : 16).map((store: any) => {
-                const rawLogo = store.logo || '';
-                const logo = rawLogo.startsWith('http') ? rawLogo : rawLogo ? `${serverUrl}${rawLogo}` : '';
-                return (
-                  <Link key={store._id} href={`/coupons/${store.slug}-coupons`} className="no-underline group text-center">
-                    <div
-                      className="rounded-2xl overflow-hidden flex items-center justify-center transition-all duration-300 hover:-translate-y-1"
-                      style={{ backgroundColor: cardBg, height: 80, boxShadow: 'rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px' }}
-                    >
-                      {logo ? (
-                        <img src={logo} alt={store.storeName} className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-white text-xl font-bold" style={{ backgroundColor: primary }}>{store.storeName?.[0]}</div>
-                      )}
-                    </div>
-                    <p className="mt-2 text-sm font-bold truncate" style={{ color: textMain }}>{store.storeName}</p>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        )}
+
 
         {/* Trending Deals */}
         {trending.length > 0 && (

@@ -8,6 +8,7 @@ import DealsOfTheDay from '@/components/home/DealsOfTheDay';
 import Collections from '@/components/home/Collections';
 import LazySection from '@/components/common/LazySection';
 import HomepageSkeleton from '@/components/common/HomepageSkeleton';
+
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 
 export default function HomePage() {
@@ -66,6 +67,7 @@ export default function HomePage() {
       <LazySection skeleton="cards">
         <Collections />
       </LazySection>
+
     </main>
   );
 }

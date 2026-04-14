@@ -55,11 +55,30 @@ export default function AdminDashboard() {
     color: item.store ? '#10b981' : '#6366f1',
   }));
 
+  if (loading) {
+    return (
+      <AdminShell>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-500 rounded-full animate-spin" />
+            <p className="text-sm text-slate-400 font-medium">Loading dashboard...</p>
+          </div>
+        </div>
+      </AdminShell>
+    );
+  }
+
   return (
     <AdminShell>
-      <div className="mb-7">
-        <h1 className="text-2xl font-bold text-slate-800">Dashboard Overview</h1>
-        <p className="text-base text-slate-500 mt-1">Real-time stats from your database.</p>
+      <div className="mb-7 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-800">Dashboard Overview</h1>
+          <p className="text-base text-slate-500 mt-1">Real-time stats from your database.</p>
+        </div>
+        <a href="https://coupons-script-frontend.vercel.app" target="_blank" rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors no-underline shadow-sm">
+          Visit Store <ArrowRight size={16} />
+        </a>
       </div>
 
       {/* KPI Cards */}
@@ -89,12 +108,12 @@ export default function AdminDashboard() {
 
       {/* Management Cards + Activity */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 mb-7">
-        <div className="xl:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div className="xl:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-5 auto-rows-fr">
           {managementCards.map((c) => {
             const Icon = c.icon;
             return (
               <Link key={c.title} href={c.href}
-                className={`${card} no-underline group p-5 flex flex-col gap-3 hover:-translate-y-0.5 hover:shadow-md transition-all min-h-[160px]`}>
+                className={`${card} no-underline group p-5 flex flex-col gap-3 hover:-translate-y-0.5 hover:shadow-md transition-all h-full`}>
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: c.bg }}>
                   <Icon size={22} style={{ color: c.color }} />
                 </div>

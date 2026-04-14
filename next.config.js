@@ -5,6 +5,7 @@ const nextConfig = {
       'localhost',
       'coupons-script-backend-production.up.railway.app',
       'res.cloudinary.com',
+      'images.unsplash.com',
     ],
   },
 }
