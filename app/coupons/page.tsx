@@ -50,6 +50,8 @@ export default function AllCouponsPage() {
         const now = new Date();
         const validCoupons = (Array.isArray(coupons) ? coupons : []).filter((c: any) => {
           if (c.expiryDate && new Date(c.expiryDate) < now) return false;
+          // Only show coupons (with code), exclude deals
+          if (!c.code) return false;
           return true;
         });
         

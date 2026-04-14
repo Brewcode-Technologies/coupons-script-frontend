@@ -9,7 +9,9 @@ import {
   FaFire, FaPlane, FaMobileAlt, FaTshirt, FaUtensils, FaDesktop,
   FaShoppingCart, FaHome, FaHeart, FaCar, FaGamepad, FaBaby,
   FaBookOpen, FaDumbbell, FaPills, FaGift, FaBriefcase, FaMusic,
-  FaCamera, FaWrench,
+  FaCamera, FaWrench, FaBus, FaBicycle, FaGlasses, FaShoePrints,
+  FaGem, FaFlask, FaPizzaSlice, FaTv, FaHotel, FaBlender,
+  FaRunning, FaDrumstickBite, FaCapsules,
 } from 'react-icons/fa';
 import { useDynamicTheme } from '@/components/DynamicThemeProvider';
 import { useTheme } from '@/components/ThemeProvider';
@@ -18,25 +20,38 @@ import { getServerUrl } from '@/utils/serverUrl';
 
 const ICON_MAP: Record<string, IconType> = {
   'most-used': FaFire, popular: FaFire, trending: FaFire, hot: FaFire,
-  travel: FaPlane, flight: FaPlane, flights: FaPlane, hotels: FaPlane,
+  travel: FaPlane, flight: FaPlane, flights: FaPlane,
   recharge: FaMobileAlt, mobile: FaMobileAlt, phone: FaMobileAlt, telecom: FaMobileAlt,
-  fashion: FaTshirt, clothing: FaTshirt, apparel: FaTshirt,
-  food: FaUtensils, restaurant: FaUtensils, dining: FaUtensils, grocery: FaUtensils,
+  fashion: FaTshirt, clothing: FaTshirt, apparel: FaTshirt, lingerie: FaTshirt,
+  food: FaUtensils, restaurant: FaUtensils, dining: FaUtensils, grocery: FaUtensils, groceries: FaUtensils,
   electronics: FaDesktop, tech: FaDesktop, gadgets: FaDesktop, computers: FaDesktop,
   shopping: FaShoppingCart, ecommerce: FaShoppingCart, 'online-shopping': FaShoppingCart,
-  home: FaHome, furniture: FaHome, 'home-decor': FaHome, kitchen: FaHome,
+  home: FaHome, furniture: FaHome, 'home-decor': FaHome,
   health: FaHeart, wellness: FaHeart, fitness: FaDumbbell, gym: FaDumbbell,
   beauty: FaHeart, cosmetics: FaHeart, skincare: FaHeart,
-  automotive: FaCar, cars: FaCar, bikes: FaCar, cab: FaCar, ride: FaCar,
+  automotive: FaCar, cars: FaCar, cab: FaCar, ride: FaCar,
   gaming: FaGamepad, games: FaGamepad,
   kids: FaBaby, baby: FaBaby, toys: FaBaby,
   books: FaBookOpen, education: FaBookOpen, courses: FaBookOpen, learning: FaBookOpen,
-  pharmacy: FaPills, medicine: FaPills, medical: FaPills,
-  gifts: FaGift, gifting: FaGift,
+  pharmacy: FaPills, medicine: FaPills, medical: FaPills, medicines: FaCapsules,
+  gifts: FaGift, gifting: FaGift, flowers: FaGift,
   business: FaBriefcase, office: FaBriefcase, hosting: FaBriefcase, software: FaBriefcase,
-  entertainment: FaMusic, music: FaMusic, movies: FaMusic, streaming: FaMusic,
+  entertainment: FaMusic, music: FaMusic, movies: FaMusic, streaming: FaMusic, ott: FaTv,
   photography: FaCamera,
   tools: FaWrench, hardware: FaWrench, services: FaWrench,
+  bus: FaBus,
+  bike: FaBicycle, 'bike-rentals': FaBicycle,
+  eyewear: FaGlasses,
+  footwear: FaShoePrints, shoes: FaShoePrints,
+  jewellery: FaGem, jewelry: FaGem,
+  'lab-tests': FaFlask, lab: FaFlask,
+  pizza: FaPizzaSlice,
+  hotel: FaHotel, hotels: FaHotel,
+  kitchen: FaBlender, 'kitchen-appliances': FaBlender,
+  sports: FaRunning,
+  meat: FaDrumstickBite, dairy: FaDrumstickBite,
+  protein: FaDumbbell, supplements: FaDumbbell,
+  utility: FaWrench, 'bill-payments': FaWrench,
 };
 
 function getIcon(slug: string, name: string): IconType {
@@ -67,12 +82,25 @@ export default function TopCoupons() {
   const [activeTab, setActiveTab] = useState('');
   const [fade, setFade] = useState(true);
   const [page, setPage] = useState(0);
+  const [catPage, setCatPage] = useState(0);
+  const [catsPerPage, setCatsPerPage] = useState(8);
+
+  // Responsive categories per page
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      setCatsPerPage(w < 640 ? 4 : w < 1024 ? 6 : 8);
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
 
   useEffect(() => {
     getCategories()
       .then((res) => {
         const data = res.data?.data ?? res.data ?? [];
-        const cats = (Array.isArray(data) ? data : []).slice(0, 6).map((c: any) => ({
+        const cats = (Array.isArray(data) ? data : []).map((c: any) => ({
           label: c.name,
           slug: c.slug || c.name.toLowerCase().replace(/\s+/g, '-'),
           Icon: getIcon(c.slug || '', c.name || ''),
@@ -142,61 +170,72 @@ export default function TopCoupons() {
   return (
     <section className="py-8" style={{ backgroundColor: sectionBg }}>
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl md:text-2xl font-bold" style={{ color: textColor }}>
-            {labels?.homepage?.topCouponsTitle || "Today's Top Coupons & Offers"}
-          </h2>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setPage((p) => Math.max(0, p - 1))}
-              className="w-8 h-8 rounded-full flex items-center justify-center border transition-colors"
-              style={{ borderColor: borderClr, color: mutedText, backgroundColor: cardBg }}
-            >
-              <FiChevronLeft className="w-4 h-4" />
-            </button>
-            <div className="flex gap-1.5">
-              {Array.from({ length: totalPages }).map((_, i) => (
-                <span
-                  key={i}
-                  className="h-2 rounded-full transition-all"
-                  style={{
-                    width: i === page ? 20 : 8,
-                    backgroundColor:
-                      i === page ? primary : isDark ? `${darkPalette.text}30` : '#d1d5db',
-                  }}
-                />
-              ))}
-            </div>
-            <button
-              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-              className="w-8 h-8 rounded-full flex items-center justify-center border transition-colors"
-              style={{ borderColor: borderClr, color: mutedText, backgroundColor: cardBg }}
-            >
-              <FiChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+        {(() => {
+          const totalCatPages = Math.max(1, Math.ceil(tabs.length / catsPerPage));
+          const visibleTabs = tabs.slice(catPage * catsPerPage, catPage * catsPerPage + catsPerPage);
+          return (
+            <>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl md:text-2xl font-bold" style={{ color: textColor }}>
+                  {labels?.homepage?.topCouponsTitle || "Today's Top Coupons & Offers"}
+                </h2>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setCatPage((p) => Math.max(0, p - 1))}
+                    disabled={catPage === 0}
+                    className="w-8 h-8 rounded-full flex items-center justify-center border transition-colors disabled:opacity-30"
+                    style={{ borderColor: borderClr, color: mutedText, backgroundColor: cardBg }}
+                  >
+                    <FiChevronLeft className="w-4 h-4" />
+                  </button>
+                  <div className="flex gap-1.5">
+                    {Array.from({ length: totalCatPages }).map((_, i) => (
+                      <span
+                        key={i}
+                        className="h-2 rounded-full transition-all cursor-pointer"
+                        onClick={() => setCatPage(i)}
+                        style={{
+                          width: i === catPage ? 20 : 8,
+                          backgroundColor:
+                            i === catPage ? primary : isDark ? `${darkPalette.text}30` : '#d1d5db',
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => setCatPage((p) => Math.min(totalCatPages - 1, p + 1))}
+                    disabled={catPage === totalCatPages - 1}
+                    className="w-8 h-8 rounded-full flex items-center justify-center border transition-colors disabled:opacity-30"
+                    style={{ borderColor: borderClr, color: mutedText, backgroundColor: cardBg }}
+                  >
+                    <FiChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
 
-        {tabs.length > 0 && (
-          <div className="flex flex-wrap gap-3 mb-6">
-            {tabs.map(({ label, Icon }) => (
-              <button
-                key={label}
-                onClick={() => switchTab(label)}
-                className="flex items-center gap-2 px-5 py-2 rounded-full border text-sm font-medium transition-all cursor-pointer"
-                style={{
-                  backgroundColor: activeTab === label ? primary : cardBg,
-                  color: activeTab === label ? '#ffffff' : textColor,
-                  borderColor:
-                    activeTab === label ? primary : isDark ? `${darkPalette.text}30` : '#d1d5db',
-                }}
-              >
-                <Icon className="w-4 h-4" />
-                {label}
-              </button>
-            ))}
-          </div>
-        )}
+              {visibleTabs.length > 0 && (
+                <div className="flex flex-wrap gap-2.5 mb-6">
+                  {visibleTabs.map(({ label, Icon }) => (
+                    <button
+                      key={label}
+                      onClick={() => switchTab(label)}
+                      className="flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition-all cursor-pointer whitespace-nowrap"
+                      style={{
+                        backgroundColor: activeTab === label ? primary : cardBg,
+                        color: activeTab === label ? '#ffffff' : textColor,
+                        borderColor:
+                          activeTab === label ? primary : isDark ? `${darkPalette.text}30` : '#d1d5db',
+                      }}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          );
+        })()}
 
         <div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 transition-opacity duration-300"

@@ -41,6 +41,11 @@ export default function PopularStores() {
   const [loaded, setLoaded] = useState(false);
   const [page, setPage] = useState(0);
   const [columns, setColumns] = useState(5);
+
+  // Set 2 columns on mobile after mount
+  useEffect(() => {
+    if (window.innerWidth < 640) setColumns(2);
+  }, []);
   const gridRef = useRef<HTMLDivElement>(null);
   const [gridHeight, setGridHeight] = useState(0);
 
