@@ -9,7 +9,7 @@ import NavbarFour from '@/components/navbar/NavbarFour';
 
 const defaultNavLinks = [
   { name: 'Categories', url: '/categories' },
-  { name: 'All Coupons', url: '/all-coupons' },
+  { name: 'All Coupons', url: '/coupons' },
   { name: 'Stores', url: '/stores' },
   { name: 'Deals', url: '/deals' },
   { name: 'Blog', url: '/blog' },

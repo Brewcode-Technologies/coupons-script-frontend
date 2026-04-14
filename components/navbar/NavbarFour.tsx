@@ -54,7 +54,7 @@ const defaultNavLinks = [
   },
   {
     label: 'All Coupons',
-    href: '/all-coupons',
+    href: '/coupons',
     icon: 'https://cdn.grabon.in/gograbon/v8/icons/calendar-v3.svg',
   },
   {

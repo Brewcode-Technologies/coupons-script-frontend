@@ -36,7 +36,7 @@ interface SelectableItem {
 // Predefined pages
 const predefinedPages: SelectableItem[] = [
   { name: 'Homepage', url: '/', type: 'page' },
-  { name: 'All Coupons', url: '/all-coupons', type: 'page' },
+  { name: 'All Coupons', url: '/coupons', type: 'page' },
   { name: 'Stores', url: '/stores', type: 'page' },
   { name: 'Deals', url: '/deals', type: 'page' },
   { name: 'Blog', url: '/blog', type: 'page' },
