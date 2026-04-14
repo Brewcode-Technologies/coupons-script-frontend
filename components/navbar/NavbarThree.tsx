@@ -64,11 +64,11 @@ export default function NavbarThree({ navLinks, config }: NavbarThreeProps) {
         style={{ backgroundColor: navBg, color: navText, borderBottom: `1px solid ${navBorder}` }}
       >
         {/* Logo */}
-        <Link href="/" className="flex-shrink-0 no-underline">
+        <Link href="/" className="flex items-center gap-1 shrink-0 no-underline">
           {logoUrl ? (
-            <img src={getImageUrl(logoUrl)} alt={siteName} className="h-8 w-auto" />
+            <img src={getImageUrl(logoUrl)} alt={siteName} className="h-8 sm:h-12 w-auto object-contain" />
           ) : (
-            <span className="font-extrabold text-xl tracking-tight" style={{ color: primary }}>
+            <span className="text-lg sm:text-2xl font-extrabold" style={{ color: primary }}>
               {siteName}
             </span>
           )}

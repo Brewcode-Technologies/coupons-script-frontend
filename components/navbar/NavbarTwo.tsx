@@ -193,11 +193,11 @@ export default function NavbarTwo({ navLinks, config }: NavbarTwoProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex-shrink-0">
+          <Link href="/" className="flex items-center gap-1 shrink-0 no-underline">
             {siteConfig?.logos?.navbar ? (
-              <img src={getImageUrl(siteConfig.logos.navbar)} alt={siteConfig.siteName || 'Logo'} className="h-8 w-auto" />
+              <img src={getImageUrl(siteConfig.logos.navbar)} alt={siteConfig.siteName || 'Logo'} className="h-8 sm:h-12 w-auto object-contain" />
             ) : (
-              <span className="font-extrabold text-2xl tracking-tight" style={{ color: navText }}>
+              <span className="text-lg sm:text-2xl font-extrabold" style={{ color: navText }}>
                 {siteConfig?.siteName || 'Coupons Script'}
               </span>
             )}

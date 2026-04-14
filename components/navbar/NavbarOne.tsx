@@ -45,11 +45,11 @@ export default function NavbarOne({ navLinks, config }: NavbarOneProps) {
     <>
       <nav className={`fixed top-0 z-50 flex w-full items-center justify-between border-b ${navBg} px-4 py-3.5 backdrop-blur-md md:px-16 lg:px-24`}>
         {/* Logo */}
-        <Link href="/">
+        <Link href="/" className="flex items-center gap-1 shrink-0 no-underline">
           {logoUrl ? (
-            <img src={getImageUrl(logoUrl)} alt={siteName} className="h-8 w-auto" />
+            <img src={getImageUrl(logoUrl)} alt={siteName} className="h-8 sm:h-12 w-auto object-contain" />
           ) : (
-            <span className="font-extrabold text-xl tracking-tight" style={{ color: primary }}>{siteName}</span>
+            <span className="text-lg sm:text-2xl font-extrabold" style={{ color: primary }}>{siteName}</span>
           )}
         </Link>
 
