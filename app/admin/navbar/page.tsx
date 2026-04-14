@@ -224,11 +224,21 @@ export default function NavbarMenuBuilder() {
 
   const saveNavbarLayout = async () => {
     try {
+      const configRes = await getSiteConfig();
+      const existingNavbar = configRes.data?.navbar || {};
       await updateSiteConfig({
-        navbar: { layout: navbarLayout }
+        navbar: { ...existingNavbar, layout: navbarLayout }
       });
+      // Trigger config refresh across all tabs/components
+      localStorage.setItem('cms-updated', Date.now().toString());
+      window.dispatchEvent(new StorageEvent('storage', {
+        key: 'cms-updated',
+        newValue: Date.now().toString()
+      }));
+      window.dispatchEvent(new CustomEvent('cms-updated'));
       toast.success('Navbar layout updated successfully');
     } catch (error) {
+      console.error('Error updating navbar layout:', error);
       toast.error('Error updating navbar layout');
     }
   };
