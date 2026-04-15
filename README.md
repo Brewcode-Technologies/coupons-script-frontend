@@ -352,7 +352,13 @@ Access at `/admin/login`
 
 ## 📄 License
 
-This project is private and proprietary.
+This project is proprietary software. See the [LICENSE](./LICENSE) file for the full license agreement.
+
+**Key points:**
+- All rights reserved — source code may not be redistributed or resold
+- Licensee retains ownership of uploaded content and CMS data
+- Third-party dependencies (Next.js, React, MUI, etc.) are under their respective open-source licenses
+- Licensee is responsible for data privacy compliance (GDPR, CCPA) and securing credentials
 
 ---
 
