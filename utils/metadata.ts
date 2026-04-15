@@ -62,9 +62,11 @@ export function buildMetadata({
   const safeTitle = title.length > 60 ? title.slice(0, 57) + '...' : title;
   const safeDesc = description.length > 160 ? description.slice(0, 157) + '...' : description;
 
-  // Use admin-uploaded Cloudinary image directly, fallback to dynamic /api/og
+  // Optimize Cloudinary images to 1200x630 JPEG under 600KB for WhatsApp compatibility
   let ogImageUrl: string;
-  if (image) {
+  if (image && image.includes('res.cloudinary.com')) {
+    ogImageUrl = image.replace('/upload/', '/upload/w_1200,h_630,c_fill,g_center,q_80,f_jpg/');
+  } else if (image) {
     ogImageUrl = image;
   } else {
     const params = new URLSearchParams({ title: safeTitle, ...(safeDesc && { description: safeDesc }), ...(siteName && { siteName }) });
