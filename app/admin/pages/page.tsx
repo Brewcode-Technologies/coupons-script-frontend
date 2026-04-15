@@ -326,7 +326,7 @@ export default function AdminPagesManager() {
           </div>
         </div>
         <button onClick={() => openCreate()}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-sm font-semibold transition-all hover:opacity-90"
+          className="flex items-center gap-2 h-12 px-5 rounded-xl text-white text-sm font-semibold transition-all hover:opacity-90"
           style={{ background: 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}>
           <Plus size={16} /> New Page
         </button>
@@ -379,7 +379,7 @@ export default function AdminPagesManager() {
           <p className="font-semibold text-slate-700 text-lg">No pages yet</p>
           <p className="text-slate-400 text-sm">Click "New Page" to create your first page</p>
           <button onClick={() => openCreate()}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-semibold mt-2"
+            className="flex items-center gap-2 h-12 px-5 rounded-xl text-white text-sm font-semibold mt-2"
             style={{ background: 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}>
             <Plus size={15} /> Create First Page
           </button>
@@ -456,7 +456,7 @@ export default function AdminPagesManager() {
                 <div>
                   <label className="text-sm font-semibold text-slate-700 block mb-1.5">Page Title *</label>
                   <input
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-indigo-400 transition-colors"
+                    className="w-full h-12 px-4 rounded-xl border border-slate-200 text-sm outline-none focus:border-indigo-400 transition-colors"
                     placeholder="e.g., About Us"
                     value={form.title}
                     onChange={e => {
@@ -471,7 +471,7 @@ export default function AdminPagesManager() {
                     URL Slug * <span className="text-indigo-500 font-mono text-xs">→ yourdomain.com/{form.slug === 'home' ? '' : (form.slug || 'your-slug')}</span>
                   </label>
                   <input
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-mono outline-none focus:border-indigo-400 transition-colors"
+                    className="w-full h-12 px-4 rounded-xl border border-slate-200 text-sm font-mono outline-none focus:border-indigo-400 transition-colors"
                     placeholder="e.g., about-us"
                     value={form.slug}
                     onChange={e => setForm({ ...form, slug: slugify(e.target.value), page: slugify(e.target.value) })}
@@ -486,7 +486,7 @@ export default function AdminPagesManager() {
                 <div>
                   <label className="text-sm font-semibold text-slate-700 block mb-1.5">Description (SEO)</label>
                   <textarea
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-indigo-400 transition-colors resize-none"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm outline-none focus:border-indigo-400 transition-colors resize-none"
                     rows={2}
                     placeholder="Brief description for search engines"
                     value={form.description}
@@ -498,7 +498,7 @@ export default function AdminPagesManager() {
                   <div>
                     <label className="text-sm font-semibold text-slate-700 block mb-1.5">Template</label>
                     <select
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-indigo-400 bg-white"
+                      className="w-full h-12 px-4 rounded-xl border border-slate-200 text-sm outline-none focus:border-indigo-400 bg-white"
                       value={form.template}
                       onChange={e => setForm({ ...form, template: e.target.value })}
                     >
@@ -508,7 +508,7 @@ export default function AdminPagesManager() {
                   <div>
                     <label className="text-sm font-semibold text-slate-700 block mb-1.5">Status</label>
                     <select
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-indigo-400 bg-white"
+                      className="w-full h-12 px-4 rounded-xl border border-slate-200 text-sm outline-none focus:border-indigo-400 bg-white"
                       value={form.isActive ? 'active' : 'inactive'}
                       onChange={e => setForm({ ...form, isActive: e.target.value === 'active' })}
                     >
@@ -552,21 +552,21 @@ export default function AdminPagesManager() {
 
                       {isOpen && (
                         <div className="p-4 space-y-3 border-t border-slate-100">
-                          <input className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-indigo-400"
+                          <input className="w-full h-12 px-4 rounded-xl border border-slate-200 text-sm outline-none focus:border-indigo-400"
                             placeholder="Section title" value={section.title}
                             onChange={e => updateSection(idx, 'title', e.target.value)} />
 
                           {(section.type === 'heroBanner') && (
                             <>
-                              <input className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-indigo-400"
+                              <input className="w-full h-12 px-4 rounded-xl border border-slate-200 text-sm outline-none focus:border-indigo-400"
                                 placeholder="Image URL (https://...)" value={section.image || ''}
                                 onChange={e => updateSection(idx, 'image', e.target.value)} />
                               <RichTextEditor value={section.content || ''} onChange={val => updateSection(idx, 'content', val)} placeholder="Subtitle / description" />
                               <div className="grid grid-cols-2 gap-3">
-                                <input className="px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-indigo-400"
+                                <input className="h-12 px-4 rounded-xl border border-slate-200 text-sm outline-none focus:border-indigo-400"
                                   placeholder="Button text" value={section.buttonText || ''}
                                   onChange={e => updateSection(idx, 'buttonText', e.target.value)} />
-                                <input className="px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-indigo-400"
+                                <input className="h-12 px-4 rounded-xl border border-slate-200 text-sm outline-none focus:border-indigo-400"
                                   placeholder="Button link e.g. /stores" value={section.buttonLink || ''}
                                   onChange={e => updateSection(idx, 'buttonLink', e.target.value)} />
                               </div>
@@ -585,7 +585,7 @@ export default function AdminPagesManager() {
                             <div className="flex items-center gap-3">
                               <label className="text-sm text-slate-600">Items to show:</label>
                               <input type="number" min={1} max={50}
-                                className="w-20 px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-indigo-400"
+                                className="w-20 h-12 px-4 rounded-xl border border-slate-200 text-sm outline-none focus:border-indigo-400"
                                 value={section.limit || 8}
                                 onChange={e => updateSection(idx, 'limit', parseInt(e.target.value) || 8)} />
                             </div>
@@ -607,7 +607,7 @@ export default function AdminPagesManager() {
                       return (
                         <button key={st.value}
                           onClick={() => setNewSection({ ...newSection, type: st.value })}
-                          className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-left transition-all ${selected ? 'border-indigo-400 bg-indigo-50' : 'border-slate-200 hover:border-slate-300 bg-white'}`}>
+                          className={`flex items-center gap-2 px-3 h-12 rounded-xl border text-left transition-all ${selected ? 'border-indigo-400 bg-indigo-50' : 'border-slate-200 hover:border-slate-300 bg-white'}`}>
                           <Icon size={14} className={selected ? 'text-indigo-500' : 'text-slate-400'} />
                           <div>
                             <p className={`text-xs font-semibold ${selected ? 'text-indigo-700' : 'text-slate-600'}`}>{st.label}</p>
@@ -618,14 +618,14 @@ export default function AdminPagesManager() {
                   </div>
 
                   <input
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-indigo-400"
+                    className="w-full h-12 px-4 rounded-xl border border-slate-200 text-sm outline-none focus:border-indigo-400"
                     placeholder="Section title e.g. Welcome Banner"
                     value={newSection.title}
                     onChange={e => setNewSection({ ...newSection, title: e.target.value })}
                   />
 
                   <button onClick={addSection}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors">
+                    className="w-full flex items-center justify-center gap-2 h-12 rounded-xl text-sm font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors">
                     <Plus size={15} /> Add Section
                   </button>
                 </div>
@@ -635,11 +635,11 @@ export default function AdminPagesManager() {
             {/* Drawer footer */}
             <div className="flex-shrink-0 px-6 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between gap-3">
               <button onClick={() => setShowForm(false)}
-                className="px-5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors">
+                className="h-12 px-5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors">
                 Cancel
               </button>
               <button onClick={handleSave}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-white text-sm font-semibold transition-all hover:opacity-90"
+                className="flex items-center justify-center gap-2 h-12 px-6 rounded-xl text-white text-sm font-semibold transition-all hover:opacity-90"
                 style={{ background: 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}>
                 {editingPage ? 'Save Changes' : 'Create Page'}
               </button>
@@ -660,11 +660,11 @@ export default function AdminPagesManager() {
             <p className="text-center text-slate-400 text-sm mb-5">The page at <code className="bg-slate-100 px-1 rounded">/{deleteConfirm.slug}</code> will be permanently removed.</p>
             <div className="flex gap-3">
               <button onClick={() => setDeleteConfirm(null)}
-                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50">
+                className="flex-1 h-12 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50">
                 Cancel
               </button>
               <button onClick={handleDelete}
-                className="flex-1 py-2.5 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-colors">
+                className="flex-1 h-12 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-colors">
                 Delete
               </button>
             </div>

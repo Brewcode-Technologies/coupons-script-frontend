@@ -62,17 +62,16 @@ export function buildMetadata({
   const safeTitle = title.length > 60 ? title.slice(0, 57) + '...' : title;
   const safeDesc = description.length > 160 ? description.slice(0, 157) + '...' : description;
 
-  const ogImage = image || `${siteUrl}/og_img.png`;
+  // Use admin-uploaded Cloudinary image directly, fallback to dynamic /api/og
+  let ogImageUrl: string;
+  if (image) {
+    ogImageUrl = image;
+  } else {
+    const params = new URLSearchParams({ title: safeTitle, ...(safeDesc && { description: safeDesc }), ...(siteName && { siteName }) });
+    ogImageUrl = `${siteUrl}/api/og?${params.toString()}`;
+  }
 
-  // Force Cloudinary images to 1200x630 PNG for WhatsApp/social media compatibility
-  const ogImageUrl = ogImage.includes('res.cloudinary.com') 
-    ? ogImage.replace('/upload/', '/upload/w_1200,h_630,c_fill,g_center,q_auto,f_png/') 
-    : ogImage;
-
-  // Determine image MIME type for og:image:type
-  const ogImageType = ogImageUrl.endsWith('.jpg') || ogImageUrl.endsWith('.jpeg') 
-    ? 'image/jpeg' 
-    : 'image/png';
+  const ogImageType = ogImageUrl.match(/\.(jpe?g)/i) ? 'image/jpeg' : 'image/png';
 
   return {
     metadataBase: new URL(siteUrl),
