@@ -1,12 +1,11 @@
 import { Metadata } from 'next';
-import { fetchAPI, buildMetadata, SITE_URL } from '@/utils/metadata';
+import { fetchAPI, buildMetadata, getSiteUrl } from '@/utils/metadata';
 import CouponsClient from './CouponsClient';
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const slug = params.slug;
   const name = slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
-  // Try to find store by slug for better metadata
   const store = await fetchAPI(`/public/stores/details/${slug}`);
   const storeName = store?.storeName || name;
   const logo = store?.logo?.startsWith('http') ? store.logo : '';
@@ -14,7 +13,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return buildMetadata({
     title: `${storeName} Coupons & Discount Codes`,
     description: `Get the latest ${storeName} coupons, discount codes and offers. Verified and updated daily to save you money.`,
-    url: `${SITE_URL}/coupons/${slug}`,
+    url: `${getSiteUrl()}/coupons/${slug}`,
     image: logo,
   });
 }

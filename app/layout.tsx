@@ -1,14 +1,5 @@
-'use client';
-import { Provider } from 'react-redux';
-import { store } from '@/store';
-import CssBaseline from '@mui/material/CssBaseline';
-import DynamicThemeProvider from '@/components/DynamicThemeProvider';
-import { ThemeProvider as CustomThemeProvider } from '@/components/ThemeProvider';
-import DynamicFontLoader from '@/components/DynamicFontLoader';
-import DynamicAnalyticsLoader from '@/components/DynamicAnalyticsLoader';
-import { Toaster } from 'react-hot-toast';
 import '@/styles/globals.css';
-import PublicLayout from '@/components/layout/PublicLayout';
+import ClientProviders from './ClientProviders';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -27,17 +18,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
 
-        {/* Default font - will be overridden by DynamicFontLoader */}
+        {/* Default font */}
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet" />
 
-        {/* Sync dark mode before React hydrates to prevent flash */}
+        {/* Sync dark mode before React hydrates */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.classList.add('dark')}catch(e){}})()`
           }}
         />
 
-        {/* Structured Data - Organization */}
+        {/* Structured Data */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -45,10 +36,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               "@context": "https://schema.org",
               "@type": "WebSite",
               "name": "Coupons Script",
-              "url": process.env.NEXT_PUBLIC_SITE_URL || "https://example.com",
+              "url": process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || "https://coupons-script-frontend.vercel.app",
               "potentialAction": {
                 "@type": "SearchAction",
-                "target": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/search?q={search_term_string}`,
+                "target": `${process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://coupons-script-frontend.vercel.app'}/search?q={search_term_string}`,
                 "query-input": "required name=search_term_string"
               }
             })
@@ -56,26 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <Provider store={store}>
-          <CustomThemeProvider>
-          <DynamicThemeProvider>
-            <DynamicFontLoader />
-            <DynamicAnalyticsLoader />
-            <CssBaseline />
-            <PublicLayout>{children}</PublicLayout>
-            <Toaster
-              position="top-right"
-              toastOptions={{
-                duration: 4000,
-                style: { background: '#363636', color: '#fff' },
-                success: { duration: 3000, iconTheme: { primary: '#4ade80', secondary: '#fff' } },
-                error: { duration: 4000, iconTheme: { primary: '#ef4444', secondary: '#fff' } },
-                loading: { iconTheme: { primary: '#3b82f6', secondary: '#fff' } },
-              }}
-            />
-          </DynamicThemeProvider>
-          </CustomThemeProvider>
-        </Provider>
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );

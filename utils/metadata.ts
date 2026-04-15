@@ -1,14 +1,18 @@
 import { Metadata } from 'next';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-const metadataBase = new URL(SITE_URL);
+function getApiUrl() {
+  return process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:5000/api';
+}
 
-export { SITE_URL, API_URL, metadataBase };
+function getSiteUrl() {
+  return process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://coupons-script-frontend.vercel.app';
+}
+
+export { getSiteUrl, getApiUrl };
 
 export async function fetchAPI(endpoint: string) {
   try {
-    const res = await fetch(`${API_URL}${endpoint}`, { next: { revalidate: 60 } });
+    const res = await fetch(`${getApiUrl()}${endpoint}`, { next: { revalidate: 60 } });
     if (!res.ok) return null;
     const json = await res.json();
     return json.data || json;
@@ -54,13 +58,19 @@ export function buildMetadata({
   publishedTime?: string;
   authors?: string[];
 }): Metadata {
+  const siteUrl = getSiteUrl();
   const safeTitle = title.length > 60 ? title.slice(0, 57) + '...' : title;
   const safeDesc = description.length > 160 ? description.slice(0, 157) + '...' : description;
 
-  const ogImage = image || `${SITE_URL}/og_img.png`;
+  const ogImage = image || `${siteUrl}/og_img.png`;
+
+  // Force Cloudinary images to 1200x630 for optimal OG display
+  const ogImageUrl = ogImage.includes('res.cloudinary.com') 
+    ? ogImage.replace('/upload/', '/upload/w_1200,h_630,c_fill,g_center,q_auto,f_auto/') 
+    : ogImage;
 
   return {
-    metadataBase,
+    metadataBase: new URL(siteUrl),
     title: safeTitle,
     description: safeDesc,
     openGraph: {
@@ -69,7 +79,7 @@ export function buildMetadata({
       url,
       type,
       siteName: siteName || 'CouponsScript',
-      images: [{ url: ogImage, width: 1200, height: 630, alt: safeTitle }],
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: safeTitle }],
       ...(publishedTime && { publishedTime }),
       ...(authors && { authors }),
     },
@@ -77,7 +87,7 @@ export function buildMetadata({
       card: 'summary_large_image',
       title: safeTitle,
       description: safeDesc,
-      images: [ogImage],
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: safeTitle }],
     },
     alternates: {
       canonical: url,

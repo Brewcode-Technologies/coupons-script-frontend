@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { fetchAPI, buildMetadata, SITE_URL } from '@/utils/metadata';
+import { fetchAPI, buildMetadata, getSiteUrl } from '@/utils/metadata';
 import StoreDetailClient from './StoreDetailClient';
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return buildMetadata({
     title: `${name} Coupons & Promo Codes - Save Today`,
     description: store.description || `Find the latest ${name} coupons, promo codes and deals. Save money on your next purchase.`,
-    url: `${SITE_URL}/stores/${params.slug}`,
+    url: `${getSiteUrl()}/stores/${params.slug}`,
     image: logo,
   });
 }

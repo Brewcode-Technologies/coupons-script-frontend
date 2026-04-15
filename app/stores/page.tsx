@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
-import { getSiteConfigServer, buildMetadata, getPageOgImage, getPageSeo, SITE_URL } from '@/utils/metadata';
+import { getSiteConfigServer, buildMetadata, getPageOgImage, getPageSeo, getSiteUrl } from '@/utils/metadata';
 import StoresClient from './StoresClient';
+
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getSiteConfigServer();
@@ -9,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     title: ps.metaTitle || `All Stores - Coupons & Promo Codes | ${siteName}`,
     description: ps.metaDescription || `Browse all stores and find the best coupons, promo codes and deals. Save money at your favorite stores with ${siteName}.`,
-    url: `${SITE_URL}/stores`,
+    url: `${getSiteUrl()}/stores`,
     image: getPageOgImage(config, 'stores'),
     siteName,
   });

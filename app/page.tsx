@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
-import { getSiteConfigServer, buildMetadata, getPageOgImage, getPageSeo, SITE_URL } from '@/utils/metadata';
+import { getSiteConfigServer, buildMetadata, getPageOgImage, getPageSeo, getSiteUrl } from '@/utils/metadata';
 import HomeClient from './HomeClient';
+
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getSiteConfigServer();
@@ -10,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const description = ps.metaDescription || config?.seo?.metaDescription || config?.siteDescription || `Save money with verified coupons and deals from top stores at ${siteName}.`;
   const image = getPageOgImage(config, 'home');
 
-  return buildMetadata({ title, description, url: SITE_URL, image, siteName });
+  return buildMetadata({ title, description, url: getSiteUrl(), image, siteName });
 }
 
 export default function HomePage() {

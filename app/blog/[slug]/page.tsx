@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { fetchAPI, buildMetadata, SITE_URL } from '@/utils/metadata';
+import { fetchAPI, buildMetadata, getSiteUrl } from '@/utils/metadata';
 import BlogArticleClient from './BlogArticleClient';
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return buildMetadata({
     title: article.metaTitle || article.title || 'Blog',
     description: article.metaDescription || article.excerpt || article.title || '',
-    url: `${SITE_URL}/blog/${params.slug}`,
+    url: `${getSiteUrl()}/blog/${params.slug}`,
     image: article.heroImage || article.featuredImage || article.image || '',
     type: 'article',
     publishedTime: article.publishDate || article.createdAt,
