@@ -3,7 +3,12 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Link2, Share2 } from 'lucide-react';
 
-export default function MobileShareBar() {
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+export default function MobileShareBar({ title, description }: Props) {
   const [visible, setVisible] = useState(false);
   const [liked, setLiked] = useState(false);
 
@@ -19,7 +24,11 @@ export default function MobileShareBar() {
 
   const share = async () => {
     if (navigator.share) {
-      await navigator.share({ title: document.title, url: window.location.href });
+      await navigator.share({
+        title: title || document.title,
+        text: description || '',
+        url: window.location.href,
+      });
     } else {
       copyLink();
     }

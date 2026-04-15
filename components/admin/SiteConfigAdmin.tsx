@@ -332,6 +332,7 @@ export default function SiteConfigAdmin() {
                 value={config.siteName}
                 onChange={(e) => setConfig({...config, siteName: e.target.value})}
                 helperText="Appears in browser tab, navbar, and throughout the site"
+                InputProps={{ sx: { height: 48, borderRadius: 2 } }}
               />
             </Grid>
           </Grid>
@@ -344,6 +345,8 @@ export default function SiteConfigAdmin() {
           <Typography variant="h6">SEO & Meta Tags</Typography>
         </AccordionSummary>
         <AccordionDetails>
+          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>Global SEO (Default for all pages)</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>These values are used as defaults when no page-specific SEO is set.</Typography>
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <TextField
@@ -354,7 +357,8 @@ export default function SiteConfigAdmin() {
                   ...config, 
                   seo: {...config.seo, metaTitle: e.target.value}
                 })}
-                helperText="Appears in search results and browser tab (50-60 characters recommended)"
+                helperText={<span>Appears in search results and browser tab · <strong style={{ color: (config.seo.metaTitle?.length || 0) > 60 ? '#ef4444' : '#10b981' }}>{config.seo.metaTitle?.length || 0}/60</strong></span>}
+                InputProps={{ sx: { height: 48, borderRadius: 2 } }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -368,7 +372,8 @@ export default function SiteConfigAdmin() {
                   ...config, 
                   seo: {...config.seo, metaDescription: e.target.value}
                 })}
-                helperText="Appears in search results (150-160 characters recommended)"
+                helperText={<span>Appears in search results · <strong style={{ color: (config.seo.metaDescription?.length || 0) > 160 ? '#ef4444' : '#10b981' }}>{config.seo.metaDescription?.length || 0}/160</strong></span>}
+                InputProps={{ sx: { borderRadius: 2 } }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -385,13 +390,13 @@ export default function SiteConfigAdmin() {
               </Box>
               <Box sx={{ display: 'flex', gap: 1 }}>
                 <TextField
-                  size="small"
                   label="Add Keyword"
                   value={newKeyword}
                   onChange={(e) => setNewKeyword(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && addKeyword()}
+                  InputProps={{ sx: { height: 48, borderRadius: 2 } }}
                 />
-                <Button variant="outlined" onClick={addKeyword} startIcon={<AddIcon />}>
+                <Button variant="outlined" onClick={addKeyword} startIcon={<AddIcon />} sx={{ height: 48, borderRadius: 2, textTransform: 'none', fontWeight: 600 }}>
                   Add
                 </Button>
               </Box>
@@ -406,6 +411,7 @@ export default function SiteConfigAdmin() {
                   seo: {...config.seo, ogTitle: e.target.value}
                 })}
                 helperText="Title when shared on social media"
+                InputProps={{ sx: { height: 48, borderRadius: 2 } }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -418,6 +424,7 @@ export default function SiteConfigAdmin() {
                   seo: {...config.seo, twitterSite: e.target.value}
                 })}
                 helperText="Your Twitter handle (e.g., @yoursite)"
+                InputProps={{ sx: { height: 48, borderRadius: 2 } }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -432,9 +439,146 @@ export default function SiteConfigAdmin() {
                   seo: {...config.seo, ogDescription: e.target.value}
                 })}
                 helperText="Description when shared on social media"
+                InputProps={{ sx: { borderRadius: 2 } }}
               />
             </Grid>
           </Grid>
+
+          <Divider sx={{ my: 4 }} />
+
+          {/* Page-Specific SEO */}
+          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>Page-Specific SEO</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>Override meta title, description and OG tags for individual pages. Leave fields empty to use global defaults.</Typography>
+          <Grid container spacing={2} sx={{ mb: 3 }}>
+            <Grid item xs={12} md={4}>
+              <FormControl fullWidth>
+                <InputLabel>Select Page</InputLabel>
+                <Select
+                  value={config._selectedSeoPage || ''}
+                  label="Select Page"
+                  onChange={(e) => setConfig({ ...config, _selectedSeoPage: e.target.value })}
+                  sx={{ height: 48, borderRadius: 2 }}
+                >
+                  {[
+                    { slug: 'home', label: 'Home Page' },
+                    { slug: 'stores', label: 'Stores' },
+                    { slug: 'coupons', label: 'All Coupons' },
+                    { slug: 'deals', label: 'Deals' },
+                    { slug: 'blog', label: 'Blog' },
+                    { slug: 'categories', label: 'Categories' },
+                    { slug: 'about-us', label: 'About Us' },
+                    { slug: 'contact-us', label: 'Contact Us' },
+                  ].map((p) => (
+                    <MenuItem key={p.slug} value={p.slug}>
+                      {p.label} {config.pageSeo?.[p.slug]?.metaTitle ? '✅' : ''}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+          {config._selectedSeoPage && (() => {
+            const ps = config._selectedSeoPage;
+            const seo = config.pageSeo?.[ps] || {};
+            const updatePageSeo = (field: string, value: string) => {
+              setConfig({
+                ...config,
+                pageSeo: {
+                  ...(config.pageSeo || {}),
+                  [ps]: { ...(config.pageSeo?.[ps] || {}), [field]: value }
+                }
+              });
+            };
+            const titleLen = (seo.metaTitle || '').length;
+            const descLen = (seo.metaDescription || '').length;
+            return (
+              <Card variant="outlined" sx={{ p: 3, mt: 1, borderRadius: 2, border: '1px solid #e0e0e0' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+                    SEO for: {ps.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())}
+                  </Typography>
+                  {(seo.metaTitle || seo.metaDescription || seo.ogTitle || seo.ogDescription) && (
+                    <Chip label="Customized" size="small" color="success" variant="outlined" />
+                  )}
+                </Box>
+                <Grid container spacing={3}>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      label="Meta Title"
+                      value={seo.metaTitle || ''}
+                      onChange={(e) => updatePageSeo('metaTitle', e.target.value)}
+                      helperText={<span>Leave empty to use global default · <strong style={{ color: titleLen > 60 ? '#ef4444' : titleLen > 0 ? '#10b981' : undefined }}>{titleLen}/60</strong></span>}
+                      InputProps={{ sx: { height: 48, borderRadius: 2 } }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      multiline
+                      rows={3}
+                      label="Meta Description"
+                      value={seo.metaDescription || ''}
+                      onChange={(e) => updatePageSeo('metaDescription', e.target.value)}
+                      helperText={<span>Leave empty to use global default · <strong style={{ color: descLen > 160 ? '#ef4444' : descLen > 0 ? '#10b981' : undefined }}>{descLen}/160</strong></span>}
+                      InputProps={{ sx: { borderRadius: 2 } }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      fullWidth
+                      label="OG Title"
+                      value={seo.ogTitle || ''}
+                      onChange={(e) => updatePageSeo('ogTitle', e.target.value)}
+                      helperText="Title shown when shared on social media"
+                      InputProps={{ sx: { height: 48, borderRadius: 2 } }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      fullWidth
+                      label="OG Description"
+                      value={seo.ogDescription || ''}
+                      onChange={(e) => updatePageSeo('ogDescription', e.target.value)}
+                      helperText="Description shown when shared on social media"
+                      InputProps={{ sx: { height: 48, borderRadius: 2 } }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box sx={{ display: 'flex', gap: 1.5 }}>
+                      <Button
+                        variant="contained"
+                        onClick={async () => {
+                          try {
+                            await updateSiteConfig({ pageSeo: config.pageSeo });
+                            toast.success(`SEO saved for ${ps.replace(/-/g, ' ')}`);
+                          } catch { toast.error('Failed to save page SEO'); }
+                        }}
+                        sx={{ height: 42, borderRadius: 2, textTransform: 'none', fontWeight: 600, px: 3 }}
+                      >
+                        Save Page SEO
+                      </Button>
+                      {(seo.metaTitle || seo.metaDescription || seo.ogTitle || seo.ogDescription) && (
+                        <Button
+                          variant="outlined"
+                          color="error"
+                          onClick={() => {
+                            const pageSeo = { ...(config.pageSeo || {}) };
+                            delete pageSeo[ps];
+                            setConfig({ ...config, pageSeo });
+                            updateSiteConfig({ pageSeo }).then(() => toast.success(`SEO reset for ${ps.replace(/-/g, ' ')}`));
+                          }}
+                          sx={{ height: 42, borderRadius: 2, textTransform: 'none', fontWeight: 600, px: 3 }}
+                        >
+                          Reset to Default
+                        </Button>
+                      )}
+                    </Box>
+                  </Grid>
+                </Grid>
+              </Card>
+            );
+          })()}
         </AccordionDetails>
       </Accordion>
 
@@ -657,7 +801,8 @@ export default function SiteConfigAdmin() {
               />
             </Grid>
             <Grid item xs={12} md={6}>
-              <Typography variant="subtitle1" gutterBottom>Open Graph Image</Typography>
+              <Typography variant="subtitle1" gutterBottom>Open Graph Image (Default)</Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Used when no page-specific OG image is set. Recommended: 1200×630px</Typography>
               <LogoUploader 
                 currentLogo={config.logos.ogImage}
                 logoType="ogImage"
@@ -671,6 +816,55 @@ export default function SiteConfigAdmin() {
                   } catch (e) { console.error('Auto-save logo failed', e); }
                 }}
               />
+            </Grid>
+            <Grid item xs={12}>
+              <Divider sx={{ my: 2 }} />
+              <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>Page-Specific OG Images</Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>Set a unique Open Graph image for each page. Recommended: 1200×630px (JPG, PNG, WebP)</Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel>Select Page</InputLabel>
+                    <Select
+                      value={config._selectedOgPage || ''}
+                      label="Select Page"
+                      onChange={(e) => setConfig({ ...config, _selectedOgPage: e.target.value })}
+                    >
+                      {[
+                        { slug: 'home', label: 'Home Page' },
+                        { slug: 'stores', label: 'Stores' },
+                        { slug: 'coupons', label: 'All Coupons' },
+                        { slug: 'deals', label: 'Deals' },
+                        { slug: 'blog', label: 'Blog' },
+                        { slug: 'categories', label: 'Categories' },
+                        { slug: 'about-us', label: 'About Us' },
+                        { slug: 'contact-us', label: 'Contact Us' },
+                      ].map((p) => (
+                        <MenuItem key={p.slug} value={p.slug}>
+                          {p.label} {config.pageOgImages?.[p.slug] ? '✅' : ''}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                {config._selectedOgPage && (
+                  <Grid item xs={12} md={6}>
+                    <LogoUploader
+                      currentLogo={config.pageOgImages?.[config._selectedOgPage] || ''}
+                      logoType="ogImage"
+                      onLogoUpdate={async (logoUrl) => {
+                        const pageOgImages = { ...(config.pageOgImages || {}), [config._selectedOgPage]: logoUrl };
+                        const updated = { ...config, pageOgImages };
+                        setConfig(updated);
+                        try {
+                          await updateSiteConfig({ pageOgImages });
+                          toast.success(`OG image updated for ${config._selectedOgPage}`);
+                        } catch (e) { console.error('Auto-save OG image failed', e); }
+                      }}
+                    />
+                  </Grid>
+                )}
+              </Grid>
             </Grid>
           </Grid>
         </AccordionDetails>
@@ -708,6 +902,7 @@ export default function SiteConfigAdmin() {
                           label="Display Label"
                           value={data.label}
                           onChange={(e) => updateSocialMedia(platform, 'label', e.target.value)}
+                          InputProps={{ sx: { height: 48, borderRadius: 2 } }}
                         />
                       </Grid>
                       <Grid item xs={12} md={4}>
@@ -717,6 +912,7 @@ export default function SiteConfigAdmin() {
                           value={data.url}
                           onChange={(e) => updateSocialMedia(platform, 'url', e.target.value)}
                           placeholder={`https://${platform}.com/yourhandle`}
+                          InputProps={{ sx: { height: 48, borderRadius: 2 } }}
                         />
                       </Grid>
                       <Grid item xs={12} md={4}>
@@ -726,6 +922,7 @@ export default function SiteConfigAdmin() {
                           value={data.icon}
                           onChange={(e) => updateSocialMedia(platform, 'icon', e.target.value)}
                           helperText="Icon identifier for display"
+                          InputProps={{ sx: { height: 48, borderRadius: 2 } }}
                         />
                       </Grid>
                     </Grid>
@@ -753,6 +950,7 @@ export default function SiteConfigAdmin() {
                   ...config, 
                   footer: {...config.footer, copyright: e.target.value}
                 })}
+                InputProps={{ sx: { height: 48, borderRadius: 2 } }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -764,6 +962,7 @@ export default function SiteConfigAdmin() {
                   ...config, 
                   footer: {...config.footer, email: e.target.value}
                 })}
+                InputProps={{ sx: { height: 48, borderRadius: 2 } }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -775,6 +974,7 @@ export default function SiteConfigAdmin() {
                   ...config, 
                   footer: {...config.footer, phone: e.target.value}
                 })}
+                InputProps={{ sx: { height: 48, borderRadius: 2 } }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -786,6 +986,7 @@ export default function SiteConfigAdmin() {
                   ...config, 
                   footer: {...config.footer, address: e.target.value}
                 })}
+                InputProps={{ sx: { height: 48, borderRadius: 2 } }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -1195,6 +1396,7 @@ export default function SiteConfigAdmin() {
                 label="Copyright Text"
                 value={config.footer.copyright}
                 onChange={(e) => setConfig({ ...config, footer: { ...config.footer, copyright: e.target.value } })}
+                InputProps={{ sx: { height: 48, borderRadius: 2 } }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -1203,6 +1405,7 @@ export default function SiteConfigAdmin() {
                 label="Contact Email"
                 value={config.footer.email}
                 onChange={(e) => setConfig({ ...config, footer: { ...config.footer, email: e.target.value } })}
+                InputProps={{ sx: { height: 48, borderRadius: 2 } }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -1211,6 +1414,7 @@ export default function SiteConfigAdmin() {
                 label="Phone Number"
                 value={config.footer.phone}
                 onChange={(e) => setConfig({ ...config, footer: { ...config.footer, phone: e.target.value } })}
+                InputProps={{ sx: { height: 48, borderRadius: 2 } }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -1219,6 +1423,7 @@ export default function SiteConfigAdmin() {
                 label="Address"
                 value={config.footer.address}
                 onChange={(e) => setConfig({ ...config, footer: { ...config.footer, address: e.target.value } })}
+                InputProps={{ sx: { height: 48, borderRadius: 2 } }}
               />
             </Grid>
             <Grid item xs={12} md={4}>
@@ -1275,6 +1480,7 @@ export default function SiteConfigAdmin() {
             value={config.footerContent?.tagline || ''}
             onChange={(e) => setConfig({ ...config, footerContent: { ...config.footerContent, tagline: e.target.value } })}
             helperText="Short description shown below the logo in the footer"
+            InputProps={{ sx: { height: 48, borderRadius: 2 } }}
             sx={{ mb: 3 }}
           />
 
@@ -1290,7 +1496,7 @@ export default function SiteConfigAdmin() {
                     cols[colIdx] = { ...cols[colIdx], heading: e.target.value };
                     setConfig({ ...config, footerContent: { ...config.footerContent, columns: cols } });
                   }}
-                  size="small"
+                  InputProps={{ sx: { height: 48, borderRadius: 2 } }}
                   sx={{ flex: 1 }}
                 />
                 <Button color="error" size="small" onClick={() => {
@@ -1302,6 +1508,7 @@ export default function SiteConfigAdmin() {
               {col.links.map((link: any, linkIdx: number) => (
                 <Box key={linkIdx} sx={{ display: 'flex', gap: 1, mb: 1, alignItems: 'center' }}>
                   <TextField size="small" label="Label" value={link.label} sx={{ flex: 1 }}
+                    InputProps={{ sx: { height: 48, borderRadius: 2 } }}
                     onChange={(e) => {
                       const cols = [...config.footerContent.columns];
                       cols[colIdx].links[linkIdx] = { ...link, label: e.target.value };
@@ -1309,6 +1516,7 @@ export default function SiteConfigAdmin() {
                     }}
                   />
                   <TextField size="small" label="URL" value={link.href} sx={{ flex: 1 }}
+                    InputProps={{ sx: { height: 48, borderRadius: 2 } }}
                     onChange={(e) => {
                       const cols = [...config.footerContent.columns];
                       cols[colIdx].links[linkIdx] = { ...link, href: e.target.value };
@@ -1465,6 +1673,7 @@ export default function SiteConfigAdmin() {
             <Box key={linkIdx} sx={{ display: 'flex', gap: 1, mb: 1.5, alignItems: 'center' }}>
               <Chip label={linkIdx + 1} size="small" sx={{ minWidth: 28, fontWeight: 'bold' }} />
               <TextField size="small" label="Label" value={link.label} sx={{ flex: 1 }}
+                InputProps={{ sx: { height: 48, borderRadius: 2 } }}
                 onChange={(e) => {
                   const links = [...(config.footerContent?.bottomLinks || [])];
                   links[linkIdx] = { ...link, label: e.target.value };
@@ -1472,6 +1681,7 @@ export default function SiteConfigAdmin() {
                 }}
               />
               <TextField size="small" label="URL" value={link.href} sx={{ flex: 1 }}
+                InputProps={{ sx: { height: 48, borderRadius: 2 } }}
                 onChange={(e) => {
                   const links = [...(config.footerContent?.bottomLinks || [])];
                   links[linkIdx] = { ...link, href: e.target.value };
@@ -1499,7 +1709,7 @@ export default function SiteConfigAdmin() {
           size="large" 
           onClick={handleSave}
           disabled={saving}
-          sx={{ minWidth: 200 }}
+          sx={{ minWidth: 200, height: 48, borderRadius: 2, textTransform: 'none', fontWeight: 600, fontSize: 16 }}
         >
           {saving ? 'Saving...' : 'Save All Configuration'}
         </Button>
