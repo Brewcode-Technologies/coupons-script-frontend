@@ -153,14 +153,15 @@ export default function AdminTags() {
               onChange={e => {
                 const name = e.target.value;
                 setFormData({ name, slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') });
-              }} variant="outlined" />
+              }} variant="outlined" InputProps={{ sx: { height: 48, borderRadius: 2 } }} />
             <TextField fullWidth label="Slug" value={formData.slug}
               onChange={e => setFormData(p => ({ ...p, slug: e.target.value }))}
-              variant="outlined" helperText="Auto-generated from name. Edit if needed." />
+              variant="outlined" helperText="Auto-generated from name. Edit if needed."
+              InputProps={{ sx: { height: 48, borderRadius: 2 } }} />
           </div>
           <div className="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t">
-            <Button onClick={closeDrawer} variant="outlined">Cancel</Button>
-            <Button onClick={handleSubmit} variant="contained" style={{ background: 'linear-gradient(135deg, #a855f7, #7c3aed)', borderRadius: 8, textTransform: 'none' }}>
+            <Button onClick={closeDrawer} variant="outlined" sx={{ height: 42, borderRadius: 2, textTransform: 'none', fontWeight: 600 }}>Cancel</Button>
+            <Button onClick={handleSubmit} variant="contained" sx={{ height: 42, borderRadius: 2, textTransform: 'none', fontWeight: 600, background: 'linear-gradient(135deg, #a855f7, #7c3aed)' }}>
               {editId ? 'Update Tag' : 'Create Tag'}
             </Button>
           </div>

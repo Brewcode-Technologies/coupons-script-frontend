@@ -24,6 +24,7 @@ import {
   Hash,
   BarChart3,
   Navigation,
+  MessageSquare,
 } from 'lucide-react';
 
 const navItems = [
@@ -37,6 +38,7 @@ const navItems = [
   { href: '/admin/popular-links', label: 'Popular Links', icon: Link2, badge: null },
   { href: '/admin/categories', label: 'Categories', icon: LayoutGrid, badge: null },
   { href: '/admin/tags', label: 'Tags', icon: Hash, badge: null },
+  { href: '/admin/contact-messages', label: 'Messages', icon: MessageSquare, badge: null },
   { href: '/admin/banners', label: 'Banners', icon: Image, badge: null },
   { href: '/admin/pages', label: 'Pages', icon: FileText, badge: null },
   { href: '/admin/integration', label: 'Integration', icon: BarChart3, badge: null },

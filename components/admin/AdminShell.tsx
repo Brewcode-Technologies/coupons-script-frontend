@@ -14,6 +14,7 @@ const pageNames: Record<string, string> = {
   '/admin/popular-links': 'Popular Links',
   '/admin/categories': 'Categories',
   '/admin/tags': 'Tags',
+  '/admin/contact-messages': 'Contact Messages',
   '/admin/banners': 'Banners',
   '/admin/pages': 'Pages',
   '/admin/navbar': 'Menu Builder',
@@ -30,7 +31,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       <AdminSidebar />
       <main className="flex-1 min-w-0 flex flex-col overflow-hidden">
         {/* Top Navigation Bar */}
-        <div className="bg-white border-b border-slate-200 px-6 py-4 flex-shrink-0">
+        <div className="bg-white border-b border-slate-200 pl-16 pr-4 lg:px-6 py-4 flex-shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm">
               <Link 
@@ -46,7 +47,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 </>
               )}
             </div>
-            <div className="text-xs text-slate-500">
+            <div className="text-xs text-slate-500 hidden lg:block">
               {new Date().toLocaleDateString('en-US', { 
                 weekday: 'long', 
                 year: 'numeric', 

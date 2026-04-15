@@ -141,6 +141,13 @@ export const bulkDeleteCategories = (ids: string[]) => api.post('/admin/categori
 export const adminLogin = (data: { email: string; password: string }) => api.post('/auth/login', data);
 export const adminVerify = () => api.get('/auth/verify');
 
+// Contact Messages
+export const submitContactForm = (data: { name: string; email: string; subject: string; message: string }) => api.post('/public/contact/submit', data);
+export const getContactMessages = (status?: string) => api.get('/admin/contact-messages', { params: status ? { status } : {} });
+export const getContactStats = () => api.get('/admin/contact-messages/stats');
+export const updateContactMessage = (id: string, data: any) => api.put(`/admin/contact-messages/${id}`, data);
+export const deleteContactMessage = (id: string) => api.delete(`/admin/contact-messages/${id}`);
+
 // Analytics
 export const getAnalyticsConfig = () => api.get('/public/site/analytics');
 export const updateAnalyticsConfig = (data: any) => api.put('/admin/pages/analytics/update', data);

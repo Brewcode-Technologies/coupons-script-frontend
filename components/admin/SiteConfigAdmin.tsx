@@ -30,7 +30,9 @@ import { getSiteConfig, updateSiteConfig } from '@/services/api';
 import LogoUploader from './LogoUploader';
 import ColorPicker from './ColorPicker';
 import { updateFavicon, updatePageTitle, updateMetaTags } from '@/utils/faviconUtils';
-import { Palette, Navigation, ArrowDownCircle, FileText } from 'lucide-react';
+import { Palette, Navigation, ArrowDownCircle, FileText, HelpCircle, Home, Globe, Info, Phone } from 'lucide-react';
+import { Store as StoreIcon } from 'lucide-react';
+import FontDemo from '@/components/FontDemo';
 import toast from 'react-hot-toast';
 
 export default function SiteConfigAdmin() {
@@ -200,6 +202,9 @@ export default function SiteConfigAdmin() {
   const [newKeyword, setNewKeyword] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [faqHeading, setFaqHeading] = useState('Frequently Asked Questions');
+  const [faqShowOn, setFaqShowOn] = useState('both');
+  const [faqItems, setFaqItems] = useState<{ question: string; answer: string }[]>([]);
 
   useEffect(() => {
     fetchConfig();
@@ -215,6 +220,9 @@ export default function SiteConfigAdmin() {
           ? response.data.footerCategories
           : prev.footerCategories || [],
       }));
+      setFaqHeading(response.data?.faqs?.heading || 'Frequently Asked Questions');
+      setFaqShowOn(response.data?.faqs?.showOn || 'both');
+      setFaqItems(response.data?.faqs?.items || []);
     } catch (error) {
       console.error('Error fetching site config:', error);
     } finally {
@@ -317,6 +325,127 @@ export default function SiteConfigAdmin() {
       <Alert severity="info" sx={{ mb: 3 }}>
         Configure all aspects of your website from this single panel. Changes apply immediately across the entire site.
       </Alert>
+
+      {/* Font Preview & Testing */}
+      <Accordion>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography variant="h6">Font Preview & Testing</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography variant="body2" color="text.secondary" gutterBottom sx={{ mb: 3 }}>
+            Preview how different font combinations look across your application. Changes apply instantly when you select a new font combination in the Site Configuration above.
+          </Typography>
+          <FontDemo />
+        </AccordionDetails>
+      </Accordion>
+
+      {/* Global FAQ Section */}
+      <Accordion>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography variant="h6">Global FAQ Section</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Manage FAQs that appear on your site. Use the &quot;Show On&quot; dropdown to control where they display.
+          </Typography>
+          <Typography variant="body2" sx={{ mb: 3, p: 1.5, borderRadius: 2, background: '#f0f4ff', color: '#4338ca', fontSize: 13 }}>
+            Tip: Use <code style={{ background: '#e0e7ff', padding: '1px 6px', borderRadius: 4, fontWeight: 600 }}>{'{storeName}'}</code> in questions and answers &mdash; it will be automatically replaced with the actual store name on each store page.
+          </Typography>
+
+          <Card variant="outlined" sx={{ p: 3, mb: 3, borderRadius: 3, border: '1px solid #e5e7eb' }}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={7}>
+                <TextField
+                  fullWidth
+                  label="Section Heading"
+                  value={faqHeading}
+                  onChange={e => setFaqHeading(e.target.value)}
+                  placeholder="Frequently Asked Questions"
+                  InputProps={{ sx: { height: 48, borderRadius: 2 } }}
+                />
+              </Grid>
+              <Grid item xs={12} md={5}>
+                <FormControl fullWidth>
+                  <InputLabel>Show On</InputLabel>
+                  <Select
+                    value={faqShowOn}
+                    label="Show On"
+                    onChange={(e) => setFaqShowOn(e.target.value)}
+                    sx={{ height: 48, borderRadius: 2 }}
+                    renderValue={(val) => (
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        {val === 'both' && <><Globe size={15} /> Both (Home + Store Pages)</>}
+                        {val === 'home' && <><Home size={15} /> Home Page Only</>}
+                        {val === 'store' && <><StoreIcon size={15} /> Store Pages Only</>}
+                      </span>
+                    )}
+                  >
+                    <MenuItem value="both">
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Globe size={15} /> Both (Home + Store Pages)</span>
+                    </MenuItem>
+                    <MenuItem value="home">
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Home size={15} /> Home Page Only</span>
+                    </MenuItem>
+                    <MenuItem value="store">
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><StoreIcon size={15} /> Store Pages Only</span>
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+          </Card>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxHeight: 520, overflowY: 'auto', paddingRight: 4 }}>
+            {faqItems.map((item, i) => (
+              <Card key={i} variant="outlined" sx={{ borderRadius: 3, border: '1px solid #e5e7eb', overflow: 'visible' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px 0' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <HelpCircle size={14} color="#6366f1" />
+                    <Typography variant="caption" sx={{ fontWeight: 700, color: '#6366f1', letterSpacing: 0.5 }}>FAQ {i + 1}</Typography>
+                  </div>
+                  <Button size="small" color="error" onClick={() => setFaqItems(f => f.filter((_, idx) => idx !== i))}
+                    sx={{ minWidth: 0, fontSize: 12, textTransform: 'none' }}>Remove</Button>
+                </div>
+                <div style={{ padding: '12px 16px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <TextField
+                    fullWidth
+                    label="Question"
+                    value={item.question}
+                    onChange={e => setFaqItems(f => { const n = [...f]; n[i] = { ...n[i], question: e.target.value }; return n; })}
+                    InputProps={{ sx: { height: 48, borderRadius: 2 } }}
+                  />
+                  <TextField
+                    fullWidth
+                    label="Answer"
+                    value={item.answer}
+                    onChange={e => setFaqItems(f => { const n = [...f]; n[i] = { ...n[i], answer: e.target.value }; return n; })}
+                    multiline
+                    rows={3}
+                    InputProps={{ sx: { borderRadius: 2 } }}
+                  />
+                </div>
+              </Card>
+            ))}
+            {faqItems.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '40px 0', color: '#9ca3af' }}>
+                <HelpCircle size={32} style={{ margin: '0 auto 8px', opacity: 0.4 }} />
+                <Typography variant="body2" color="text.secondary">No FAQs yet &mdash; click &quot;+ Add FAQ&quot; below</Typography>
+              </div>
+            )}
+          </div>
+
+          <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
+            <Button variant="outlined" onClick={() => setFaqItems(f => [...f, { question: '', answer: '' }])}
+              sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600 }}>+ Add FAQ</Button>
+            <Button variant="contained" onClick={async () => {
+              try {
+                await updateSiteConfig({ faqs: { heading: faqHeading, showOn: faqShowOn, items: faqItems } });
+                toast.success('FAQs saved!');
+              } catch { toast.error('Failed to save FAQs'); }
+            }} sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600 }}>Save FAQs</Button>
+          </div>
+        </AccordionDetails>
+      </Accordion>
 
       {/* Basic Site Information */}
       <Accordion defaultExpanded>
@@ -1699,6 +1828,127 @@ export default function SiteConfigAdmin() {
             const links = [...(config.footerContent?.bottomLinks || []), { label: '', href: '#' }];
             setConfig({ ...config, footerContent: { ...config.footerContent, bottomLinks: links } });
           }}>Add Bottom Link</Button>
+        </AccordionDetails>
+      </Accordion>
+
+      {/* ── About Us Page Content ── */}
+      <Accordion>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography variant="h6"><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}><Info size={18} /> About Us Page</span></Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Alert severity="info" sx={{ mb: 3 }}>Edit the About Us page content. Leave fields empty to use defaults.</Alert>
+          <TextField fullWidth label="Introduction Text" value={config.aboutPage?.intro || ''} multiline rows={4}
+            onChange={e => setConfig({ ...config, aboutPage: { ...config.aboutPage, intro: e.target.value } })}
+            helperText="Supports HTML (<strong>, <br>). Use \n for paragraphs." InputProps={{ sx: { borderRadius: 2 } }} sx={{ mb: 3 }} />
+          <TextField fullWidth label="Our Story Text" value={config.aboutPage?.story || ''} multiline rows={4}
+            onChange={e => setConfig({ ...config, aboutPage: { ...config.aboutPage, story: e.target.value } })}
+            helperText="Supports HTML. Use \n for paragraphs." InputProps={{ sx: { borderRadius: 2 } }} sx={{ mb: 3 }} />
+
+          <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>Stats</Typography>
+          {(config.aboutPage?.stats || []).map((s: any, i: number) => (
+            <Box key={i} sx={{ display: 'flex', gap: 1.5, mb: 1.5, alignItems: 'center' }}>
+              <TextField label="Number" value={s.number} sx={{ flex: 1 }} InputProps={{ sx: { height: 48, borderRadius: 2 } }}
+                onChange={e => { const stats = [...(config.aboutPage?.stats || [])]; stats[i] = { ...s, number: e.target.value }; setConfig({ ...config, aboutPage: { ...config.aboutPage, stats } }); }} />
+              <TextField label="Label" value={s.label} sx={{ flex: 1 }} InputProps={{ sx: { height: 48, borderRadius: 2 } }}
+                onChange={e => { const stats = [...(config.aboutPage?.stats || [])]; stats[i] = { ...s, label: e.target.value }; setConfig({ ...config, aboutPage: { ...config.aboutPage, stats } }); }} />
+              <IconButton color="error" onClick={() => { const stats = (config.aboutPage?.stats || []).filter((_: any, idx: number) => idx !== i); setConfig({ ...config, aboutPage: { ...config.aboutPage, stats } }); }}><DeleteIcon fontSize="small" /></IconButton>
+            </Box>
+          ))}
+          <Button size="small" startIcon={<AddIcon />} onClick={() => setConfig({ ...config, aboutPage: { ...config.aboutPage, stats: [...(config.aboutPage?.stats || []), { number: '', label: '' }] } })}
+            sx={{ mb: 3, borderRadius: 2, textTransform: 'none' }}>Add Stat</Button>
+
+          <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>Features</Typography>
+          {(config.aboutPage?.features || []).map((f: any, i: number) => (
+            <Card key={i} variant="outlined" sx={{ p: 2, mb: 1.5, borderRadius: 2 }}>
+              <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center', mb: 1.5 }}>
+                <FormControl size="small" sx={{ width: 130 }}>
+                  <InputLabel>Icon</InputLabel>
+                  <Select value={f.icon || 'Target'} label="Icon" onChange={e => { const features = [...(config.aboutPage?.features || [])]; features[i] = { ...f, icon: e.target.value }; setConfig({ ...config, aboutPage: { ...config.aboutPage, features } }); }} sx={{ height: 48, borderRadius: 2 }}>
+                    {['Target', 'Users', 'Award', 'Heart', 'Shield', 'Zap'].map(ic => <MenuItem key={ic} value={ic}>{ic}</MenuItem>)}
+                  </Select>
+                </FormControl>
+                <TextField label="Title" value={f.title} sx={{ flex: 1 }} InputProps={{ sx: { height: 48, borderRadius: 2 } }}
+                  onChange={e => { const features = [...(config.aboutPage?.features || [])]; features[i] = { ...f, title: e.target.value }; setConfig({ ...config, aboutPage: { ...config.aboutPage, features } }); }} />
+                <IconButton color="error" onClick={() => { const features = (config.aboutPage?.features || []).filter((_: any, idx: number) => idx !== i); setConfig({ ...config, aboutPage: { ...config.aboutPage, features } }); }}><DeleteIcon fontSize="small" /></IconButton>
+              </Box>
+              <TextField fullWidth label="Description" value={f.description} multiline rows={2} InputProps={{ sx: { borderRadius: 2 } }}
+                onChange={e => { const features = [...(config.aboutPage?.features || [])]; features[i] = { ...f, description: e.target.value }; setConfig({ ...config, aboutPage: { ...config.aboutPage, features } }); }} />
+            </Card>
+          ))}
+          <Button size="small" startIcon={<AddIcon />} onClick={() => setConfig({ ...config, aboutPage: { ...config.aboutPage, features: [...(config.aboutPage?.features || []), { icon: 'Target', title: '', description: '' }] } })}
+            sx={{ mb: 3, borderRadius: 2, textTransform: 'none' }}>Add Feature</Button>
+
+          <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>Values</Typography>
+          {(config.aboutPage?.values || []).map((v: any, i: number) => (
+            <Box key={i} sx={{ display: 'flex', gap: 1.5, mb: 1.5, alignItems: 'flex-start' }}>
+              <TextField label="Title" value={v.title} sx={{ width: 200 }} InputProps={{ sx: { height: 48, borderRadius: 2 } }}
+                onChange={e => { const values = [...(config.aboutPage?.values || [])]; values[i] = { ...v, title: e.target.value }; setConfig({ ...config, aboutPage: { ...config.aboutPage, values } }); }} />
+              <TextField label="Description" value={v.description} sx={{ flex: 1 }} multiline rows={2} InputProps={{ sx: { borderRadius: 2 } }}
+                onChange={e => { const values = [...(config.aboutPage?.values || [])]; values[i] = { ...v, description: e.target.value }; setConfig({ ...config, aboutPage: { ...config.aboutPage, values } }); }} />
+              <IconButton color="error" onClick={() => { const values = (config.aboutPage?.values || []).filter((_: any, idx: number) => idx !== i); setConfig({ ...config, aboutPage: { ...config.aboutPage, values } }); }}><DeleteIcon fontSize="small" /></IconButton>
+            </Box>
+          ))}
+          <Button size="small" startIcon={<AddIcon />} onClick={() => setConfig({ ...config, aboutPage: { ...config.aboutPage, values: [...(config.aboutPage?.values || []), { title: '', description: '' }] } })}
+            sx={{ borderRadius: 2, textTransform: 'none' }}>Add Value</Button>
+        </AccordionDetails>
+      </Accordion>
+
+      {/* ── Contact Us Page Content ── */}
+      <Accordion>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography variant="h6"><span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}><Phone size={18} /> Contact Us Page</span></Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Alert severity="info" sx={{ mb: 3 }}>Edit the Contact Us page info and FAQs. Leave empty to use defaults.</Alert>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <TextField fullWidth label="Page Description" value={config.contactPage?.description || ''} multiline rows={3}
+                onChange={e => setConfig({ ...config, contactPage: { ...config.contactPage, description: e.target.value } })}
+                helperText="Text shown under 'Get in Touch' heading" InputProps={{ sx: { borderRadius: 2 } }} />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField fullWidth label="Email" value={config.contactPage?.email || ''}
+                onChange={e => setConfig({ ...config, contactPage: { ...config.contactPage, email: e.target.value } })}
+                helperText="Falls back to footer email if empty" InputProps={{ sx: { height: 48, borderRadius: 2 } }} />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField fullWidth label="Email Note" value={config.contactPage?.emailNote || ''}
+                onChange={e => setConfig({ ...config, contactPage: { ...config.contactPage, emailNote: e.target.value } })}
+                placeholder="We'll respond within 24 hours" InputProps={{ sx: { height: 48, borderRadius: 2 } }} />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField fullWidth label="Phone" value={config.contactPage?.phone || ''}
+                onChange={e => setConfig({ ...config, contactPage: { ...config.contactPage, phone: e.target.value } })}
+                helperText="Falls back to footer phone if empty" InputProps={{ sx: { height: 48, borderRadius: 2 } }} />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField fullWidth label="Phone Note" value={config.contactPage?.phoneNote || ''}
+                onChange={e => setConfig({ ...config, contactPage: { ...config.contactPage, phoneNote: e.target.value } })}
+                placeholder="Mon-Fri, 9AM-6PM EST" InputProps={{ sx: { height: 48, borderRadius: 2 } }} />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField fullWidth label="Address" value={config.contactPage?.address || ''} multiline rows={2}
+                onChange={e => setConfig({ ...config, contactPage: { ...config.contactPage, address: e.target.value } })}
+                helperText="Use \n for line breaks. Falls back to footer address if empty" InputProps={{ sx: { borderRadius: 2 } }} />
+            </Grid>
+          </Grid>
+
+          <Divider sx={{ my: 3 }} />
+          <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>Contact Page FAQs</Typography>
+          {(config.contactPage?.faqs || []).map((faq: any, i: number) => (
+            <Card key={i} variant="outlined" sx={{ p: 2, mb: 1.5, borderRadius: 2 }}>
+              <Box sx={{ display: 'flex', gap: 1.5, mb: 1.5, alignItems: 'center' }}>
+                <TextField label="Question" value={faq.question} sx={{ flex: 1 }} InputProps={{ sx: { height: 48, borderRadius: 2 } }}
+                  onChange={e => { const faqs = [...(config.contactPage?.faqs || [])]; faqs[i] = { ...faq, question: e.target.value }; setConfig({ ...config, contactPage: { ...config.contactPage, faqs } }); }} />
+                <IconButton color="error" onClick={() => { const faqs = (config.contactPage?.faqs || []).filter((_: any, idx: number) => idx !== i); setConfig({ ...config, contactPage: { ...config.contactPage, faqs } }); }}><DeleteIcon fontSize="small" /></IconButton>
+              </Box>
+              <TextField fullWidth label="Answer" value={faq.answer} multiline rows={2} InputProps={{ sx: { borderRadius: 2 } }}
+                onChange={e => { const faqs = [...(config.contactPage?.faqs || [])]; faqs[i] = { ...faq, answer: e.target.value }; setConfig({ ...config, contactPage: { ...config.contactPage, faqs } }); }} />
+            </Card>
+          ))}
+          <Button size="small" startIcon={<AddIcon />} onClick={() => setConfig({ ...config, contactPage: { ...config.contactPage, faqs: [...(config.contactPage?.faqs || []), { question: '', answer: '' }] } })}
+            sx={{ borderRadius: 2, textTransform: 'none' }}>Add FAQ</Button>
         </AccordionDetails>
       </Accordion>
 
