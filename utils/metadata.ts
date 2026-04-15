@@ -64,10 +64,15 @@ export function buildMetadata({
 
   const ogImage = image || `${siteUrl}/og_img.png`;
 
-  // Force Cloudinary images to 1200x630 for optimal OG display
+  // Force Cloudinary images to 1200x630 PNG for WhatsApp/social media compatibility
   const ogImageUrl = ogImage.includes('res.cloudinary.com') 
-    ? ogImage.replace('/upload/', '/upload/w_1200,h_630,c_fill,g_center,q_auto,f_auto/') 
+    ? ogImage.replace('/upload/', '/upload/w_1200,h_630,c_fill,g_center,q_auto,f_png/') 
     : ogImage;
+
+  // Determine image MIME type for og:image:type
+  const ogImageType = ogImageUrl.endsWith('.jpg') || ogImageUrl.endsWith('.jpeg') 
+    ? 'image/jpeg' 
+    : 'image/png';
 
   return {
     metadataBase: new URL(siteUrl),
@@ -79,7 +84,7 @@ export function buildMetadata({
       url,
       type,
       siteName: siteName || 'CouponsScript',
-      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: safeTitle }],
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: safeTitle, type: ogImageType, secureUrl: ogImageUrl }],
       ...(publishedTime && { publishedTime }),
       ...(authors && { authors }),
     },
